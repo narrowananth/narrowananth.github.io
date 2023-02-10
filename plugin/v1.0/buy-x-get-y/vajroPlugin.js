@@ -1,118 +1,147 @@
-/*
- * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
- * This devtool is neither made for production nor for readable output files.
- * It uses "eval()" calls to create a separate source file in the browser devtools.
- * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
- * or disable the default devtool with "devtool: false".
- * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
- */
-var vajroPlugin;
-/******/ (() => { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ "./src/buy-x-get-y/controller/plugin.controller.ts":
-/*!*********************************************************!*\
-  !*** ./src/buy-x-get-y/controller/plugin.controller.ts ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"findOfferSection\": () => (/* binding */ findOfferSection)\n/* harmony export */ });\n/* harmony import */ var _service_plugin_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../service/plugin.core */ \"./src/buy-x-get-y/service/plugin.core.ts\");\n\nvar findOfferSection = function (data) {\n    switch (data.buyOfferType) {\n        case \"threshold\":\n            return (0,_service_plugin_core__WEBPACK_IMPORTED_MODULE_0__.thresholdProcess)(data);\n        case \"collection\":\n            break;\n        case \"product\":\n            return (0,_service_plugin_core__WEBPACK_IMPORTED_MODULE_0__.productProcess)(data);\n        case \"quantity\":\n            return (0,_service_plugin_core__WEBPACK_IMPORTED_MODULE_0__.quantityProcess)(data);\n        default:\n            return [];\n    }\n    return [];\n};\n\n\n//# sourceURL=webpack://vajroPlugin/./src/buy-x-get-y/controller/plugin.controller.ts?");
-
-/***/ }),
-
-/***/ "./src/buy-x-get-y/service/plugin.core.ts":
-/*!************************************************!*\
-  !*** ./src/buy-x-get-y/service/plugin.core.ts ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"productProcess\": () => (/* binding */ productProcess),\n/* harmony export */   \"quantityProcess\": () => (/* binding */ quantityProcess),\n/* harmony export */   \"thresholdProcess\": () => (/* binding */ thresholdProcess)\n/* harmony export */ });\n/* harmony import */ var _utils_common__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/common */ \"./src/buy-x-get-y/utils/common.ts\");\n\nvar thresholdProcess = function (data) {\n    var getOfferConfig = data.getOfferConfig;\n    var getCartTotal = (0,_utils_common__WEBPACK_IMPORTED_MODULE_0__.findCartTotal)(data);\n    var getOffer = (0,_utils_common__WEBPACK_IMPORTED_MODULE_0__.findOffer)(getOfferConfig, getCartTotal);\n    // removeExistingDiscount(data, getOffer, getCartTotal)\n    if (getOffer.length !== 0)\n        return (0,_utils_common__WEBPACK_IMPORTED_MODULE_0__.splitDiscount)(data, getOffer, getCartTotal);\n    return [];\n};\nvar productProcess = function (data) {\n    return [];\n};\nvar quantityProcess = function (data) {\n    return [];\n};\n\n\n//# sourceURL=webpack://vajroPlugin/./src/buy-x-get-y/service/plugin.core.ts?");
-
-/***/ }),
-
-/***/ "./src/buy-x-get-y/utils/common.ts":
-/*!*****************************************!*\
-  !*** ./src/buy-x-get-y/utils/common.ts ***!
-  \*****************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"findCartTotal\": () => (/* binding */ findCartTotal),\n/* harmony export */   \"findOffer\": () => (/* binding */ findOffer),\n/* harmony export */   \"getLineItemsObj\": () => (/* binding */ getLineItemsObj),\n/* harmony export */   \"removeLineItems\": () => (/* binding */ removeLineItems),\n/* harmony export */   \"setKeyInFilterProduct\": () => (/* binding */ setKeyInFilterProduct),\n/* harmony export */   \"splitDiscount\": () => (/* binding */ splitDiscount)\n/* harmony export */ });\nvar __assign = (undefined && undefined.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nvar setKeyInFilterProduct = function (product) {\n    return product.reduce(function (obj, producDetails) {\n        var _a;\n        var variantId = producDetails.variantId;\n        return __assign(__assign({}, obj), (_a = {}, _a[variantId] = producDetails, _a));\n    }, {});\n};\nvar getLineItemsObj = function (lineItems) {\n    return lineItems.reduce(function (acc, lineItem) {\n        var variantId = lineItem.variantId;\n        acc[variantId] = lineItem;\n        return acc;\n    }, {});\n};\nvar removeLineItems = function (lineItems, productObj, selection) {\n    var editedLineItem = [];\n    if (selection === \"include\") {\n        Object.keys(lineItems).forEach(function (key) {\n            if (productObj[key])\n                editedLineItem.push(lineItems[key]);\n        });\n    }\n    else if (selection === \"exclude\") {\n        Object.keys(lineItems).forEach(function (key) {\n            if (!productObj[key])\n                editedLineItem.push(lineItems[key]);\n        });\n    }\n    return editedLineItem;\n};\nvar findCartTotal = function (data) {\n    var lineItemsObj = getLineItemsObj(data.lineItems);\n    var includeProductObj = setKeyInFilterProduct(data.includeProducts);\n    var excludedProductObj = setKeyInFilterProduct(data.excludeProducts);\n    var includedProductLineItem = Object.keys(includeProductObj).length !== 0 ? removeLineItems(lineItemsObj, includeProductObj, \"include\") : [];\n    var excludedProductLineItem = Object.keys(excludedProductObj).length !== 0 ? removeLineItems(lineItemsObj, excludedProductObj, \"exclude\") : [];\n    data.includedProductLineItem = includedProductLineItem.length !== 0 ? includedProductLineItem : undefined;\n    data.excludedProductLineItem =\n        includedProductLineItem.length === 0 && excludedProductLineItem.length !== 0\n            ? excludedProductLineItem\n            : undefined;\n    var lineItems = includedProductLineItem.length ? includedProductLineItem : excludedProductLineItem;\n    var finalLineItems = lineItems.length !== 0 ? lineItems : data.lineItems;\n    var total = 0;\n    finalLineItems.forEach(function (lineItem) {\n        var unitPrice = lineItem.unitPrice, quantity = lineItem.quantity;\n        total += unitPrice * quantity;\n    });\n    return total;\n};\nvar findOffer = function (getOfferConfig, getCartTotal) {\n    getOfferConfig = getOfferConfig.sort(function (a, b) { return a.threshold - b.threshold; });\n    var closestThreshold = getOfferConfig.reduce(function (prev, current) {\n        if (current.threshold <= Math.round(getCartTotal)) {\n            return prev < current ? prev : current;\n        }\n        else {\n            return prev;\n        }\n    }, 0);\n    return closestThreshold !== 0 ? closestThreshold : [];\n};\n// export const removeExistingDiscount = (data: any, getOffer: any, getCartTotal: number): any => {\n// \tconst { lineItems, getOfferType } = data\n// \tlet { threshold, getProducts } = getOffer\n// \tif (getOfferType === \"product\") {\n// \t\tif (threshold >= getCartTotal) {\n// \t\t\tgetProducts.forEach((key: any) => {\n// \t\t\t\tconst { variantId } = key\n// \t\t\t\tdelete lineItems[variantId]\n// \t\t\t})\n// \t\t}\n// \t}\n// \treturn\n// }\nvar splitDiscount = function (data, getOffer, getCartTotal) {\n    var includedProductLineItem = data.includedProductLineItem, excludedProductLineItem = data.excludedProductLineItem, lineItems = data.lineItems, getOfferType = data.getOfferType;\n    var discount = getOffer.discount, getProducts = getOffer.getProducts;\n    var filteringLineItems = includedProductLineItem || excludedProductLineItem || lineItems;\n    if (getOfferType === \"percentage\") {\n        if (discount >= 100)\n            discount = 100;\n        filteringLineItems.forEach(function (item) { return (item.unitPrice = item.unitPrice - item.unitPrice * (discount / 100)); });\n    }\n    else if (getOfferType === \"amount\") {\n        if (discount >= getCartTotal)\n            filteringLineItems.forEach(function (item) { return (item.unitPrice = item.unitPrice * 0); });\n        else\n            filteringLineItems.forEach(function (item) { return (item.unitPrice = item.unitPrice * (1 - ((discount / getCartTotal) * 100) / 100)); });\n    }\n    else if (getOfferType === \"product\") {\n        filteringLineItems = getProducts;\n    }\n    return filteringLineItems;\n};\n\n\n//# sourceURL=webpack://vajroPlugin/./src/buy-x-get-y/utils/common.ts?");
-
-/***/ }),
-
-/***/ "./src/index.ts":
-/*!**********************!*\
-  !*** ./src/index.ts ***!
-  \**********************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"getBuyXGetY\": () => (/* binding */ getBuyXGetY)\n/* harmony export */ });\n/* harmony import */ var _src__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../src */ \"./src/index.ts\");\n/* harmony import */ var _buy_x_get_y_controller_plugin_controller__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./buy-x-get-y/controller/plugin.controller */ \"./src/buy-x-get-y/controller/plugin.controller.ts\");\n\n\nvar getBuyXGetY = function (appContext, configSchema) {\n    var _a = appContext.cartLineItems, cartLineItems = _a === void 0 ? {} : _a;\n    var _b = cartLineItems.lineItems, lineItems = _b === void 0 ? {} : _b;\n    configSchema.lineItems = lineItems;\n    return (0,_buy_x_get_y_controller_plugin_controller__WEBPACK_IMPORTED_MODULE_1__.findOfferSection)(configSchema);\n};\n\n\n//# sourceURL=webpack://vajroPlugin/./src/index.ts?");
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/************************************************************************/
-/******/ 	
-/******/ 	// startup
-/******/ 	// Load entry module and return exports
-/******/ 	// This entry module is referenced by other modules so it can't be inlined
-/******/ 	var __webpack_exports__ = __webpack_require__("./src/index.ts");
-/******/ 	vajroPlugin = __webpack_exports__;
-/******/ 	
-/******/ })()
-;
+var vajroPlugin
+;(() => {
+	"use strict"
+	var e = {
+			d: (t, n) => {
+				for (var r in n) e.o(n, r) && !e.o(t, r) && Object.defineProperty(t, r, { enumerable: !0, get: n[r] })
+			},
+			o: (e, t) => Object.prototype.hasOwnProperty.call(e, t),
+			r: e => {
+				"undefined" != typeof Symbol &&
+					Symbol.toStringTag &&
+					Object.defineProperty(e, Symbol.toStringTag, { value: "Module" }),
+					Object.defineProperty(e, "__esModule", { value: !0 })
+			}
+		},
+		t = {}
+	e.r(t), e.d(t, { getBuyXGetY: () => c })
+	var n = function () {
+			return (
+				(n =
+					Object.assign ||
+					function (e) {
+						for (var t, n = 1, r = arguments.length; n < r; n++)
+							for (var u in (t = arguments[n]))
+								Object.prototype.hasOwnProperty.call(t, u) && (e[u] = t[u])
+						return e
+					}),
+				n.apply(this, arguments)
+			)
+		},
+		r = function (e) {
+			return e.reduce(function (e, t) {
+				var r,
+					u = t.variantId
+				return n(n({}, e), (((r = {})[u] = t), r))
+			}, {})
+		},
+		u = function (e, t, n) {
+			var r = []
+			return (
+				"include" === n
+					? Object.keys(e).forEach(function (n) {
+							t[n] && r.push(e[n])
+					  })
+					: "exclude" === n &&
+					  Object.keys(e).forEach(function (n) {
+							t[n] || r.push(e[n])
+					  }),
+				r
+			)
+		},
+		i = function () {
+			return (
+				(i =
+					Object.assign ||
+					function (e) {
+						for (var t, n = 1, r = arguments.length; n < r; n++)
+							for (var u in (t = arguments[n]))
+								Object.prototype.hasOwnProperty.call(t, u) && (e[u] = t[u])
+						return e
+					}),
+				i.apply(this, arguments)
+			)
+		},
+		c = function (e, t) {
+			var n = e.cartLineItems,
+				c = (void 0 === n ? {} : n).lineItems,
+				o = void 0 === c ? {} : c,
+				a = (function (e) {
+					switch (e.buyOfferType) {
+						case "threshold":
+							return (function (e) {
+								var t = e.getOfferConfig,
+									n = (function (e) {
+										var t = (function (e) {
+												return e.reduce(function (e, t) {
+													return (e[t.variantId] = t), e
+												}, {})
+											})(e.lineItems),
+											n = r(e.includeProducts),
+											i = r(e.excludeProducts),
+											c = 0 !== Object.keys(n).length ? u(t, n, "include") : [],
+											o = 0 !== Object.keys(i).length ? u(t, i, "exclude") : []
+										;(e.includedProductLineItem = 0 !== c.length ? c : void 0),
+											(e.excludedProductLineItem = 0 === c.length && 0 !== o.length ? o : void 0)
+										var a = c.length ? c : o,
+											l = 0 !== a.length ? a : e.lineItems,
+											f = 0
+										return (
+											l.forEach(function (e) {
+												var t = e.unitPrice,
+													n = e.quantity
+												f += t * n
+											}),
+											f
+										)
+									})(e),
+									i = (function (e, t) {
+										var n = (e = e.sort(function (e, t) {
+											return e.threshold - t.threshold
+										})).reduce(function (e, n) {
+											return n.threshold <= Math.round(t) ? (e < n ? e : n) : e
+										}, 0)
+										return 0 !== n ? n : []
+									})(t, n)
+								return 0 !== i.length
+									? (function (e, t, n) {
+											var r = e.includedProductLineItem,
+												u = e.excludedProductLineItem,
+												i = e.lineItems,
+												c = e.getOfferType,
+												o = t.discount,
+												a = t.getProducts,
+												l = r || u || i
+											return (
+												"percentage" === c
+													? (o >= 100 && (o = 100),
+													  l.forEach(function (e) {
+															return (e.unitPrice = e.unitPrice - e.unitPrice * (o / 100))
+													  }))
+													: "amount" === c
+													? o >= n
+														? l.forEach(function (e) {
+																return (e.unitPrice = 0 * e.unitPrice)
+														  })
+														: l.forEach(function (e) {
+																return (e.unitPrice =
+																	e.unitPrice * (1 - ((o / n) * 100) / 100))
+														  })
+													: "product" === c && (l = a),
+												l
+											)
+									  })(e, i, n)
+									: []
+							})(e)
+						case "collection":
+							break
+						default:
+							return []
+					}
+					return []
+				})(i(i({}, t), { lineItems: o }))
+			return JSON.stringify(a)
+		}
+	vajroPlugin = t
+})()
+//# sourceMappingURL=vajroPlugin.js.map
