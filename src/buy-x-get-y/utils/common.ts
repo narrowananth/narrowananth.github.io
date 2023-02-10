@@ -80,6 +80,23 @@ export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Arr
 	return closestThreshold !== 0 ? closestThreshold : []
 }
 
+// export const removeExistingDiscount = (data: any, getOffer: any, getCartTotal: number): any => {
+// 	const { lineItems, getOfferType } = data
+
+// 	let { threshold, getProducts } = getOffer
+
+// 	if (getOfferType === "product") {
+// 		if (threshold >= getCartTotal) {
+// 			getProducts.forEach((key: any) => {
+// 				const { variantId } = key
+// 				delete lineItems[variantId]
+// 			})
+// 		}
+// 	}
+
+// 	return
+// }
+
 export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {
 	const { includedProductLineItem, excludedProductLineItem, lineItems, getOfferType } = data
 

@@ -8,8 +8,7 @@ const config = {
 	output: {
 		path: _resolve(__dirname, "dist"),
 		filename: "vajroPlugin.js",
-		library: "vajroPlugin",
-		libraryTarget: "umd"
+		library: "vajroPlugin"
 	},
 	module: {
 		rules: [
