@@ -1,13 +1,15 @@
 import { findCartTotal, findOffer, removeExistingDiscount, splitDiscount } from "../utils/common"
 
 export const thresholdProcess = (data: any): Array<any> => {
-	const { getOfferConfig } = data
+	const { getOfferConfig, getOfferType } = data
 
 	const getCartTotal = findCartTotal(data)
 
 	const getOffer = findOffer(getOfferConfig, getCartTotal)
 
-	removeExistingDiscount(data, getOffer, getCartTotal)
+	const getRemoveDiscount = getOfferType === "product" ? removeExistingDiscount(data) : undefined
+
+	data.lineItems = getRemoveDiscount ? (data.lineItems = [...getRemoveDiscount]) : data.lineItems
 
 	if (getOffer.length !== 0) return splitDiscount(data, getOffer, getCartTotal)
 

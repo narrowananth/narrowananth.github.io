@@ -15,6 +15,7 @@ export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 export const setKeyInFilterProduct = (product: Array<any>): any => {
 	return product.reduce((obj: object, producDetails: any) => {
 		const { variantId } = producDetails
+
 		return { ...obj, [variantId]: producDetails }
 	}, {})
 }
@@ -84,31 +85,21 @@ export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Arr
 	getOfferConfig = getOfferConfig.sort((a: any, b: any) => a.threshold - b.threshold)
 
 	const closestThreshold = getOfferConfig.reduce((prev: number, current: any) => {
-		if (current.threshold <= Math.round(getCartTotal)) {
-			return prev < current ? prev : current
-		} else {
-			return prev
-		}
+		if (current.threshold <= Math.round(getCartTotal)) return prev < current ? prev : current
+		else return prev
 	}, 0)
 
 	return closestThreshold !== 0 ? closestThreshold : []
 }
 
-export const removeExistingDiscount = (data: any, getOffer: any, getCartTotal: number): any => {
-	const { lineItems, getOfferType } = data
+export const removeExistingDiscount = (data: any): Array<any> => {
+	const { lineItems } = data
 
-	let { threshold, getProducts } = getOffer
+	return lineItems.filter((lineItem: any) => {
+		const { originalUnitPrice, unitPrice } = lineItem
 
-	if (getOfferType === "product") {
-		if (threshold >= getCartTotal) {
-			getProducts.forEach((key: any) => {
-				const { variantId } = key
-				delete lineItems[variantId]
-			})
-		}
-	}
-
-	return
+		return originalUnitPrice !== 0 || unitPrice !== 0
+	})
 }
 
 export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {
@@ -130,5 +121,6 @@ export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): A
 	} else if (getOfferType === "product") {
 		filteringLineItems = getProducts
 	}
+
 	return filteringLineItems
 }

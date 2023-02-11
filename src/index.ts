@@ -7,11 +7,11 @@ import { appContext, configSchema } from "./input"
 export const getBuyXGetY = (appContext: object | any, configSchema: object | any): string => {
 	const { cartLineItems = {} } = appContext
 
-	const { lineItems = {} } = cartLineItems
+	let { lineItems = {} } = cartLineItems
 
-	const getResetLineItem = resetLineItemAmount(lineItems)
+	lineItems = resetLineItemAmount(lineItems)
 
-	const config = { ...configSchema, getResetLineItem }
+	const config = { ...configSchema, lineItems }
 
 	const result = findOfferSection(config)
 
