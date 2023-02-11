@@ -1,3 +1,17 @@
+export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
+	return lineItems.map(lineItem => {
+		const { originalUnitPrice, unitPrice } = lineItem
+
+		if (originalUnitPrice !== unitPrice)
+			return {
+				...lineItem,
+				unitPrice: originalUnitPrice
+			}
+
+		return lineItem
+	})
+}
+
 export const setKeyInFilterProduct = (product: Array<any>): any => {
 	return product.reduce((obj: object, producDetails: any) => {
 		const { variantId } = producDetails
@@ -80,22 +94,22 @@ export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Arr
 	return closestThreshold !== 0 ? closestThreshold : []
 }
 
-// export const removeExistingDiscount = (data: any, getOffer: any, getCartTotal: number): any => {
-// 	const { lineItems, getOfferType } = data
+export const removeExistingDiscount = (data: any, getOffer: any, getCartTotal: number): any => {
+	const { lineItems, getOfferType } = data
 
-// 	let { threshold, getProducts } = getOffer
+	let { threshold, getProducts } = getOffer
 
-// 	if (getOfferType === "product") {
-// 		if (threshold >= getCartTotal) {
-// 			getProducts.forEach((key: any) => {
-// 				const { variantId } = key
-// 				delete lineItems[variantId]
-// 			})
-// 		}
-// 	}
+	if (getOfferType === "product") {
+		if (threshold >= getCartTotal) {
+			getProducts.forEach((key: any) => {
+				const { variantId } = key
+				delete lineItems[variantId]
+			})
+		}
+	}
 
-// 	return
-// }
+	return
+}
 
 export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {
 	const { includedProductLineItem, excludedProductLineItem, lineItems, getOfferType } = data

@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf dist",
-    "build-dev": "webpack --mode development",
-    "build-prod": "rimraf dist && webpack --mode production",
-     "bundle": "webpack --config webpack.config.js"
+    "bundle": "webpack --config webpack.config.js"
   },
   "keywords": [],
   "author": "Ananth S <narrowananth@gmail.com>",
