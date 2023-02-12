@@ -98,7 +98,7 @@ export const removeExistingDiscount = (data: any): Array<any> => {
 	return lineItems.filter((lineItem: any) => {
 		const { unitPrice } = lineItem
 
-		return unitPrice !== 0
+		return unitPrice === 0
 	})
 }
 
