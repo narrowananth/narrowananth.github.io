@@ -9,7 +9,9 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object | any
 
 	let { lineItems = {} } = cartLineItems
 
-	lineItems = resetLineItemAmount(lineItems)
+	const { getOfferType } = configSchema
+
+	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
 
 	const config = { ...configSchema, lineItems }
 

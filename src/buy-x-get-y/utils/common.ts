@@ -1,11 +1,11 @@
 export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 	return lineItems.map(lineItem => {
-		const { originalUnitPrice, unitPrice } = lineItem
+		const { totalPrice, unitPrice } = lineItem
 
-		if (unitPrice === 0)
+		if (totalPrice !== unitPrice)
 			return {
 				...lineItem,
-				unitPrice: originalUnitPrice
+				unitPrice: totalPrice
 			}
 
 		return lineItem
