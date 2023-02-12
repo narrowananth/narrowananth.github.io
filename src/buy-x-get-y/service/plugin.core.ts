@@ -7,15 +7,7 @@ export const thresholdProcess = (data: any): Array<any> => {
 
 	const getOffer = findOffer(getOfferConfig, getCartTotal)
 
-	const getRemoveDiscount: any = getOfferType === "product" ? removeExistingDiscount(data) : undefined
-
-	if (getOffer.length !== 0) {
-		let getSplitDiscount = splitDiscount(data, getOffer, getCartTotal)
-
-		const getValue = getOfferType === "product" ? [...getSplitDiscount, ...getRemoveDiscount] : getSplitDiscount
-
-		return getValue
-	}
+	if (getOffer.length !== 0) return splitDiscount(data, getOffer, getCartTotal)
 
 	return []
 }

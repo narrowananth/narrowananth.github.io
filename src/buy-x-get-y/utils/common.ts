@@ -12,6 +12,14 @@ export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 	})
 }
 
+export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
+	return lineItems.filter((lineItem: any) => {
+		const { unitPrice, lineItemType } = lineItem
+
+		return unitPrice !== 0 && lineItemType !== "READONLY"
+	})
+}
+
 export const setKeyInFilterProduct = (product: Array<any>): any => {
 	return product.reduce((obj: object, producDetails: any) => {
 		const { variantId } = producDetails
@@ -90,16 +98,6 @@ export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Arr
 	}, 0)
 
 	return closestThreshold !== 0 ? closestThreshold : []
-}
-
-export const removeExistingDiscount = (data: any): Array<any> => {
-	const { lineItems } = data
-
-	return lineItems.filter((lineItem: any) => {
-		const { unitPrice } = lineItem
-
-		return unitPrice === 0
-	})
 }
 
 export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {

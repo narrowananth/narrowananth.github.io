@@ -1,7 +1,7 @@
 export * from "../src"
 
 import { findOfferSection } from "./buy-x-get-y/controller/plugin.controller"
-import { resetLineItemAmount } from "./buy-x-get-y/utils/common"
+import { resetLineItemAmount, removeExistingDiscount } from "./buy-x-get-y/utils/common"
 import { appContext, configSchema } from "./input"
 
 export const getBuyXGetY = (appContext: object | any, configSchema: object | any): string => {
@@ -11,7 +11,7 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object | any
 
 	const { getOfferType } = configSchema
 
-	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
+	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : removeExistingDiscount(lineItems)
 
 	const config = { ...configSchema, lineItems }
 
