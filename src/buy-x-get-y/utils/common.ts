@@ -1,11 +1,23 @@
+export const setDuplicateAmount = (lineItems: Array<any>): Array<any> => {
+	return lineItems.map(lineItem => {
+		const { totalPrice } = lineItem
+
+		return {
+			...lineItem,
+			duplicatePrice: totalPrice
+		}
+	})
+}
+
 export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 	return lineItems.map(lineItem => {
-		const { totalPrice, unitPrice } = lineItem
+		const { duplicatePrice, unitPrice } = lineItem
 
-		if (totalPrice !== unitPrice)
+		if (duplicatePrice && duplicatePrice !== unitPrice)
 			return {
 				...lineItem,
-				unitPrice: totalPrice
+				unitPrice: duplicatePrice,
+				totalPrice: duplicatePrice
 			}
 
 		return lineItem
