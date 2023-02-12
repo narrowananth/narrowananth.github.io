@@ -11,7 +11,7 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object | any
 
 	const { getOfferType } = configSchema
 
-	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : removeExistingDiscount(lineItems)
+	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
 
 	const config = { ...configSchema, lineItems }
 
