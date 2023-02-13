@@ -1,6 +1,6 @@
 import { thresholdProcess, productProcess, quantityProcess } from "../service/plugin.core"
 
-export const findOfferSection = (data: any): Array<any> => {
+export const findOfferSection = (data: any): object => {
 	switch (data.buyOfferType) {
 		case "threshold":
 			return thresholdProcess(data)

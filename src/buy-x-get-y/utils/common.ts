@@ -16,7 +16,7 @@ export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
 	return lineItems.filter((lineItem: any) => {
 		const { unitPrice, lineItemType } = lineItem
 
-		return unitPrice !== 0 && lineItemType !== "READONLY"
+		return unitPrice === 0 && lineItemType === "READONLY"
 	})
 }
 

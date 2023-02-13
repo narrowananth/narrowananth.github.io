@@ -13,7 +13,9 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object | any
 
 	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
 
-	const config = { ...configSchema, lineItems }
+	const getRemovedProductList = getOfferType === "product" ? removeExistingDiscount(lineItems) : undefined
+
+	const config = { ...configSchema, lineItems, getRemovedProductList }
 
 	const result = findOfferSection(config)
 

@@ -1,15 +1,18 @@
 import { findCartTotal, findOffer, splitDiscount } from "../utils/common"
 
-export const thresholdProcess = (data: any): Array<any> => {
-	const { getOfferConfig } = data
+export const thresholdProcess = (data: any): object => {
+	const { getOfferConfig, getOfferType, getRemovedProductList } = data
 
 	const getCartTotal = findCartTotal(data)
 
 	const getOffer = findOffer(getOfferConfig, getCartTotal)
 
-	if (getOffer.length !== 0) return splitDiscount(data, getOffer, getCartTotal)
+	const getSplitDiscount = getOffer.length !== 0 ? splitDiscount(data, getOffer, getCartTotal) : []
 
-	return []
+	const parsedSplitDiscount =
+		getOfferType === "product" ? { getSplitDiscount, getRemovedProductList } : { getSplitDiscount }
+
+	return parsedSplitDiscount
 }
 
 export const productProcess = (data: any): Array<any> => {
