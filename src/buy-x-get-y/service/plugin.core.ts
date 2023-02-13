@@ -1,4 +1,4 @@
-import { findCartTotal, findOffer, splitDiscount } from "../utils/common"
+import { findCartTotal, findOffer, splitDiscount } from "../utils/threshold.utils"
 
 export const thresholdProcess = (data: any): object => {
 	const { getOfferConfig, getOfferType, getRemovedProductList } = data
