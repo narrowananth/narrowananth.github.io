@@ -27,15 +27,16 @@ export const findCartQuantity = (data: any): object => {
 		return getProducts.map((key: any) => {
 			const { unitPrice } = key
 
-			let amount = getProductQuantity * unitPrice
-
 			if (getOfferType === "percentage") {
 				if (discount >= 100) discount = 100
 			} else if (getOfferType === "amount") {
-				if (discount >= amount) discount = amount
+				if (discount >= getProductQuantity * unitPrice) discount = getProductQuantity * unitPrice
 			}
 
-			let getEditedPrice = getOfferType === "percentage" ? amount - amount * (discount / 100) : amount - discount
+			let getEditedPrice =
+				getOfferType === "percentage"
+					? getProductQuantity * unitPrice - getProductQuantity * unitPrice * (discount / 100)
+					: getProductQuantity * unitPrice - discount
 
 			const finalDiscount = { ...key, quantity: getProductQuantity, editedUnitPrice: getEditedPrice }
 
