@@ -13,17 +13,21 @@ export const findCartTotal = (data: any): object => {
 
 	let offerFlag = false
 
+	let total = 0
+
 	for (const key of buyProductIdArray) {
 		const { quantity, unitPrice } = getSanitizeLineItems[key] || {}
 
-		if (getSanitizeLineItems[key] && threshold <= quantity * unitPrice) offerFlag = true
-		else {
+		if (quantity && unitPrice) {
+			total += quantity * unitPrice
+			offerFlag = true
+		} else {
 			offerFlag = false
 			break
 		}
 	}
 
-	if (offerFlag) {
+	if (offerFlag && threshold <= total) {
 		return getProducts.map((key: any) => {
 			const { unitPrice } = key
 
