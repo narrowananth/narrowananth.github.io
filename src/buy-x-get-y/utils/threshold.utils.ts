@@ -1,52 +1,49 @@
 import { sanitizeLineItems } from "./plugin.utils"
 
-export const findCartTotal = (data: any): number => {
+export const findCartTotal = (data: any): object => {
+	const { getOfferType, getOfferConfig } = data
+
+	let { discount } = getOfferConfig
+
+	const { threshold, buyProducts, getProducts, getProductQuantity } = getOfferConfig
+
+	const buyProductIdArray = buyProducts.map((product: any) => product.variantId)
+
 	const getSanitizeLineItems = sanitizeLineItems(data)
 
-	let total = 0
+	let offerFlag = false
 
-	getSanitizeLineItems.forEach((lineItem: any) => {
-		const { unitPrice, quantity } = lineItem
+	for (const key of buyProductIdArray) {
+		const { quantity, unitPrice } = getSanitizeLineItems[key] || {}
 
-		total += unitPrice * quantity
-	})
+		if (getSanitizeLineItems[key] && threshold <= quantity * unitPrice) offerFlag = true
+		else {
+			offerFlag = false
+			break
+		}
+	}
 
-	return total
-}
+	if (offerFlag) {
+		return getProducts.map((key: any) => {
+			const { unitPrice } = key
 
-export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Array<any> => {
-	getOfferConfig = getOfferConfig.sort((a: any, b: any) => a.threshold - b.threshold)
+			let getEditedPrice = 0
 
-	const closestThreshold = getOfferConfig.reduce((prev: number, current: any) => {
-		if (current.threshold <= Math.round(getCartTotal)) return prev < current ? prev : current
-		else return prev
-	}, 0)
+			if (getOfferType !== "product") {
+				if (getOfferType === "percentage") {
+					if (discount >= 100) discount = 100
+				}
 
-	return closestThreshold !== 0 ? closestThreshold : []
-}
+				getEditedPrice =
+					getOfferType === "percentage"
+						? getProductQuantity * unitPrice - getProductQuantity * unitPrice * (discount / 100)
+						: getProductQuantity * unitPrice - discount
+			}
+			const finalDiscount = { ...key, quantity: getProductQuantity, unitPrice: getEditedPrice }
 
-export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {
-	const { includedProductLineItem, excludedProductLineItem, lineItems, getOfferType } = data
-
-	let { discount, getProducts, getProductQuantity } = getOffer
-
-	let filteringLineItems = includedProductLineItem || excludedProductLineItem || lineItems
-
-	if (getOfferType === "percentage") {
-		if (discount >= 100) discount = 100
-		filteringLineItems.forEach((item: any) => (item.unitPrice = item.unitPrice - item.unitPrice * (discount / 100)))
-	} else if (getOfferType === "amount") {
-		if (discount >= getCartTotal) filteringLineItems.forEach((item: any) => (item.unitPrice = item.unitPrice * 0))
-		else
-			filteringLineItems.forEach(
-				(item: any) => (item.unitPrice = item.unitPrice * (1 - ((discount / getCartTotal) * 100) / 100))
-			)
-	} else if (getOfferType === "product") {
-		filteringLineItems = getProducts.map((key: any) => {
-			key.quantity = getProductQuantity
-			return key
+			return finalDiscount
 		})
 	}
 
-	return filteringLineItems
+	return []
 }

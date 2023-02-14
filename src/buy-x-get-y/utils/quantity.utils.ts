@@ -33,9 +33,6 @@ export const findCartQuantity = (data: any): object => {
 				if (getOfferType === "percentage") {
 					if (discount >= 100) discount = 100
 				}
-				// else if (getOfferType === "amount") {
-				// 	if (discount >= getProductQuantity * unitPrice) discount = getProductQuantity * unitPrice
-				// }
 
 				getEditedPrice =
 					getOfferType === "percentage"
