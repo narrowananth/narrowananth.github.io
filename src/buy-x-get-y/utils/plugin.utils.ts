@@ -18,7 +18,9 @@ export const resetLineItemAmount = (getProducts: Array<any>, lineItems: Array<an
 	lineItems = getLineItemsObj(lineItems)
 
 	getRemovedList.forEach((key: any) => {
-		if (lineItems[key]) delete lineItems[key]
+		const { lineItemType } = lineItems[key] || {}
+
+		if (lineItemType === "READONLY") delete lineItems[key]
 	})
 
 	return lineItems

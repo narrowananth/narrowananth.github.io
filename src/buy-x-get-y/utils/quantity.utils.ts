@@ -1,4 +1,4 @@
-import { getLineItemsObj, sanitizeLineItems } from "./plugin.utils"
+import { sanitizeLineItems } from "./plugin.utils"
 
 export const findCartQuantity = (data: any): object => {
 	let getOffer: any = []
@@ -28,6 +28,7 @@ export const findCartQuantity = (data: any): object => {
 	if (offerFlag) {
 		getOffer = getProducts.map((key: any) => {
 			const { unitPrice } = key
+
 			key.quantity = getProductQuantity
 
 			if (getOfferType === "percentage") {
