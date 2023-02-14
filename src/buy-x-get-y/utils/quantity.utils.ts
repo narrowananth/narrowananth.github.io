@@ -34,7 +34,7 @@ export const findCartQuantity = (data: any): object => {
 			if (getOfferType === "percentage") {
 				if (discount >= 100) discount = 100
 
-				const amount = getProductQuantity * unitPrice
+				let amount = getProductQuantity * unitPrice
 
 				key.unitPrice = amount - amount * (discount / 100)
 			}
