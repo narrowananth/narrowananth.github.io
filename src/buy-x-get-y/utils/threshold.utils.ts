@@ -15,11 +15,13 @@ export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 }
 
 export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
-	return lineItems.filter((lineItem: any) => {
+	lineItems = lineItems.filter((lineItem: any) => {
 		const { lineItemType } = lineItem
 
 		return lineItemType === "READONLY"
 	})
+
+	return lineItems || []
 }
 
 export const findCartTotal = (data: any): number => {

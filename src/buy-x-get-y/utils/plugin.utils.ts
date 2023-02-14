@@ -3,9 +3,9 @@ import { resetLineItemAmount, removeExistingDiscount } from "./threshold.utils"
 export const buildInputData = (configSchema: object | any, lineItems: Array<any>): object => {
 	const { getOfferType } = configSchema
 
-	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
+	// lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
 
-	const getRemovedProductList = getOfferType === "product" ? removeExistingDiscount(lineItems) : []
+	const getRemovedProductList = removeExistingDiscount(lineItems)
 
 	const config = { ...configSchema, lineItems, getRemovedProductList }
 
