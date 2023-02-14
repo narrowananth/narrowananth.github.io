@@ -21,7 +21,12 @@ export const productProcess = (data: any): object => {
 }
 
 export const quantityProcess = (data: any): object => {
+	const { getOfferType, getRemovedProductList } = data
+
 	const getCartQuantity = findCartQuantity(data)
 
-	return getCartQuantity
+	const parsedSplitDiscount =
+		getOfferType === "product" ? { getCartQuantity, getRemovedProductList } : { getCartQuantity }
+
+	return parsedSplitDiscount
 }
