@@ -1,15 +1,33 @@
-import { resetLineItemAmount, removeExistingDiscount } from "./threshold.utils"
-
 export const buildInputData = (configSchema: object | any, lineItems: Array<any>): object => {
-	const { getOfferType } = configSchema
-
-	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
-
 	const getRemovedProductList = removeExistingDiscount(lineItems)
+
+	lineItems = resetLineItemAmount(getRemovedProductList, lineItems)
 
 	const config = { ...configSchema, lineItems, getRemovedProductList }
 
 	return config
+}
+
+export const resetLineItemAmount = (getRemovedProductList: Array<any>, lineItems: Array<any>): Array<any> => {
+	const getRemovedList = getRemovedProductList.map((product: any) => product.variantId)
+
+	lineItems = getLineItemsObj(lineItems)
+
+	getRemovedList.forEach((key: any) => {
+		if (lineItems[key]) delete lineItems[key]
+	})
+
+	return lineItems
+}
+
+export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
+	lineItems = lineItems.filter((lineItem: any) => {
+		const { lineItemType } = lineItem
+
+		return lineItemType === "READONLY"
+	})
+
+	return lineItems || []
 }
 
 export const setKeyInFilterProduct = (product: Array<any>): any => {
@@ -49,17 +67,17 @@ export const removeLineItems = (lineItems: any, productObj: any, selection: stri
 export const sanitizeLineItems = (data: any): Array<any> => {
 	const { lineItems, includeProducts, excludeProducts } = data
 
-	const lineItemsObj = getLineItemsObj(lineItems)
+	console.log("lineitems: ", lineItems)
 
 	const includeProductObj = setKeyInFilterProduct(includeProducts)
 
 	const excludedProductObj = setKeyInFilterProduct(excludeProducts)
 
 	const includedProductLineItem =
-		Object.keys(includeProductObj).length !== 0 ? removeLineItems(lineItemsObj, includeProductObj, "include") : []
+		Object.keys(includeProductObj).length !== 0 ? removeLineItems(lineItems, includeProductObj, "include") : []
 
 	const excludedProductLineItem =
-		Object.keys(excludedProductObj).length !== 0 ? removeLineItems(lineItemsObj, excludedProductObj, "exclude") : []
+		Object.keys(excludedProductObj).length !== 0 ? removeLineItems(lineItems, excludedProductObj, "exclude") : []
 
 	data.includedProductLineItem = includedProductLineItem.length !== 0 ? includedProductLineItem : undefined
 

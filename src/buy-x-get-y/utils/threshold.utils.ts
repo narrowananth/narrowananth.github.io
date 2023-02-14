@@ -1,29 +1,5 @@
 import { sanitizeLineItems } from "./plugin.utils"
 
-export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
-	return lineItems.map(lineItem => {
-		const { originalUnitPrice, unitPrice } = lineItem
-
-		if (originalUnitPrice && originalUnitPrice !== unitPrice)
-			return {
-				...lineItem,
-				unitPrice: originalUnitPrice
-			}
-
-		return lineItem
-	})
-}
-
-export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
-	lineItems = lineItems.filter((lineItem: any) => {
-		const { lineItemType } = lineItem
-
-		return lineItemType === "READONLY"
-	})
-
-	return lineItems || []
-}
-
 export const findCartTotal = (data: any): number => {
 	const getSanitizeLineItems = sanitizeLineItems(data)
 

@@ -13,14 +13,12 @@ export const findCartQuantity = (data: any): object => {
 
 	const getSanitizeLineItems = sanitizeLineItems(data)
 
-	const getLineItems = getLineItemsObj(getSanitizeLineItems)
-
 	let offerFlag = false
 
 	for (const key of buyProductIdArray) {
-		const { quantity } = getLineItems[key] || {}
+		const { quantity } = getSanitizeLineItems[key] || {}
 
-		if (getLineItems[key] && buyProductQuantity <= quantity) offerFlag = true
+		if (getSanitizeLineItems[key] && buyProductQuantity <= quantity) offerFlag = true
 		else {
 			offerFlag = false
 			break
@@ -35,7 +33,9 @@ export const findCartQuantity = (data: any): object => {
 			if (getOfferType === "percentage") {
 				if (discount >= 100) discount = 100
 
-				key.unitPrice = getProductQuantity * unitPrice - getProductQuantity * unitPrice * (discount / 100)
+				const amount = getProductQuantity * unitPrice
+
+				key.unitPrice = amount - amount * (discount / 100)
 			}
 			return key
 		})
