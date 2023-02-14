@@ -5,7 +5,7 @@ export const buildInputData = (configSchema: object | any, lineItems: Array<any>
 
 	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
 
-	const getRemovedProductList = getOfferType === "product" ? removeExistingDiscount(lineItems) : undefined
+	const getRemovedProductList = getOfferType === "product" ? removeExistingDiscount(lineItems) : []
 
 	const config = { ...configSchema, lineItems, getRemovedProductList }
 
