@@ -27,8 +27,7 @@ const config = {
 	resolve: {
 		extensions: [".tsx", ".ts", ".js"]
 	},
-	devtool: "source-map",
-	mode: "development"
+	devtool: "source-map"
 }
 
 export default config
