@@ -15,10 +15,12 @@ export const thresholdProcess = (data: any): object => {
 	return parsedSplitDiscount
 }
 
-export const productProcess = (data: any): Array<any> => {
-	return []
+export const productProcess = (data: any): object => {
+	return {}
 }
 
-export const quantityProcess = (data: any): Array<any> => {
-	return []
+export const quantityProcess = (data: any): object => {
+	const { getOfferConfig, getOfferType, getRemovedProductList } = data
+
+	return {}
 }

@@ -15,8 +15,8 @@ export const findOfferSection = (data: any): object => {
 			return quantityProcess(data)
 
 		default:
-			return []
+			return {}
 	}
 
-	return []
+	return {}
 }

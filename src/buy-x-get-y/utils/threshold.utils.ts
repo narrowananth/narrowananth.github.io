@@ -103,7 +103,7 @@ export const findOffer = (getOfferConfig: Array<any>, getCartTotal: number): Arr
 export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): Array<any> => {
 	const { includedProductLineItem, excludedProductLineItem, lineItems, getOfferType } = data
 
-	let { discount, getProducts, productQuantity } = getOffer
+	let { discount, getProducts, getProductQuantity } = getOffer
 
 	let filteringLineItems = includedProductLineItem || excludedProductLineItem || lineItems
 
@@ -118,7 +118,7 @@ export const splitDiscount = (data: any, getOffer: any, getCartTotal: number): A
 			)
 	} else if (getOfferType === "product") {
 		filteringLineItems = getProducts.map((key: any) => {
-			key.quantity = productQuantity
+			key.quantity = getProductQuantity
 			return key
 		})
 	}

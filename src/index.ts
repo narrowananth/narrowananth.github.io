@@ -1,20 +1,14 @@
 import { findOfferSection } from "./buy-x-get-y/controller/plugin.controller"
-import { resetLineItemAmount, removeExistingDiscount } from "./buy-x-get-y/utils/threshold.utils"
+import { buildInputData } from "./buy-x-get-y/utils/plugin.utils"
 
-export const getBuyXGetY = (appContext: object | any, configSchema: object | any): string => {
+export const getBuyXGetY = (appContext: object | any, configSchema: object): string => {
 	const { cartLineItems = {} } = appContext
 
-	let { lineItems = {} } = cartLineItems
+	const { lineItems = {} } = cartLineItems
 
-	const { getOfferType } = configSchema
+	const getBuildInputData = buildInputData(configSchema, lineItems)
 
-	lineItems = getOfferType !== "product" ? resetLineItemAmount(lineItems) : lineItems
+	const getOfferSection = findOfferSection(getBuildInputData)
 
-	const getRemovedProductList = getOfferType === "product" ? removeExistingDiscount(lineItems) : undefined
-
-	const config = { ...configSchema, lineItems, getRemovedProductList }
-
-	const result = findOfferSection(config)
-
-	return JSON.stringify(result)
+	return JSON.stringify(getOfferSection)
 }
