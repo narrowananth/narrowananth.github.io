@@ -16,9 +16,9 @@ export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 
 export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
 	return lineItems.filter((lineItem: any) => {
-		const { unitPrice, lineItemType } = lineItem
+		const { lineItemType } = lineItem
 
-		return unitPrice === 0 && lineItemType === "READONLY"
+		return lineItemType === "READONLY"
 	})
 }
 

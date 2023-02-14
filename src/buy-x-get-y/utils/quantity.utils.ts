@@ -3,9 +3,11 @@ import { getLineItemsObj, sanitizeLineItems } from "./plugin.utils"
 export const findCartQuantity = (data: any): object => {
 	let getOffer: any = []
 
-	const { getOfferConfig } = data
+	const { getOfferType, getOfferConfig } = data
 
 	const { buyProducts, buyProductQuantity, getProducts, getProductQuantity } = getOfferConfig
+
+	let { discount } = getOfferConfig
 
 	const buyProductIdArray = buyProducts.map((product: any) => product.variantId)
 
@@ -27,7 +29,14 @@ export const findCartQuantity = (data: any): object => {
 
 	if (offerFlag) {
 		getOffer = getProducts.map((key: any) => {
+			const { unitPrice } = key
 			key.quantity = getProductQuantity
+
+			if (getOfferType === "percentage") {
+				if (discount >= 100) discount = 100
+
+				key.unitPrice = getProductQuantity * unitPrice - getProductQuantity * unitPrice * (discount / 100)
+			}
 			return key
 		})
 	}
