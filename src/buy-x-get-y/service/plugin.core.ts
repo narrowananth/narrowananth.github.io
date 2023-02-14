@@ -2,7 +2,7 @@ import { findCartQuantity } from "../utils/quantity.utils"
 import { findCartTotal, findOffer, splitDiscount } from "../utils/threshold.utils"
 
 export const thresholdProcess = (data: any): object => {
-	const { getOfferConfig, getOfferType, getRemovedProductList } = data
+	const { getOfferConfig, getRemovedProductList } = data
 
 	const getCartTotal = findCartTotal(data)
 
@@ -10,8 +10,7 @@ export const thresholdProcess = (data: any): object => {
 
 	const getSplitDiscount = getOffer.length !== 0 ? splitDiscount(data, getOffer, getCartTotal) : []
 
-	const parsedSplitDiscount =
-		getOfferType === "product" ? { getSplitDiscount, getRemovedProductList } : { getSplitDiscount }
+	const parsedSplitDiscount = { getSplitDiscount, getRemovedProductList }
 
 	return parsedSplitDiscount
 }
