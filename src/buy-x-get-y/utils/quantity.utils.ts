@@ -38,7 +38,7 @@ export const findCartQuantity = (data: any): object => {
 					? getProductQuantity * unitPrice - getProductQuantity * unitPrice * (discount / 100)
 					: getProductQuantity * unitPrice - discount
 
-			const finalDiscount = { ...key, quantity: getProductQuantity, editedUnitPrice: getEditedPrice }
+			const finalDiscount = { ...key, quantity: getProductQuantity, unitPrice: getEditedPrice }
 
 			return finalDiscount
 		})
