@@ -36,7 +36,9 @@ export const findCartQuantity = (data: any): object => {
 
 				let amount = getProductQuantity * unitPrice
 
-				key.unitPrice = amount - amount * (discount / 100)
+				amount = amount - amount * (discount / 100)
+
+				key.editedUnitPrice = amount
 			}
 			return key
 		})
