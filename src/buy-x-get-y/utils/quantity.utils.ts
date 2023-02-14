@@ -15,15 +15,15 @@ export const findCartQuantity = (data: any): object => {
 
 	let offerFlag = false
 
-	buyProductIdArray.forEach((key: any) => {
+	for (const key of buyProductIdArray) {
 		const { quantity } = getLineItems[key] || {}
 
 		if (getLineItems[key] && buyProductQuantity <= quantity) offerFlag = true
 		else {
 			offerFlag = false
-			return
+			break
 		}
-	})
+	}
 
 	if (offerFlag) {
 		getOffer = getProducts.map((key: any) => {
