@@ -1,5 +1,5 @@
 export const buildInputData = (configSchema: object | any, lineItems: Array<any>): object => {
-	const getRemovedProductList = removeExistingDiscount(lineItems)
+	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
 	const { getOfferConfig } = configSchema
 
@@ -12,8 +12,8 @@ export const buildInputData = (configSchema: object | any, lineItems: Array<any>
 	return config
 }
 
-export const resetLineItemAmount = (getRemovedProductList: Array<any>, lineItems: Array<any>): Array<any> => {
-	const getRemovedList = getRemovedProductList.map((product: any) => product.variantId)
+export const resetLineItemAmount = (getProducts: Array<any>, lineItems: Array<any>): Array<any> => {
+	const getRemovedList = getProducts.map((product: any) => product.variantId)
 
 	lineItems = getLineItemsObj(lineItems)
 
@@ -25,13 +25,13 @@ export const resetLineItemAmount = (getRemovedProductList: Array<any>, lineItems
 }
 
 export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
-	lineItems = lineItems.filter((lineItem: any) => {
+	const getRemoveItemsList = lineItems
+
+	return getRemoveItemsList.filter((lineItem: any) => {
 		const { lineItemType } = lineItem
 
 		return lineItemType === "READONLY"
 	})
-
-	return lineItems || []
 }
 
 export const setKeyInFilterProduct = (product: Array<any>): any => {
