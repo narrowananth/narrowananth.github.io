@@ -1,8 +1,6 @@
 import { sanitizeLineItems } from "./plugin.utils"
 
 export const findCartQuantity = (data: any): object => {
-	let getOffer: any = []
-
 	const { getOfferType, getOfferConfig } = data
 
 	const { buyProducts, buyProductQuantity, getProducts, getProductQuantity } = getOfferConfig
@@ -26,31 +24,24 @@ export const findCartQuantity = (data: any): object => {
 	}
 
 	if (offerFlag) {
-		getOffer = getProducts.map((key: any) => {
+		return getProducts.map((key: any) => {
 			const { unitPrice } = key
 
-			key.quantity = getProductQuantity
+			let amount = getProductQuantity * unitPrice
 
 			if (getOfferType === "percentage") {
-				let amount = getProductQuantity * unitPrice
-
 				if (discount >= 100) discount = 100
-
-				let getEditedPrice = amount - amount * (discount / 100)
-
-				key.editedUnitPrice = getEditedPrice
 			} else if (getOfferType === "amount") {
-				let amount = getProductQuantity * unitPrice
-
 				if (discount >= amount) discount = amount
-
-				let getEditedPrice = amount - discount
-
-				key.editedUnitPrice = getEditedPrice
 			}
-			return key
+
+			let getEditedPrice = getOfferType === "percentage" ? amount - amount * (discount / 100) : amount - discount
+
+			const finalDiscount = { ...key, quantity: getProductQuantity, editedUnitPrice: getEditedPrice }
+
+			return finalDiscount
 		})
 	}
 
-	return getOffer
+	return []
 }
