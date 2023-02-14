@@ -1,3 +1,5 @@
+import { sanitizeLineItems } from "./plugin.utils"
+
 export const resetLineItemAmount = (lineItems: Array<any>): Array<any> => {
 	return lineItems.map(lineItem => {
 		const { originalUnitPrice, unitPrice } = lineItem
@@ -20,67 +22,12 @@ export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
 	})
 }
 
-export const setKeyInFilterProduct = (product: Array<any>): any => {
-	return product.reduce((obj: object, producDetails: any) => {
-		const { variantId } = producDetails
-
-		return { ...obj, [variantId]: producDetails }
-	}, {})
-}
-
-export const getLineItemsObj = (lineItems: Array<any>): any => {
-	return lineItems.reduce((acc: any, lineItem: any) => {
-		const { variantId } = lineItem
-
-		acc[variantId] = lineItem
-
-		return acc
-	}, {})
-}
-
-export const removeLineItems = (lineItems: any, productObj: any, selection: string): Array<object> => {
-	const editedLineItem: any[] = []
-
-	if (selection === "include") {
-		Object.keys(lineItems).forEach((key: any) => {
-			if (productObj[key]) editedLineItem.push(lineItems[key])
-		})
-	} else if (selection === "exclude") {
-		Object.keys(lineItems).forEach((key: any) => {
-			if (!productObj[key]) editedLineItem.push(lineItems[key])
-		})
-	}
-
-	return editedLineItem
-}
-
 export const findCartTotal = (data: any): number => {
-	const lineItemsObj = getLineItemsObj(data.lineItems)
-
-	const includeProductObj = setKeyInFilterProduct(data.includeProducts)
-
-	const excludedProductObj = setKeyInFilterProduct(data.excludeProducts)
-
-	const includedProductLineItem =
-		Object.keys(includeProductObj).length !== 0 ? removeLineItems(lineItemsObj, includeProductObj, "include") : []
-
-	const excludedProductLineItem =
-		Object.keys(excludedProductObj).length !== 0 ? removeLineItems(lineItemsObj, excludedProductObj, "exclude") : []
-
-	data.includedProductLineItem = includedProductLineItem.length !== 0 ? includedProductLineItem : undefined
-
-	data.excludedProductLineItem =
-		includedProductLineItem.length === 0 && excludedProductLineItem.length !== 0
-			? excludedProductLineItem
-			: undefined
-
-	const lineItems = includedProductLineItem.length ? includedProductLineItem : excludedProductLineItem
-
-	const finalLineItems = lineItems.length !== 0 ? lineItems : data.lineItems
+	const getSanitizeLineItems = sanitizeLineItems(data)
 
 	let total = 0
 
-	finalLineItems.forEach((lineItem: any) => {
+	getSanitizeLineItems.forEach((lineItem: any) => {
 		const { unitPrice, quantity } = lineItem
 
 		total += unitPrice * quantity

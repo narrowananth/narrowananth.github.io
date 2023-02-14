@@ -1,3 +1,4 @@
+import { findCartQuantity } from "../utils/quantity.utils"
 import { findCartTotal, findOffer, splitDiscount } from "../utils/threshold.utils"
 
 export const thresholdProcess = (data: any): object => {
@@ -20,7 +21,7 @@ export const productProcess = (data: any): object => {
 }
 
 export const quantityProcess = (data: any): object => {
-	const { getOfferConfig, getOfferType, getRemovedProductList } = data
+	const getCartQuantity = findCartQuantity(data)
 
-	return {}
+	return getCartQuantity
 }

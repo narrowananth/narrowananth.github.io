@@ -4,7 +4,7 @@ import { buildInputData } from "./buy-x-get-y/utils/plugin.utils"
 export const getBuyXGetY = (appContext: object | any, configSchema: object): string => {
 	const { cartLineItems = {} } = appContext
 
-	const { lineItems = {} } = cartLineItems
+	const { lineItems = [] } = cartLineItems
 
 	const getBuildInputData = buildInputData(configSchema, lineItems)
 
