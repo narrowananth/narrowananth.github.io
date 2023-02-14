@@ -18,7 +18,7 @@ export const findCartQuantity = (data: any): object => {
 	buyProductIdArray.forEach((key: any) => {
 		const { quantity } = getLineItems[key] || {}
 
-		if (getLineItems[key] && buyProductQuantity === quantity) offerFlag = true
+		if (getLineItems[key] && buyProductQuantity <= quantity) offerFlag = true
 		else {
 			offerFlag = false
 			return
