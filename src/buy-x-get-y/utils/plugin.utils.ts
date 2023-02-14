@@ -1,7 +1,11 @@
 export const buildInputData = (configSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems)
 
-	lineItems = resetLineItemAmount(getRemovedProductList, lineItems)
+	const { getOfferConfig } = configSchema
+
+	const { getProducts } = getOfferConfig
+
+	lineItems = resetLineItemAmount(getProducts, lineItems)
 
 	const config = { ...configSchema, lineItems, getRemovedProductList }
 
@@ -66,8 +70,6 @@ export const removeLineItems = (lineItems: any, productObj: any, selection: stri
 
 export const sanitizeLineItems = (data: any): Array<any> => {
 	const { lineItems, includeProducts, excludeProducts } = data
-
-	console.log("lineitems: ", lineItems)
 
 	const includeProductObj = setKeyInFilterProduct(includeProducts)
 
