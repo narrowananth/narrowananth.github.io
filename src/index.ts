@@ -6,7 +6,9 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object): str
 
 	const { lineItems = [] } = cartLineItems
 
-	const getBuildInputData = buildInputData(configSchema, lineItems)
+	const getConfigSchema = configSchema
+
+	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
 
 	const getOfferSection = findOfferSection(getBuildInputData)
 

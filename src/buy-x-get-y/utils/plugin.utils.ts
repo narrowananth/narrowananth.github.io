@@ -1,13 +1,13 @@
-export const buildInputData = (configSchema: object | any, lineItems: Array<any>): object => {
+export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
-	const { getOfferConfig } = configSchema
+	const { getOfferConfig } = getConfigSchema
 
 	const { getProducts } = getOfferConfig
 
 	lineItems = resetLineItemAmount(getProducts, lineItems)
 
-	const config = { ...configSchema, lineItems, getRemovedProductList }
+	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
 	return config
 }
