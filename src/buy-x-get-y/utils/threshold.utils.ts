@@ -1,16 +1,9 @@
 import { sanitizeLineItems } from "./plugin.utils"
 
-export const findCartTotal = (data: any): object => {
-	const { getOfferType, getOfferConfig } = data
-
-	let { discount } = getOfferConfig
-
-	const { threshold, buyProducts, getProducts, getProductQuantity } = getOfferConfig
-
-	const buyProductIdArray = buyProducts.map((product: any) => product.variantId)
-
-	const getSanitizeLineItems = sanitizeLineItems(data)
-
+export const findOfferAndTotal = (
+	buyProductIdArray: Array<any>,
+	getSanitizeLineItems: any
+): { offerFlag: boolean; total: number } => {
 	let offerFlag = false
 
 	let total = 0
@@ -26,6 +19,22 @@ export const findCartTotal = (data: any): object => {
 			break
 		}
 	}
+
+	return { offerFlag, total }
+}
+
+export const splitThresholdOffer = (getFindOfferAndTotal: any, data: any): Array<any> => {
+	const { offerFlag, total } = getFindOfferAndTotal
+
+	const { getOfferType, getOfferConfig } = data
+
+	const { threshold, getProducts, getProductQuantity } = getOfferConfig
+
+	const getProductsLength = getProducts.length !== 0 ? getProducts.length : 1
+
+	let { discount } = getOfferConfig
+
+	discount = getOfferType === "amount" ? discount / getProductsLength : discount
 
 	if (offerFlag && threshold <= total) {
 		return getProducts.map((key: any) => {
@@ -50,4 +59,20 @@ export const findCartTotal = (data: any): object => {
 	}
 
 	return []
+}
+
+export const findCartTotal = (data: any): Array<any> => {
+	const { getOfferConfig } = data
+
+	const { buyProducts } = getOfferConfig
+
+	const buyProductIdArray = buyProducts.map((product: any) => product.variantId)
+
+	const getSanitizeLineItems = sanitizeLineItems(data)
+
+	const getFindOfferAndTotal = findOfferAndTotal(buyProductIdArray, getSanitizeLineItems)
+
+	const getSplitOffer = splitThresholdOffer(getFindOfferAndTotal, data)
+
+	return getSplitOffer
 }
