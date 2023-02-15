@@ -36,14 +36,6 @@ export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
 	})
 }
 
-export const setKeyInFilterProduct = (product: Array<any>): any => {
-	return product.reduce((obj: object, producDetails: any) => {
-		const { variantId } = producDetails
-
-		return { ...obj, [variantId]: producDetails }
-	}, {})
-}
-
 export const getLineItemsObj = (lineItems: Array<any>): any => {
 	return lineItems.reduce((acc: any, lineItem: any) => {
 		const { variantId } = lineItem
@@ -73,9 +65,9 @@ export const removeLineItems = (lineItems: any, productObj: any, selection: stri
 export const sanitizeLineItems = (data: any): Array<any> => {
 	const { lineItems, includeProducts, excludeProducts } = data
 
-	const includeProductObj = setKeyInFilterProduct(includeProducts)
+	const includeProductObj = getLineItemsObj(includeProducts)
 
-	const excludedProductObj = setKeyInFilterProduct(excludeProducts)
+	const excludedProductObj = getLineItemsObj(excludeProducts)
 
 	const includedProductLineItem =
 		Object.keys(includeProductObj).length !== 0 ? removeLineItems(lineItems, includeProductObj, "include") : []
@@ -83,16 +75,11 @@ export const sanitizeLineItems = (data: any): Array<any> => {
 	const excludedProductLineItem =
 		Object.keys(excludedProductObj).length !== 0 ? removeLineItems(lineItems, excludedProductObj, "exclude") : []
 
-	data.includedProductLineItem = includedProductLineItem.length !== 0 ? includedProductLineItem : undefined
-
-	data.excludedProductLineItem =
-		includedProductLineItem.length === 0 && excludedProductLineItem.length !== 0
-			? excludedProductLineItem
-			: undefined
-
 	const lineItem = includedProductLineItem.length ? includedProductLineItem : excludedProductLineItem
 
-	const finalLineItems = lineItem.length !== 0 ? lineItem : data.lineItems
+	const setKeyToLineItem = getLineItemsObj(lineItem)
+
+	const finalLineItems = lineItem.length !== 0 ? setKeyToLineItem : lineItems
 
 	return finalLineItems
 }
