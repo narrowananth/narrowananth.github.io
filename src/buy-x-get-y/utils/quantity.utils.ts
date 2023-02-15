@@ -36,13 +36,15 @@ export const SplitQuantityOffer = (getFindOffer: any, data: any): Array<any> => 
 
 	if (offerFlag) {
 		return getProducts.map((key: any) => {
-			const { unitPrice } = key
+			let { unitPrice } = key
 
 			let getEditedPrice = 0
 
 			if (getOfferType !== "product") {
 				if (getOfferType === "percentage") {
 					if (discount >= 100) discount = 100
+				} else if (getOfferType === "amount") {
+					if (discount >= unitPrice) unitPrice = discount
 				}
 
 				getEditedPrice =

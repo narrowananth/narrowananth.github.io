@@ -38,13 +38,15 @@ export const splitThresholdOffer = (getFindOfferAndTotal: any, data: any): Array
 
 	if (offerFlag && threshold <= total) {
 		return getProducts.map((key: any) => {
-			const { unitPrice } = key
+			let { unitPrice } = key
 
 			let getEditedPrice = 0
 
 			if (getOfferType !== "product") {
 				if (getOfferType === "percentage") {
 					if (discount >= 100) discount = 100
+				} else if (getOfferType === "amount") {
+					if (discount >= unitPrice) unitPrice = discount
 				}
 
 				getEditedPrice =
