@@ -5,14 +5,14 @@ export const buildInputData = (getConfigSchema: object | any, lineItems: Array<a
 
 	const { getProducts } = getOfferConfig
 
-	lineItems = resetLineItemAmount(getProducts, lineItems)
+	lineItems = resetInputLineItem(getProducts, lineItems)
 
 	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
 	return config
 }
 
-export const resetLineItemAmount = (getProducts: Array<any>, lineItems: Array<any>): Array<any> => {
+export const resetInputLineItem = (getProducts: Array<any>, lineItems: Array<any>): Array<any> => {
 	const getRemovedList = getProducts.map((product: any) => product.variantId)
 
 	lineItems = getLineItemsObj(lineItems)
