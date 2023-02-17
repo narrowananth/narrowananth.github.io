@@ -14,3 +14,7 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object): str
 
 	return JSON.stringify(getOfferSection)
 }
+
+export const showMessage = (message: any) => {
+	return message
+}
