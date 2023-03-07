@@ -17,7 +17,7 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 			unitPrice: getEditedPrice
 		}
 
-		return finalDiscount
+		return isValid ? finalDiscount : {}
 	})
 }
 
@@ -36,8 +36,6 @@ export const findBuyXGetYDiscount = (data: any): object => {
 				sanitizedLineItem
 		  })
 		: []
-
-	console.log("buyProuductDiscount : ", buyProuductDiscount)
 
 	return { getRemovedProductList, output: buyProuductDiscount }
 }
