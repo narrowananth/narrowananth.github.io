@@ -1,5 +1,6 @@
 import { findBuyXGetYDiscount } from "../utils/buyXGetYDiscount.utils"
 import { findVolumeDiscount } from "../utils/findVolumeDiscount.utils"
+import { findBuyMoreSaveDiscount } from "../utils/getBuyMoreSaveDiscount.utils"
 import { findPercentageDiscount } from "../utils/percentageDiscountProcess.utils"
 import { buildInputData } from "../utils/plugin.utils"
 import { findCartQuantity } from "../utils/quantity.utils"
@@ -70,7 +71,13 @@ export const buyXGetYProcess = (data: any): object => {
 }
 
 export const buyMoreSaveMoreProcess = (data: any): object => {
-	return {}
+	const { getConfigSchema, lineItems } = data
+
+	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
+
+	const getBuyMoreSaveDiscount = findBuyMoreSaveDiscount(getBuildInputData)
+
+	return getBuyMoreSaveDiscount
 }
 
 export const automaticOffersProcess = (data: any): object => {

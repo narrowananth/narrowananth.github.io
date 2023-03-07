@@ -17,7 +17,7 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 			unitPrice: getEditedPrice
 		}
 
-		return isValid ? finalDiscount : {}
+		return isValid ? finalDiscount : null
 	})
 }
 
