@@ -71,16 +71,23 @@ export const applyProductPercentageDiscount = (data: any): object => {
 }
 
 export const findPercentageDiscount = (data: any): object => {
-	const { lineItems, getConfigSchema } = data
+	const { lineItems, getRemovedProductList } = data
 
-	const { getProductValid, buyCollection, discountType, discountValue, buyCollectionValue, buyProduct, getProduct } =
-		getConfigSchema
+	const {
+		getProductValid,
+		buyCollection,
+		discountType,
+		discountValue,
+		buyCollectionValue,
+		buyProducts,
+		getProducts
+	} = data
 
-	const buyProductVariantIds = buyProduct.flatMap((product: any) => product.variantId)
+	const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
 
-	const getProductVariantIds = getProduct.flatMap((product: any) => product.variantId)
+	const getProductVariantIds = getProducts.flatMap((product: any) => product.variantId)
 
-	const sanitizedLineItem = getLineItemsObj(lineItems)
+	const sanitizedLineItem = lineItems
 
 	if (!buyCollection) {
 		const validGetProductRepsonse = getProductValid
@@ -115,7 +122,7 @@ export const findPercentageDiscount = (data: any): object => {
 
 		const output = getProductValid ? getProuductDiscount : buyProuductDiscount
 
-		return output
+		return { output, getRemovedProductList }
 	} else {
 		return {}
 	}

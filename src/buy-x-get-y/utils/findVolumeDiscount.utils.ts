@@ -2,9 +2,9 @@ import { applyProductPercentageDiscount } from "./percentageDiscountProcess.util
 import { getLineItemsObj } from "./plugin.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
-	const { buyProduct, sanitizedLineItem } = data
+	const { buyProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProduct.every((val: any) => {
+	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
 		const { variantId, count } = val
 
 		return variantId ? sanitizedLineItem[variantId]?.quantity >= count : false
@@ -16,16 +16,16 @@ export const findBuyProductVolumeValid = (data: any): boolean => {
 }
 
 export const findVolumeDiscount = (data: any): object => {
-	const { lineItems, getConfigSchema } = data
+	const { lineItems, getConfigSchema, getRemovedProductList } = data
 
-	const { buyCollection, discountType, discountValue, buyCollectionValue, buyProduct } = getConfigSchema
+	const { buyCollection, discountType, discountValue, buyCollectionValue, buyProducts } = data
 
 	if (!buyCollection) {
-		const buyProductVariantIds = buyProduct.flatMap((product: any) => product.variantId)
+		const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
 
-		const sanitizedLineItem = getLineItemsObj(lineItems)
+		const sanitizedLineItem = lineItems
 
-		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProduct, sanitizedLineItem })
+		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
 
 		const buyProuductDiscount = validBuyProductRepsonse
 			? applyProductPercentageDiscount({
@@ -35,7 +35,7 @@ export const findVolumeDiscount = (data: any): object => {
 					discountValue
 			  })
 			: []
-		return buyProuductDiscount
+		return { getRemovedProductList, output: buyProuductDiscount }
 	} else {
 		return {}
 	}

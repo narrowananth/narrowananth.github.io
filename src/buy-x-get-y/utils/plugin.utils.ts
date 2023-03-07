@@ -1,26 +1,42 @@
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
-	const { getOfferConfig } = getConfigSchema
+	const { getProducts, buyProducts } = getConfigSchema
 
-	const { getProducts } = getOfferConfig
-
-	lineItems = resetInputLineItem(getProducts, lineItems)
+	lineItems = resetInputLineItem(getProducts, buyProducts, lineItems)
 
 	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
 	return config
 }
 
-export const resetInputLineItem = (getProducts: Array<any>, lineItems: Array<any>): Array<any> => {
+export const resetInputLineItem = (
+	getProducts: Array<any>,
+	buyProducts: Array<any>,
+	lineItems: Array<any>
+): Array<any> => {
 	const getRemovedList = getProducts.map((product: any) => product.variantId)
+
+	const buyRemovedList = buyProducts.map((product: any) => product.variantId)
 
 	lineItems = getLineItemsObj(lineItems)
 
 	getRemovedList.forEach((key: any) => {
 		const { lineItemType, variantId } = lineItems[key] || {}
 
-		if (variantId === key && lineItemType === "READONLY") delete lineItems[key]
+		if (variantId === key && lineItemType === "READONLY") {
+			lineItems[key].lineItemType = "REGULAR"
+			lineItems[key].unitPrice = lineItems[key].originalUnitPrice
+		}
+	})
+
+	buyRemovedList.forEach((key: any) => {
+		const { lineItemType, variantId } = lineItems[key] || {}
+
+		if (variantId === key && lineItemType === "READONLY") {
+			lineItems[key].lineItemType = "REGULAR"
+			lineItems[key].unitPrice = lineItems[key].originalUnitPrice
+		}
 	})
 
 	return lineItems
