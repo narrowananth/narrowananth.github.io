@@ -4,7 +4,9 @@ export const findBuyProductAmountValid = (data: any): boolean => {
 	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
 		const { variantId, amount } = val
 
-		return variantId ? sanitizedLineItem[variantId].unitPrice >= amount : false
+		return variantId
+			? sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount
+			: false
 	})
 
 	const isValid = buyProductVariantIdsValid ? true : false
@@ -22,7 +24,8 @@ export const applyProductAmountValid = (data: any): object => {
 
 		let localUnitPrice = 0
 
-		const isValid = sanitizedLineItem[variantId].unitPrice >= amount ? true : false
+		const isValid =
+			sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount ? true : false
 
 		const { unitPrice, quantity, productId } = sanitizedLineItem[variantId]
 
