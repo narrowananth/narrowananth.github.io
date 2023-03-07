@@ -22,21 +22,15 @@ export const resetInputLineItem = (
 	lineItems = getLineItemsObj(lineItems)
 
 	getRemovedList.forEach((key: any) => {
-		const { lineItemType, variantId } = lineItems[key] || {}
+		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (variantId === key && lineItemType === "READONLY") {
-			lineItems[key].lineItemType = "REGULAR"
-			lineItems[key].unitPrice = lineItems[key].originalUnitPrice
-		}
+		if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	buyRemovedList.forEach((key: any) => {
-		const { lineItemType, variantId } = lineItems[key] || {}
+		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (variantId === key && lineItemType === "READONLY") {
-			lineItems[key].lineItemType = "REGULAR"
-			lineItems[key].unitPrice = lineItems[key].originalUnitPrice
-		}
+		if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	return lineItems
