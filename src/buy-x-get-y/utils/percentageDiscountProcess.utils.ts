@@ -1,5 +1,3 @@
-import { getLineItemsObj } from "./plugin.utils"
-
 export const findGetProductValid = (data: any): boolean => {
 	const { buyProductVariantIds, getProductVariantIds, sanitizedLineItem } = data
 
@@ -28,7 +26,7 @@ export const findBuyProductValid = (data: any): boolean => {
 	return isValid
 }
 
-export const applyProductPercentageDiscount = (data: any): object => {
+export const applyProductDiscount = (data: any): object => {
 	const {
 		getProductValid,
 		getProductVariantIds,
@@ -100,7 +98,7 @@ export const findPercentageDiscount = (data: any): object => {
 
 		const getProuductDiscount =
 			getProductValid && validGetProductRepsonse
-				? applyProductPercentageDiscount({
+				? applyProductDiscount({
 						getProductValid,
 						getProductVariantIds,
 						sanitizedLineItem,
@@ -111,7 +109,7 @@ export const findPercentageDiscount = (data: any): object => {
 
 		const buyProuductDiscount =
 			!getProductValid && validBuyProductRepsonse
-				? applyProductPercentageDiscount({
+				? applyProductDiscount({
 						getProductValid,
 						buyProductVariantIds,
 						sanitizedLineItem,

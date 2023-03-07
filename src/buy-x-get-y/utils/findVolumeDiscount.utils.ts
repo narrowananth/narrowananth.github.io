@@ -1,5 +1,4 @@
-import { applyProductPercentageDiscount } from "./percentageDiscountProcess.utils"
-import { getLineItemsObj } from "./plugin.utils"
+import { applyProductDiscount } from "./percentageDiscountProcess.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
 	const { buyProducts, sanitizedLineItem } = data
@@ -7,7 +6,7 @@ export const findBuyProductVolumeValid = (data: any): boolean => {
 	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
 		const { variantId, count } = val
 
-		return variantId ? sanitizedLineItem[variantId]?.quantity >= count : false
+		return variantId ? sanitizedLineItem[variantId].quantity >= count : false
 	})
 
 	const isValid = buyProductVariantIdsValid ? true : false
@@ -28,7 +27,7 @@ export const findVolumeDiscount = (data: any): object => {
 		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
 
 		const buyProuductDiscount = validBuyProductRepsonse
-			? applyProductPercentageDiscount({
+			? applyProductDiscount({
 					buyProductVariantIds,
 					sanitizedLineItem,
 					discountType,
