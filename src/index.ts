@@ -19,7 +19,7 @@ export const showMessage = (message: any) => {
 	return message
 }
 
-export const vajroPlugins = (appContext: object | any, configSchema: object): string => {
+export const flow = (appContext: object | any, configSchema: object): string => {
 	const { cartLineItems = {} } = appContext
 
 	const { lineItems = [] } = cartLineItems
