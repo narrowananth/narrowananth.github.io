@@ -1,4 +1,4 @@
-import { findOfferSection } from "./buy-x-get-y/controller/plugin.controller"
+import { findOfferCategory, findOfferSection } from "./buy-x-get-y/controller/plugin.controller"
 import { buildInputData } from "./buy-x-get-y/utils/plugin.utils"
 
 export const getBuyXGetY = (appContext: object | any, configSchema: object): string => {
@@ -17,4 +17,16 @@ export const getBuyXGetY = (appContext: object | any, configSchema: object): str
 
 export const showMessage = (message: any) => {
 	return message
+}
+
+export const vajroPlugins = (appContext: object | any, configSchema: object): string => {
+	const { cartLineItems = {} } = appContext
+
+	const { lineItems = [] } = cartLineItems
+
+	const getConfigSchema = configSchema
+
+	const getOfferCategory = findOfferCategory({ lineItems, getConfigSchema })
+
+	return JSON.stringify(getOfferCategory)
 }
