@@ -1,5 +1,5 @@
 import { findBuyXGetYDiscount } from "../utils/buyXGetYDiscount.utils"
-import { findVolumeDiscount } from "../utils/findVolumeDiscount.utils"
+import { findVolumeDiscount } from "../utils/volumeDiscount.utils"
 import { findBuyMoreSaveDiscount } from "../utils/getBuyMoreSaveDiscount.utils"
 import { findPercentageDiscount } from "../utils/percentageDiscountProcess.utils"
 import { buildInputData } from "../utils/plugin.utils"

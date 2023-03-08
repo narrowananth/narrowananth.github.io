@@ -1,4 +1,4 @@
-import { applyProductDiscount } from "./percentageDiscountProcess.utils"
+import { applyCollectionDiscount, applyProductDiscount, findCollectionValid } from "./percentageDiscountProcess.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
 	const { buyProducts, sanitizedLineItem } = data
@@ -15,14 +15,23 @@ export const findBuyProductVolumeValid = (data: any): boolean => {
 }
 
 export const findVolumeDiscount = (data: any): object => {
-	const { lineItems, getConfigSchema, getRemovedProductList } = data
+	const { lineItems, getRemovedProductList } = data
 
-	const { buyCollection, discountType, discountValue, buyCollectionValue, buyProducts } = data
+	const {
+		offerCategory,
+		getCollectionValid,
+		collection,
+		discountType,
+		discountValue,
+		buyCollections,
+		buyCollectionsCount,
+		buyProducts
+	} = data
 
-	if (!buyCollection) {
+	const sanitizedLineItem = lineItems
+
+	if (!collection) {
 		const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
-
-		const sanitizedLineItem = lineItems
 
 		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
 
@@ -36,6 +45,19 @@ export const findVolumeDiscount = (data: any): object => {
 			: []
 		return { getRemovedProductList, output: buyProuductDiscount }
 	} else {
-		return {}
+		const buyCollectionValue = !getCollectionValid
+			? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
+			: false
+
+		const buyCollectionDiscount = !getCollectionValid
+			? applyCollectionDiscount({
+					buyCollectionValue,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
+
+		return { getRemovedProductList, output: buyCollectionDiscount }
 	}
 }

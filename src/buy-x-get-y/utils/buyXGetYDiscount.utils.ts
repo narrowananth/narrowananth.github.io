@@ -1,4 +1,4 @@
-import { findBuyProductVolumeValid } from "./findVolumeDiscount.utils"
+import { findBuyProductVolumeValid } from "./volumeDiscount.utils"
 
 export const applyBuyXGetYDiscount = (data: any): object => {
 	const { getProducts, sanitizedLineItem } = data

@@ -68,15 +68,142 @@ export const applyProductDiscount = (data: any): object => {
 	})
 }
 
+export const findCollectionValid = (data: any) => {
+	const {
+		offerCategory,
+		getCollectionValid,
+		buyCollections,
+		buyCollectionsCount,
+		getCollections,
+		getCollectionsCount,
+		sanitizedLineItem
+	} = data
+
+	let buyCollectionsIdsValid: any[] = []
+	let getCollectionsIdsValid: any[] = []
+
+	let buyCollectionQuantity = 0
+	let getCollectionQuantity = 0
+
+	if (getCollectionValid) {
+		getCollections.split(",").forEach((val: any) => {
+			if (val) {
+				Object.values(sanitizedLineItem).forEach((lineItem: any) => {
+					const { collectionId, variantId, quantity } = lineItem
+
+					if (collectionId === val) {
+						getCollectionQuantity += quantity
+
+						getCollectionsIdsValid.push(variantId)
+					}
+				})
+			}
+		})
+	}
+	buyCollections.split(",").forEach((val: any) => {
+		if (val) {
+			Object.values(sanitizedLineItem).forEach((lineItem: any) => {
+				const { collectionId, variantId, quantity } = lineItem
+
+				if (collectionId === val) {
+					buyCollectionQuantity += quantity
+
+					buyCollectionsIdsValid.push(variantId)
+				}
+			})
+		}
+	})
+
+	if (offerCategory === "volumeDiscount") {
+		const isQuantityValid = getCollectionValid
+			? getCollectionQuantity >= getCollectionsCount && buyCollectionQuantity >= buyCollectionsCount
+			: buyCollectionQuantity >= buyCollectionsCount
+
+		const output = isQuantityValid ? { buyCollectionsIdsValid, getCollectionsIdsValid } : {}
+
+		return output
+	} else {
+		return { buyCollectionsIdsValid, getCollectionsIdsValid }
+	}
+}
+
+export const applyCollectionDiscount = (data: any): any => {
+	const { getCollectionValue, buyCollectionValue, sanitizedLineItem, discountType, discountValue } = data
+
+	let discount = discountValue
+
+	let localUnitPrice = 0
+
+	let combinedArray: any[] = []
+
+	if (getCollectionValue) {
+		const { buyCollectionsIdsValid, getCollectionsIdsValid } = getCollectionValue
+
+		if (
+			buyCollectionsIdsValid &&
+			buyCollectionsIdsValid.length > 0 &&
+			getCollectionsIdsValid &&
+			getCollectionsIdsValid.length > 0
+		) {
+			combinedArray = buyCollectionsIdsValid.concat(getCollectionsIdsValid)
+		}
+	} else {
+		const { buyCollectionsIdsValid } = buyCollectionValue
+
+		if (buyCollectionsIdsValid && buyCollectionsIdsValid.length > 0) {
+			combinedArray = buyCollectionsIdsValid
+		}
+	}
+
+	return combinedArray.map((val: any) => {
+		const product = sanitizedLineItem[val]
+
+		const { unitPrice, quantity, variantId, productId } = product
+		if (discountType === "percentage") {
+			if (discountValue >= 100) discount = 100
+
+			const getEditedPrice = quantity * unitPrice - quantity * unitPrice * (discount / 100)
+
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity
+			}
+
+			return finalDiscount
+		} else {
+			if (discountValue >= unitPrice) localUnitPrice = discountValue
+			else localUnitPrice = unitPrice
+
+			const getEditedPrice = quantity * localUnitPrice - discountValue
+
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity
+			}
+
+			return finalDiscount
+		}
+	})
+}
+
 export const findPercentageDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
 	const {
+		offerCategory,
 		getProductValid,
-		buyCollection,
+		getCollectionValid,
+		collection,
 		discountType,
 		discountValue,
-		buyCollectionValue,
+		buyCollections,
+		buyCollectionsCount,
+		getCollections,
+		getCollectionsCount,
 		buyProducts,
 		getProducts
 	} = data
@@ -87,7 +214,7 @@ export const findPercentageDiscount = (data: any): object => {
 
 	const sanitizedLineItem = lineItems
 
-	if (!buyCollection) {
+	if (!collection) {
 		const validGetProductRepsonse = getProductValid
 			? findGetProductValid({ buyProductVariantIds, getProductVariantIds, sanitizedLineItem })
 			: false
@@ -122,6 +249,42 @@ export const findPercentageDiscount = (data: any): object => {
 
 		return { output, getRemovedProductList }
 	} else {
-		return {}
+		const getCollectionValue = getCollectionValid
+			? findCollectionValid({
+					offerCategory,
+					getCollectionValid,
+					buyCollections,
+					getCollections,
+					buyCollectionsCount,
+					getCollectionsCount,
+					sanitizedLineItem
+			  })
+			: false
+
+		const buyCollectionValue = !getCollectionValid
+			? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
+			: false
+
+		const getCollectionDiscount = getCollectionValid
+			? applyCollectionDiscount({
+					getCollectionValue,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
+
+		const buyCollectionDiscount = !getCollectionValid
+			? applyCollectionDiscount({
+					buyCollectionValue,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
+
+		const output = getCollectionValid ? getCollectionDiscount : buyCollectionDiscount
+
+		return { getRemovedProductList, output }
 	}
 }
