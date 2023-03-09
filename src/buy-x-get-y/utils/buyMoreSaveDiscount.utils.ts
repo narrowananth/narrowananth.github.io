@@ -31,12 +31,22 @@ export const findTotalCartAmount = (data: any): boolean => {
 export const applyProductAmountValid = (data: any): object => {
 	const { getProducts, sanitizedLineItem, discountType, discountValue } = data
 
+	let cartTotal = 0
+
+	getProducts.forEach((val: any) => {
+		const { variantId } = val
+
+		const product = sanitizedLineItem[variantId]
+
+		const { unitPrice, quantity } = product
+
+		cartTotal += unitPrice * quantity
+	})
+
 	return getProducts.map((val: any) => {
 		const { variantId, amount } = val
 
 		let discount = discountValue
-
-		let localUnitPrice = 0
 
 		const isValid =
 			sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount ? true : false
@@ -58,17 +68,13 @@ export const applyProductAmountValid = (data: any): object => {
 
 				return finalDiscount
 			} else {
-				if (discountValue >= unitPrice) localUnitPrice = discountValue
-				else localUnitPrice = unitPrice
+				const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
 
-				const getEditedPrice = quantity * localUnitPrice - discountValue
+				const getPercentageAmount = (getPercentage / 100) * discountValue
 
-				const finalDiscount = {
-					productId,
-					variantId,
-					quantity: quantity,
-					unitPrice: getEditedPrice / quantity
-				}
+				const getEditedPrice = quantity * unitPrice - getPercentageAmount
+
+				const finalDiscount = { productId, variantId, quantity: quantity, unitPrice: getEditedPrice / quantity }
 
 				return finalDiscount
 			}

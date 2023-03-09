@@ -45,11 +45,19 @@ export const applyProductDiscount = (data: any): object => {
 
 	let discount = discountValue
 
-	let localUnitPrice = 0
+	let cartTotal = 0
 
 	const validationProductArray = getProductValid ? getProductVariantIds : buyProductVariantIds
 
 	const finalProductArray = overAll ? Object.values(sanitizedLineItem) : validationProductArray
+
+	finalProductArray.forEach((val: any) => {
+		const product = overAll ? val : sanitizedLineItem[val]
+
+		const { unitPrice, quantity } = product
+
+		cartTotal += unitPrice * quantity
+	})
 
 	return finalProductArray.map((val: any) => {
 		const product = overAll ? val : sanitizedLineItem[val]
@@ -65,12 +73,18 @@ export const applyProductDiscount = (data: any): object => {
 
 			return finalDiscount
 		} else {
-			if (discountValue >= unitPrice) localUnitPrice = discountValue
-			else localUnitPrice = unitPrice
+			const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
 
-			const getEditedPrice = quantity * localUnitPrice - discountValue
+			const getPercentageAmount = (getPercentage / 100) * discountValue
 
-			const finalDiscount = { productId, variantId, quantity: quantity, unitPrice: getEditedPrice / quantity }
+			const getEditedPrice = quantity * unitPrice - getPercentageAmount
+
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity
+			}
 
 			return finalDiscount
 		}
@@ -141,7 +155,7 @@ export const applyCollectionDiscount = (data: any): any => {
 
 	let discount = discountValue
 
-	let localUnitPrice = 0
+	let cartTotal = 0
 
 	let combinedArray: any[] = []
 
@@ -164,6 +178,14 @@ export const applyCollectionDiscount = (data: any): any => {
 		}
 	}
 
+	combinedArray.forEach((val: any) => {
+		const product = sanitizedLineItem[val]
+
+		const { unitPrice } = product
+
+		cartTotal += unitPrice
+	})
+
 	return combinedArray.map((val: any) => {
 		const product = sanitizedLineItem[val]
 
@@ -182,17 +204,13 @@ export const applyCollectionDiscount = (data: any): any => {
 
 			return finalDiscount
 		} else {
-			if (discountValue >= unitPrice) localUnitPrice = discountValue
-			else localUnitPrice = unitPrice
+			const getPercentage = (unitPrice / cartTotal) * 100
 
-			const getEditedPrice = quantity * localUnitPrice - discountValue
+			const getPercentageAmount = (getPercentage / 100) * discountValue
 
-			const finalDiscount = {
-				productId,
-				variantId,
-				quantity: quantity,
-				unitPrice: getEditedPrice / quantity
-			}
+			const getEditedPrice = unitPrice - getPercentageAmount
+
+			const finalDiscount = { productId, variantId, quantity: quantity, unitPrice: getEditedPrice }
 
 			return finalDiscount
 		}
