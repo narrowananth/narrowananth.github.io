@@ -40,7 +40,9 @@ export const removeExistingDiscount = (lineItems: Array<any>): Array<any> => {
 	const getRemoveItemsList = lineItems
 
 	return getRemoveItemsList.filter((lineItem: any) => {
-		const { lineItemType } = lineItem
+		const { lineItemType, originalUnitPrice } = lineItem
+
+		lineItem.unitPrice = originalUnitPrice
 
 		return lineItemType === "READONLY"
 	})
