@@ -2,54 +2,33 @@ import { findBuyXGetYDiscount } from "../utils/buyXGetYDiscount.utils"
 import { findVolumeDiscount } from "../utils/volumeDiscount.utils"
 import { findBuyMoreSaveDiscount } from "../utils/buyMoreSaveDiscount.utils"
 import { findPercentageAmountDiscount } from "../utils/percentageDiscountAndFlatDiscount.utils"
-import { buildInputData } from "../utils/plugin.utils"
 
 export const percentageDiscountProcess = (data: any): object => {
-	const { getConfigSchema, lineItems } = data
-
-	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
-
-	const getPercentageDiscount = findPercentageAmountDiscount(getBuildInputData)
+	const getPercentageDiscount = findPercentageAmountDiscount(data)
 
 	return getPercentageDiscount
 }
 
 export const flatDiscountProcess = (data: any): object => {
-	const { getConfigSchema, lineItems } = data
-
-	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
-
-	const getFlatDiscount = findPercentageAmountDiscount(getBuildInputData)
+	const getFlatDiscount = findPercentageAmountDiscount(data)
 
 	return getFlatDiscount
 }
 
 export const volumeDiscountProcess = (data: any): object => {
-	const { getConfigSchema, lineItems } = data
-
-	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
-
-	const getVolumeDiscount = findVolumeDiscount(getBuildInputData)
+	const getVolumeDiscount = findVolumeDiscount(data)
 
 	return getVolumeDiscount
 }
 
 export const buyXGetYProcess = (data: any): object => {
-	const { getConfigSchema, lineItems } = data
-
-	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
-
-	const getBuyXGetYDiscount = findBuyXGetYDiscount(getBuildInputData)
+	const getBuyXGetYDiscount = findBuyXGetYDiscount(data)
 
 	return getBuyXGetYDiscount
 }
 
 export const buyMoreSaveMoreProcess = (data: any): object => {
-	const { getConfigSchema, lineItems } = data
-
-	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
-
-	const getBuyMoreSaveDiscount = findBuyMoreSaveDiscount(getBuildInputData)
+	const getBuyMoreSaveDiscount = findBuyMoreSaveDiscount(data)
 
 	return getBuyMoreSaveDiscount
 }

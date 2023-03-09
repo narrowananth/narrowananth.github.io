@@ -9,9 +9,7 @@ import {
 } from "../service/plugin.core"
 
 export const findOfferCategory = (data: any): object => {
-	const { getConfigSchema } = data
-
-	const { offerCategory } = getConfigSchema
+	const { offerCategory } = data
 
 	switch (offerCategory) {
 		case "percentageDiscount":
