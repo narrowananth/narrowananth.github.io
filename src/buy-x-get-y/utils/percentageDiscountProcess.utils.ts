@@ -28,6 +28,7 @@ export const findBuyProductValid = (data: any): boolean => {
 
 export const applyProductDiscount = (data: any): object => {
 	const {
+		overAll,
 		getProductValid,
 		getProductVariantIds,
 		buyProductVariantIds,
@@ -42,8 +43,10 @@ export const applyProductDiscount = (data: any): object => {
 
 	const validationProductArray = getProductValid ? getProductVariantIds : buyProductVariantIds
 
-	return validationProductArray.map((val: any) => {
-		const product = sanitizedLineItem[val]
+	const finalProductArray = overAll ? Object.values(sanitizedLineItem) : validationProductArray
+
+	return finalProductArray.map((val: any) => {
+		const product = overAll ? val : sanitizedLineItem[val]
 
 		const { unitPrice, quantity, variantId, productId } = product
 

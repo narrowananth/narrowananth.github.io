@@ -18,6 +18,7 @@ export const findVolumeDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
 	const {
+		overAll,
 		offerCategory,
 		getCollectionValid,
 		collection,
@@ -30,7 +31,16 @@ export const findVolumeDiscount = (data: any): object => {
 
 	const sanitizedLineItem = lineItems
 
-	if (!collection) {
+	if (overAll) {
+		const buyProuductDiscount = applyProductDiscount({
+			overAll,
+			sanitizedLineItem,
+			discountType,
+			discountValue
+		})
+
+		return { getRemovedProductList, output: buyProuductDiscount }
+	} else if (!collection) {
 		const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
 
 		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
@@ -44,7 +54,7 @@ export const findVolumeDiscount = (data: any): object => {
 			  })
 			: []
 		return { getRemovedProductList, output: buyProuductDiscount }
-	} else {
+	} else if (collection) {
 		const buyCollectionValue = !getCollectionValid
 			? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
 			: false
@@ -59,5 +69,7 @@ export const findVolumeDiscount = (data: any): object => {
 			: []
 
 		return { getRemovedProductList, output: buyCollectionDiscount }
+	} else {
+		return { getRemovedProductList, output: {} }
 	}
 }
