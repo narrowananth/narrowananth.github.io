@@ -204,6 +204,7 @@ export const findPercentageDiscount = (data: any): object => {
 
 	const {
 		offerCategory,
+		overAll,
 		getProductValid,
 		getCollectionValid,
 		collection,
@@ -222,8 +223,16 @@ export const findPercentageDiscount = (data: any): object => {
 	const getProductVariantIds = getProducts.flatMap((product: any) => product.variantId)
 
 	const sanitizedLineItem = lineItems
+	if (overAll) {
+		const buyProuductDiscount = applyProductDiscount({
+			overAll,
+			sanitizedLineItem,
+			discountType,
+			discountValue
+		})
 
-	if (!collection) {
+		return { output: buyProuductDiscount, getRemovedProductList }
+	} else if (!collection) {
 		const validGetProductRepsonse = getProductValid
 			? findGetProductValid({
 					buyProducts,
@@ -261,7 +270,7 @@ export const findPercentageDiscount = (data: any): object => {
 		const output = getProductValid ? getProuductDiscount : buyProuductDiscount
 
 		return { output, getRemovedProductList }
-	} else {
+	} else if (collection) {
 		const getCollectionValue = getCollectionValid
 			? findCollectionValid({
 					offerCategory,
@@ -299,5 +308,7 @@ export const findPercentageDiscount = (data: any): object => {
 		const output = getCollectionValid ? getCollectionDiscount : buyCollectionDiscount
 
 		return { getRemovedProductList, output }
+	} else {
+		return { getRemovedProductList, output: {} }
 	}
 }
