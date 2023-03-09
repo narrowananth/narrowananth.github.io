@@ -14,6 +14,20 @@ export const findBuyProductAmountValid = (data: any): boolean => {
 	return isValid
 }
 
+export const findTotalCartAmount = (data: any): boolean => {
+	const { cartTotal, sanitizedLineItem } = data
+
+	let totalCartAmount = 0
+
+	Object.values(sanitizedLineItem).forEach((val: any) => {
+		const { unitPrice } = val
+
+		totalCartAmount += unitPrice
+	})
+
+	return totalCartAmount >= cartTotal ? true : false
+}
+
 export const applyProductAmountValid = (data: any): object => {
 	const { getProducts, sanitizedLineItem, discountType, discountValue } = data
 
@@ -67,20 +81,35 @@ export const applyProductAmountValid = (data: any): object => {
 export const findBuyMoreSaveDiscount = (data: any) => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { buyProducts, getProducts, discountType, discountValue } = data
+	const { onlyCartAmoutAndQunatity, cartTotal, buyProducts, getProducts, discountType, discountValue } = data
 
 	const sanitizedLineItem = lineItems
 
-	const validBuyProductRepsonse = findBuyProductAmountValid({ buyProducts, sanitizedLineItem })
+	if (onlyCartAmoutAndQunatity) {
+		const getTotalCartAmount = findTotalCartAmount({ cartTotal, sanitizedLineItem })
 
-	const buyProuductDiscount = validBuyProductRepsonse
-		? applyProductAmountValid({
-				getProducts,
-				sanitizedLineItem,
-				discountType,
-				discountValue
-		  })
-		: []
+		const buyProuductDiscount = getTotalCartAmount
+			? applyProductAmountValid({
+					getProducts,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
 
-	return { getRemovedProductList, output: buyProuductDiscount }
+		return { getRemovedProductList, output: buyProuductDiscount }
+	} else {
+		const validBuyProductRepsonse = findBuyProductAmountValid({ buyProducts, sanitizedLineItem })
+
+		const buyProuductDiscount = validBuyProductRepsonse
+			? applyProductAmountValid({
+					getProducts,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
+
+		return { getRemovedProductList, output: buyProuductDiscount }
+	}
 }

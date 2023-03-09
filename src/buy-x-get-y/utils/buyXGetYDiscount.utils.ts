@@ -21,21 +21,48 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 	})
 }
 
+export const findTotalCartQuantity = (data: any): boolean => {
+	const { cartQuantity, sanitizedLineItem } = data
+
+	let totalCartQuantity = 0
+
+	Object.values(sanitizedLineItem).forEach((val: any) => {
+		const { quantity } = val
+
+		totalCartQuantity += quantity
+	})
+
+	return totalCartQuantity >= cartQuantity ? true : false
+}
+
 export const findBuyXGetYDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { buyProducts, getProducts } = data
+	const { onlyCartAmoutAndQunatity, cartQuantity, buyProducts, getProducts } = data
 
 	const sanitizedLineItem = lineItems
 
-	const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
+	if (onlyCartAmoutAndQunatity) {
+		const getTotalCartQuantity = findTotalCartQuantity({ cartQuantity, sanitizedLineItem })
 
-	const buyProuductDiscount = validBuyProductRepsonse
-		? applyBuyXGetYDiscount({
-				getProducts,
-				sanitizedLineItem
-		  })
-		: []
+		const buyProuductDiscount = getTotalCartQuantity
+			? applyBuyXGetYDiscount({
+					getProducts,
+					sanitizedLineItem
+			  })
+			: []
 
-	return { getRemovedProductList, output: buyProuductDiscount }
+		return { getRemovedProductList, output: buyProuductDiscount }
+	} else {
+		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
+
+		const buyProuductDiscount = validBuyProductRepsonse
+			? applyBuyXGetYDiscount({
+					getProducts,
+					sanitizedLineItem
+			  })
+			: []
+
+		return { getRemovedProductList, output: buyProuductDiscount }
+	}
 }
