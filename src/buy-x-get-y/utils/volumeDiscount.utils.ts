@@ -1,5 +1,9 @@
 import { findTotalCartQuantity } from "./buyXGetYDiscount.utils"
-import { applyCollectionDiscount, applyProductDiscount, findCollectionValid } from "./percentageDiscountProcess.utils"
+import {
+	applyCollectionDiscount,
+	applyProductDiscount,
+	findCollectionValid
+} from "./percentageDiscountAndFlatDiscount.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
 	const { buyProducts, sanitizedLineItem } = data

@@ -1,7 +1,4 @@
 import {
-	thresholdProcess,
-	productProcess,
-	quantityProcess,
 	automaticOffersProcess,
 	buyMoreSaveMoreProcess,
 	buyXGetYProcess,
@@ -10,25 +7,6 @@ import {
 	percentageDiscountProcess,
 	volumeDiscountProcess
 } from "../service/plugin.core"
-
-export const findOfferSection = (data: any): object => {
-	switch (data.buyOfferType) {
-		case "threshold":
-			return thresholdProcess(data)
-
-		case "collection":
-			return {}
-
-		case "product":
-			return productProcess(data)
-
-		case "quantity":
-			return quantityProcess(data)
-
-		default:
-			return {}
-	}
-}
 
 export const findOfferCategory = (data: any): object => {
 	const { getConfigSchema } = data

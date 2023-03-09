@@ -1,41 +1,15 @@
 import { findBuyXGetYDiscount } from "../utils/buyXGetYDiscount.utils"
 import { findVolumeDiscount } from "../utils/volumeDiscount.utils"
 import { findBuyMoreSaveDiscount } from "../utils/buyMoreSaveDiscount.utils"
-import { findPercentageDiscount } from "../utils/percentageDiscountProcess.utils"
+import { findPercentageAmountDiscount } from "../utils/percentageDiscountAndFlatDiscount.utils"
 import { buildInputData } from "../utils/plugin.utils"
-import { findCartQuantity } from "../utils/quantity.utils"
-import { findCartTotal } from "../utils/threshold.utils"
-
-export const thresholdProcess = (data: any): object => {
-	const { getRemovedProductList } = data
-
-	const getSplitDiscount = findCartTotal(data)
-
-	const parsedSplitDiscount = { getSplitDiscount, getRemovedProductList }
-
-	return parsedSplitDiscount
-}
-
-export const productProcess = (data: any): object => {
-	return {}
-}
-
-export const quantityProcess = (data: any): object => {
-	const { getRemovedProductList } = data
-
-	const getSplitDiscount = findCartQuantity(data)
-
-	const parsedSplitDiscount = { getSplitDiscount, getRemovedProductList }
-
-	return parsedSplitDiscount
-}
 
 export const percentageDiscountProcess = (data: any): object => {
 	const { getConfigSchema, lineItems } = data
 
 	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
 
-	const getPercentageDiscount = findPercentageDiscount(getBuildInputData)
+	const getPercentageDiscount = findPercentageAmountDiscount(getBuildInputData)
 
 	return getPercentageDiscount
 }
@@ -45,7 +19,7 @@ export const flatDiscountProcess = (data: any): object => {
 
 	const getBuildInputData = buildInputData(getConfigSchema, lineItems)
 
-	const getFlatDiscount = findPercentageDiscount(getBuildInputData)
+	const getFlatDiscount = findPercentageAmountDiscount(getBuildInputData)
 
 	return getFlatDiscount
 }

@@ -199,7 +199,7 @@ export const applyCollectionDiscount = (data: any): any => {
 	})
 }
 
-export const findPercentageDiscount = (data: any): object => {
+export const findPercentageAmountDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
 	const {
