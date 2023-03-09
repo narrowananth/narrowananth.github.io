@@ -1,3 +1,4 @@
+import { findTotalCartQuantity } from "./buyXGetYDiscount.utils"
 import { applyCollectionDiscount, applyProductDiscount, findCollectionValid } from "./percentageDiscountProcess.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
@@ -19,6 +20,7 @@ export const findVolumeDiscount = (data: any): object => {
 
 	const {
 		overAll,
+		cartQuantity,
 		offerCategory,
 		getCollectionValid,
 		collection,
@@ -32,12 +34,16 @@ export const findVolumeDiscount = (data: any): object => {
 	const sanitizedLineItem = lineItems
 
 	if (overAll) {
-		const buyProuductDiscount = applyProductDiscount({
-			overAll,
-			sanitizedLineItem,
-			discountType,
-			discountValue
-		})
+		const getTotalCartQuantity = findTotalCartQuantity({ cartQuantity, sanitizedLineItem })
+
+		const buyProuductDiscount = getTotalCartQuantity
+			? applyProductDiscount({
+					overAll,
+					sanitizedLineItem,
+					discountType,
+					discountValue
+			  })
+			: []
 
 		return { getRemovedProductList, output: buyProuductDiscount }
 	} else if (!collection) {
