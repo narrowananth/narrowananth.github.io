@@ -1,12 +1,16 @@
 export const findGetProductValid = (data: any): boolean => {
-	const { buyProductVariantIds, getProductVariantIds, sanitizedLineItem } = data
+	const { buyProducts, getProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProductVariantIds.every((ids: any) => {
-		return sanitizedLineItem[ids]
+	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
+		const { variantId, count } = ids
+
+		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
 	})
 
-	const getProductVariantIdsValid = getProductVariantIds.every((ids: any) => {
-		return sanitizedLineItem[ids]
+	const getProductVariantIdsValid = getProducts.every((ids: any) => {
+		const { variantId, count } = ids
+
+		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
 	})
 
 	const isValid = buyProductVariantIdsValid && getProductVariantIdsValid ? true : false
@@ -15,10 +19,12 @@ export const findGetProductValid = (data: any): boolean => {
 }
 
 export const findBuyProductValid = (data: any): boolean => {
-	const { buyProductVariantIds, sanitizedLineItem } = data
+	const { buyProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProductVariantIds.every((ids: any) => {
-		return sanitizedLineItem[ids]
+	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
+		const { variantId, count } = ids
+
+		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
 	})
 
 	const isValid = buyProductVariantIdsValid ? true : false
@@ -219,11 +225,15 @@ export const findPercentageDiscount = (data: any): object => {
 
 	if (!collection) {
 		const validGetProductRepsonse = getProductValid
-			? findGetProductValid({ buyProductVariantIds, getProductVariantIds, sanitizedLineItem })
+			? findGetProductValid({
+					buyProducts,
+					getProducts,
+					sanitizedLineItem
+			  })
 			: false
 
 		const validBuyProductRepsonse = !getProductValid
-			? findBuyProductValid({ buyProductVariantIds, sanitizedLineItem })
+			? findBuyProductValid({ buyProducts, sanitizedLineItem })
 			: false
 
 		const getProuductDiscount =
