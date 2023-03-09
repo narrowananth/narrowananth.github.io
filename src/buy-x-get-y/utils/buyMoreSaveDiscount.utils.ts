@@ -20,9 +20,9 @@ export const findTotalCartAmount = (data: any): boolean => {
 	let totalCartAmount = 0
 
 	Object.values(sanitizedLineItem).forEach((val: any) => {
-		const { unitPrice } = val
+		const { unitPrice, quantity } = val
 
-		totalCartAmount += unitPrice
+		totalCartAmount += unitPrice * quantity
 	})
 
 	return totalCartAmount >= cartTotal ? true : false
