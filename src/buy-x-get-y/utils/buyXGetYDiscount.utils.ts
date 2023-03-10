@@ -15,6 +15,7 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 			variantId,
 			quantity: sanitizedLineItem[variantId].quantity,
 			unitPrice: getEditedPrice,
+			lineItemHandle: sanitizedLineItem[variantId].lineItemHandle,
 			discountType: "free",
 			discountValue: sanitizedLineItem[variantId].unitPrice
 		}

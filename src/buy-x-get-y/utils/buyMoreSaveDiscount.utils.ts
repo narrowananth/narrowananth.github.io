@@ -51,7 +51,7 @@ export const applyProductAmountValid = (data: any): object => {
 		const isValid =
 			sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount ? true : false
 
-		const { unitPrice, quantity, productId } = sanitizedLineItem[variantId]
+		const { unitPrice, quantity, productId, lineItemHandle } = sanitizedLineItem[variantId]
 
 		if (isValid) {
 			if (discountType === "percentage") {
@@ -64,6 +64,7 @@ export const applyProductAmountValid = (data: any): object => {
 					variantId,
 					quantity: quantity,
 					unitPrice: getEditedPrice / quantity,
+					lineItemHandle,
 					discountType,
 					discountValue: discount
 				}
@@ -81,6 +82,7 @@ export const applyProductAmountValid = (data: any): object => {
 					variantId,
 					quantity: quantity,
 					unitPrice: getEditedPrice / quantity,
+					lineItemHandle,
 					discountType,
 					discountValue: getPercentageAmount
 				}

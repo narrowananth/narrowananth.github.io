@@ -62,7 +62,7 @@ export const applyProductDiscount = (data: any): object => {
 	return finalProductArray.map((val: any) => {
 		const product = overAll ? val : sanitizedLineItem[val]
 
-		const { unitPrice, quantity, variantId, productId } = product
+		const { unitPrice, quantity, variantId, productId, lineItemHandle } = product
 
 		if (discountType === "percentage") {
 			if (discountValue >= 100) discount = 100
@@ -74,6 +74,7 @@ export const applyProductDiscount = (data: any): object => {
 				variantId,
 				quantity: quantity,
 				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
 				discountType,
 				discountValue: discount
 			}
@@ -91,6 +92,7 @@ export const applyProductDiscount = (data: any): object => {
 				variantId,
 				quantity: quantity,
 				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
 				discountType,
 				discountValue: getPercentageAmount
 			}
