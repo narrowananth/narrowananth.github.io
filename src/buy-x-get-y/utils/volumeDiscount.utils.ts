@@ -11,7 +11,7 @@ export const findBuyProductVolumeValid = (data: any): boolean => {
 	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
 		const { variantId, count } = val
 
-		return variantId ? sanitizedLineItem[variantId].quantity >= count : false
+		return variantId ? sanitizedLineItem[variantId]?.quantity >= count : false
 	})
 
 	const isValid = buyProductVariantIdsValid ? true : false
