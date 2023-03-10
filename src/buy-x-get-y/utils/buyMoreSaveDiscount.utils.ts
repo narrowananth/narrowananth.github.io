@@ -63,7 +63,9 @@ export const applyProductAmountValid = (data: any): object => {
 					productId,
 					variantId,
 					quantity: quantity,
-					unitPrice: getEditedPrice / quantity
+					unitPrice: getEditedPrice / quantity,
+					discountType,
+					discountValue: discount
 				}
 
 				return finalDiscount
@@ -74,7 +76,14 @@ export const applyProductAmountValid = (data: any): object => {
 
 				const getEditedPrice = quantity * unitPrice - getPercentageAmount
 
-				const finalDiscount = { productId, variantId, quantity: quantity, unitPrice: getEditedPrice / quantity }
+				const finalDiscount = {
+					productId,
+					variantId,
+					quantity: quantity,
+					unitPrice: getEditedPrice / quantity,
+					discountType,
+					discountValue: getPercentageAmount
+				}
 
 				return finalDiscount
 			}
