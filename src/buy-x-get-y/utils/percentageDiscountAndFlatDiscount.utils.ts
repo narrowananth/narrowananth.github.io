@@ -148,7 +148,7 @@ export const findCollectionValid = (data: any) => {
 		}
 	})
 
-	if (offerCategory === "volumeDiscount") {
+	if (offerCategory === "volumeDiscount" || offerCategory === "automaticOffers") {
 		const isQuantityValid = getCollectionValid
 			? getCollectionQuantity >= getCollectionsCount && buyCollectionQuantity >= buyCollectionsCount
 			: buyCollectionQuantity >= buyCollectionsCount
