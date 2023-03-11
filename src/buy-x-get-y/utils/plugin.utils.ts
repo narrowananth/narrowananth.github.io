@@ -1,9 +1,9 @@
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
-	const { getProducts, buyProducts } = getConfigSchema
+	const { offerCategory, getProducts, buyProducts } = getConfigSchema
 
-	lineItems = resetInputLineItem(getProducts, buyProducts, lineItems)
+	lineItems = resetInputLineItem(offerCategory, getProducts, buyProducts, lineItems)
 
 	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
@@ -11,6 +11,7 @@ export const buildInputData = (getConfigSchema: object | any, lineItems: Array<a
 }
 
 export const resetInputLineItem = (
+	offerCategory: String,
 	getProducts: Array<any>,
 	buyProducts: Array<any>,
 	lineItems: Array<any>
@@ -24,13 +25,17 @@ export const resetInputLineItem = (
 	getRemovedList.forEach((key: any) => {
 		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
+			delete lineItems[key]
+		else if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	buyRemovedList.forEach((key: any) => {
 		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
+			delete lineItems[key]
+		else if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	return lineItems
