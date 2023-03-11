@@ -1,7 +1,7 @@
 import { findBuyProductVolumeValid } from "./volumeDiscount.utils"
 
 export const applyBuyXGetYDiscount = (data: any): object => {
-	const { getProducts, sanitizedLineItem } = data
+	const { offerCategory, getProducts, sanitizedLineItem } = data
 
 	return getProducts.map((val: any) => {
 		const { productId, variantId, count } = val
@@ -16,8 +16,8 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 			quantity: sanitizedLineItem[variantId].quantity,
 			unitPrice: getEditedPrice,
 			lineItemHandle: sanitizedLineItem[variantId].lineItemHandle,
-			discountType: "free",
-			discountValue: sanitizedLineItem[variantId].unitPrice
+			discountType: offerCategory,
+			discountValue: "free"
 		}
 
 		return isValid ? finalDiscount : null
@@ -41,7 +41,7 @@ export const findTotalCartQuantity = (data: any): boolean => {
 export const findBuyXGetYDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { onlyCartAmoutAndQunatity, cartQuantity, buyProducts, getProducts } = data
+	const { offerCategory, onlyCartAmoutAndQunatity, cartQuantity, buyProducts, getProducts } = data
 
 	const sanitizedLineItem = lineItems
 
@@ -50,6 +50,7 @@ export const findBuyXGetYDiscount = (data: any): object => {
 
 		const buyProuductDiscount = getTotalCartQuantity
 			? applyBuyXGetYDiscount({
+					offerCategory,
 					getProducts,
 					sanitizedLineItem
 			  })
@@ -61,6 +62,7 @@ export const findBuyXGetYDiscount = (data: any): object => {
 
 		const buyProuductDiscount = validBuyProductRepsonse
 			? applyBuyXGetYDiscount({
+					offerCategory,
 					getProducts,
 					sanitizedLineItem
 			  })

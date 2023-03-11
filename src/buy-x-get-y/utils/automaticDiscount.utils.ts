@@ -42,7 +42,9 @@ export const findAutomaticDiscount = (data: any): object => {
 				productId,
 				variantId,
 				quantity: count,
-				unitPrice: 0
+				unitPrice: 0,
+				discountType: offerCategory,
+				discountValue: "free"
 			}
 		})
 

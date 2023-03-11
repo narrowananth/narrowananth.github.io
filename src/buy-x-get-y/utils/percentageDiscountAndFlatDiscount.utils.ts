@@ -34,6 +34,7 @@ export const findBuyProductValid = (data: any): boolean => {
 
 export const applyProductDiscount = (data: any): object => {
 	const {
+		offerCategory,
 		overAll,
 		getProductValid,
 		getProductVariantIds,
@@ -75,8 +76,8 @@ export const applyProductDiscount = (data: any): object => {
 				quantity: quantity,
 				unitPrice: getEditedPrice / quantity,
 				lineItemHandle,
-				discountType,
-				discountValue: discount
+				discountType: offerCategory,
+				discountValue: `${discount}% off`
 			}
 
 			return finalDiscount
@@ -93,8 +94,8 @@ export const applyProductDiscount = (data: any): object => {
 				quantity: quantity,
 				unitPrice: getEditedPrice / quantity,
 				lineItemHandle,
-				discountType,
-				discountValue: getPercentageAmount
+				discountType: offerCategory,
+				discountValue: `You save {{currency}} ${getPercentageAmount.toFixed(3)}`
 			}
 
 			return finalDiscount
@@ -254,6 +255,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 	const sanitizedLineItem = lineItems
 	if (overAll) {
 		const buyProuductDiscount = applyProductDiscount({
+			offerCategory,
 			overAll,
 			sanitizedLineItem,
 			discountType,
@@ -277,6 +279,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 		const getProuductDiscount =
 			getProductValid && validGetProductRepsonse
 				? applyProductDiscount({
+						offerCategory,
 						getProductValid,
 						getProductVariantIds,
 						sanitizedLineItem,
@@ -288,6 +291,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 		const buyProuductDiscount =
 			!getProductValid && validBuyProductRepsonse
 				? applyProductDiscount({
+						offerCategory,
 						getProductValid,
 						buyProductVariantIds,
 						sanitizedLineItem,
@@ -318,6 +322,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 
 		const getCollectionDiscount = getCollectionValid
 			? applyCollectionDiscount({
+					offerCategory,
 					getCollectionValue,
 					sanitizedLineItem,
 					discountType,
@@ -327,6 +332,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 
 		const buyCollectionDiscount = !getCollectionValid
 			? applyCollectionDiscount({
+					offerCategory,
 					buyCollectionValue,
 					sanitizedLineItem,
 					discountType,

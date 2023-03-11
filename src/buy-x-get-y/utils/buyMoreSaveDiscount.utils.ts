@@ -29,7 +29,7 @@ export const findTotalCartAmount = (data: any): boolean => {
 }
 
 export const applyProductAmountValid = (data: any): object => {
-	const { getProducts, sanitizedLineItem, discountType, discountValue } = data
+	const { offerCategory, getProducts, sanitizedLineItem, discountType, discountValue } = data
 
 	let cartTotal = 0
 
@@ -65,8 +65,8 @@ export const applyProductAmountValid = (data: any): object => {
 					quantity: quantity,
 					unitPrice: getEditedPrice / quantity,
 					lineItemHandle,
-					discountType,
-					discountValue: discount
+					discountType: offerCategory,
+					discountValue: `${discount}% off`
 				}
 
 				return finalDiscount
@@ -83,8 +83,8 @@ export const applyProductAmountValid = (data: any): object => {
 					quantity: quantity,
 					unitPrice: getEditedPrice / quantity,
 					lineItemHandle,
-					discountType,
-					discountValue: getPercentageAmount
+					discountType: offerCategory,
+					discountValue: `You save {{currency}} ${getPercentageAmount.toFixed(3)}`
 				}
 
 				return finalDiscount
@@ -98,7 +98,15 @@ export const applyProductAmountValid = (data: any): object => {
 export const findBuyMoreSaveDiscount = (data: any) => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { onlyCartAmoutAndQunatity, cartTotal, buyProducts, getProducts, discountType, discountValue } = data
+	const {
+		offerCategory,
+		onlyCartAmoutAndQunatity,
+		cartTotal,
+		buyProducts,
+		getProducts,
+		discountType,
+		discountValue
+	} = data
 
 	const sanitizedLineItem = lineItems
 
@@ -107,6 +115,7 @@ export const findBuyMoreSaveDiscount = (data: any) => {
 
 		const buyProuductDiscount = getTotalCartAmount
 			? applyProductAmountValid({
+					offerCategory,
 					getProducts,
 					sanitizedLineItem,
 					discountType,
@@ -120,6 +129,7 @@ export const findBuyMoreSaveDiscount = (data: any) => {
 
 		const buyProuductDiscount = validBuyProductRepsonse
 			? applyProductAmountValid({
+					offerCategory,
 					getProducts,
 					sanitizedLineItem,
 					discountType,

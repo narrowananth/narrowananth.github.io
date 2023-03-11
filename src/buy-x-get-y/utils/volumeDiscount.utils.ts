@@ -42,6 +42,7 @@ export const findVolumeDiscount = (data: any): object => {
 
 		const buyProuductDiscount = getTotalCartQuantity
 			? applyProductDiscount({
+					offerCategory,
 					overAll,
 					sanitizedLineItem,
 					discountType,
@@ -57,6 +58,7 @@ export const findVolumeDiscount = (data: any): object => {
 
 		const buyProuductDiscount = validBuyProductRepsonse
 			? applyProductDiscount({
+					offerCategory,
 					buyProductVariantIds,
 					sanitizedLineItem,
 					discountType,
@@ -71,6 +73,7 @@ export const findVolumeDiscount = (data: any): object => {
 
 		const buyCollectionDiscount = !getCollectionValid
 			? applyCollectionDiscount({
+					offerCategory,
 					buyCollectionValue,
 					sanitizedLineItem,
 					discountType,
