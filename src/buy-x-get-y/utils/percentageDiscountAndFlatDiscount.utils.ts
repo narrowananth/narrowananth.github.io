@@ -77,7 +77,7 @@ export const applyProductDiscount = (data: any): object => {
 				unitPrice: getEditedPrice / quantity,
 				lineItemHandle,
 				discountType: offerCategory,
-				discountValue: `${discount}% off`
+				discountValue: `You got ${discount}% off`
 			}
 
 			return finalDiscount
@@ -95,7 +95,7 @@ export const applyProductDiscount = (data: any): object => {
 				unitPrice: getEditedPrice / quantity,
 				lineItemHandle,
 				discountType: offerCategory,
-				discountValue: `You save {{currency}} ${getPercentageAmount.toFixed(3)}`
+				discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`
 			}
 
 			return finalDiscount

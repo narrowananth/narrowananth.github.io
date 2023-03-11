@@ -17,7 +17,7 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 			unitPrice: getEditedPrice,
 			lineItemHandle: sanitizedLineItem[variantId].lineItemHandle,
 			discountType: offerCategory,
-			discountValue: "free"
+			discountValue: "Free"
 		}
 
 		return isValid ? finalDiscount : null
