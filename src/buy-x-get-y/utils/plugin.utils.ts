@@ -1,3 +1,15 @@
+export const schemaReBuilder = (configSchema: any): object => {
+	const { getCollections, getProducts } = configSchema
+
+	if (getCollections.length > 0) configSchema.getCollectionValid = true
+	else configSchema.getCollectionValid = false
+
+	if (getProducts.length > 0) configSchema.getProductValid = true
+	else configSchema.getProductValid = false
+
+	return configSchema
+}
+
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 

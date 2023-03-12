@@ -121,7 +121,7 @@ export const findCollectionValid = (data: any) => {
 	let getCollectionQuantity = 0
 
 	if (getCollectionValid) {
-		getCollections.split(",").forEach((val: any) => {
+		getCollections.forEach((val: any) => {
 			if (val) {
 				Object.values(sanitizedLineItem).forEach((lineItem: any) => {
 					const { collectionId, variantId, quantity } = lineItem
@@ -135,7 +135,7 @@ export const findCollectionValid = (data: any) => {
 			}
 		})
 	}
-	buyCollections.split(",").forEach((val: any) => {
+	buyCollections.forEach((val: any) => {
 		if (val) {
 			Object.values(sanitizedLineItem).forEach((lineItem: any) => {
 				const { collectionId, variantId, quantity } = lineItem
