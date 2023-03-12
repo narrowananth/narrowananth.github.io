@@ -149,21 +149,18 @@ export const findCollectionValid = (data: any) => {
 		}
 	})
 
-	if (offerCategory === "volumeDiscount" || offerCategory === "automaticOffers") {
-		const isQuantityValid = getCollectionValid
-			? getCollectionQuantity >= getCollectionsCount && buyCollectionQuantity >= buyCollectionsCount
-			: buyCollectionQuantity >= buyCollectionsCount
+	const isQuantityValid = getCollectionValid
+		? getCollectionQuantity >= getCollectionsCount && buyCollectionQuantity >= buyCollectionsCount
+		: buyCollectionQuantity >= buyCollectionsCount
 
-		const output = isQuantityValid ? { buyCollectionsIdsValid, getCollectionsIdsValid } : {}
+	const output = isQuantityValid ? { buyCollectionsIdsValid, getCollectionsIdsValid } : {}
 
-		return output
-	} else {
-		return { buyCollectionsIdsValid, getCollectionsIdsValid }
-	}
+	return output
 }
 
 export const applyCollectionDiscount = (data: any): any => {
-	const { getCollectionValue, buyCollectionValue, sanitizedLineItem, discountType, discountValue } = data
+	const { offerCategory, getCollectionValue, buyCollectionValue, sanitizedLineItem, discountType, discountValue } =
+		data
 
 	let discount = discountValue
 
@@ -201,7 +198,7 @@ export const applyCollectionDiscount = (data: any): any => {
 	return combinedArray.map((val: any) => {
 		const product = sanitizedLineItem[val]
 
-		const { unitPrice, quantity, variantId, productId } = product
+		const { unitPrice, quantity, variantId, productId, lineItemHandle } = product
 		if (discountType === "percentage") {
 			if (discountValue >= 100) discount = 100
 
@@ -211,7 +208,10 @@ export const applyCollectionDiscount = (data: any): any => {
 				productId,
 				variantId,
 				quantity: quantity,
-				unitPrice: getEditedPrice / quantity
+				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
+				discountType: offerCategory,
+				discountValue: `You got ${discount}% off`
 			}
 
 			return finalDiscount
@@ -222,7 +222,15 @@ export const applyCollectionDiscount = (data: any): any => {
 
 			const getEditedPrice = unitPrice - getPercentageAmount
 
-			const finalDiscount = { productId, variantId, quantity: quantity, unitPrice: getEditedPrice }
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
+				discountType: offerCategory,
+				discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`
+			}
 
 			return finalDiscount
 		}
