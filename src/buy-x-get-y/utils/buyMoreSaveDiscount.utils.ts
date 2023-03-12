@@ -1,15 +1,19 @@
 export const findBuyProductAmountValid = (data: any): boolean => {
-	const { buyProducts, sanitizedLineItem } = data
+	const { cartTotal, buyProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
-		const { variantId, amount } = val
+	let localAmount = 0
 
-		return variantId
-			? sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount
-			: false
+	buyProducts.forEach((ids: any) => {
+		const { variantId } = ids
+
+		const amount = sanitizedLineItem[variantId]
+			? sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity
+			: 0
+
+		localAmount += amount
 	})
 
-	const isValid = buyProductVariantIdsValid ? true : false
+	const isValid = localAmount >= cartTotal ? true : false
 
 	return isValid
 }
@@ -29,11 +33,29 @@ export const findTotalCartAmount = (data: any): boolean => {
 }
 
 export const applyProductAmountValid = (data: any): object => {
-	const { offerCategory, getProducts, sanitizedLineItem, discountType, discountValue } = data
+	const { offerCategory, getProducts, buyProducts, sanitizedLineItem, discountType, discountValue } = data
 
 	let cartTotal = 0
 
-	getProducts.forEach((val: any) => {
+	if (discountType === "free") {
+		return getProducts.map((val: any) => {
+			const { productId, variantId } = val
+
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: sanitizedLineItem[variantId].quantity,
+				unitPrice: 0,
+				lineItemHandle: sanitizedLineItem[variantId].lineItemHandle,
+				discountType: offerCategory,
+				discountValue: "Free"
+			}
+
+			return finalDiscount
+		})
+	}
+
+	buyProducts.forEach((val: any) => {
 		const { variantId } = val
 
 		const product = sanitizedLineItem[variantId]
@@ -43,54 +65,49 @@ export const applyProductAmountValid = (data: any): object => {
 		cartTotal += unitPrice * quantity
 	})
 
-	return getProducts.map((val: any) => {
-		const { variantId, amount } = val
+	return buyProducts.map((val: any) => {
+		const { variantId } = val
 
 		let discount = discountValue
 
-		const isValid =
-			sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity >= amount ? true : false
-
 		const { unitPrice, quantity, productId, lineItemHandle } = sanitizedLineItem[variantId]
 
-		if (isValid) {
-			if (discountType === "percentage") {
-				if (discountValue >= 100) discount = 100
+		if (discountType === "percentage") {
+			if (discountValue >= 100) discount = 100
 
-				const getEditedPrice = quantity * unitPrice - quantity * unitPrice * (discount / 100)
+			const getEditedPrice = quantity * unitPrice - quantity * unitPrice * (discount / 100)
 
-				const finalDiscount = {
-					productId,
-					variantId,
-					quantity: quantity,
-					unitPrice: getEditedPrice / quantity,
-					lineItemHandle,
-					discountType: offerCategory,
-					discountValue: `You got ${discount}% off`
-				}
-
-				return finalDiscount
-			} else {
-				const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
-
-				const getPercentageAmount = (getPercentage / 100) * discountValue
-
-				const getEditedPrice = quantity * unitPrice - getPercentageAmount
-
-				const finalDiscount = {
-					productId,
-					variantId,
-					quantity: quantity,
-					unitPrice: getEditedPrice / quantity,
-					lineItemHandle,
-					discountType: offerCategory,
-					discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`
-				}
-
-				return finalDiscount
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
+				discountType: offerCategory,
+				discountValue: `You got ${discount}% off`
 			}
+
+			return finalDiscount
+		} else if (discountType === "amount") {
+			const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
+
+			const getPercentageAmount = (getPercentage / 100) * discountValue
+
+			const getEditedPrice = quantity * unitPrice - getPercentageAmount
+
+			const finalDiscount = {
+				productId,
+				variantId,
+				quantity: quantity,
+				unitPrice: getEditedPrice / quantity,
+				lineItemHandle,
+				discountType: offerCategory,
+				discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`
+			}
+
+			return finalDiscount
 		} else {
-			return
+			return {}
 		}
 	})
 }
@@ -98,45 +115,26 @@ export const applyProductAmountValid = (data: any): object => {
 export const findBuyMoreSaveDiscount = (data: any) => {
 	const { lineItems, getRemovedProductList } = data
 
-	const {
-		offerCategory,
-		onlyCartAmoutAndQunatity,
-		cartTotal,
-		buyProducts,
-		getProducts,
-		discountType,
-		discountValue
-	} = data
+	const { offerCategory, cartTotal, buyProducts, getProducts, discountType, discountValue } = data
 
 	const sanitizedLineItem = lineItems
 
-	if (onlyCartAmoutAndQunatity) {
-		const getTotalCartAmount = findTotalCartAmount({ cartTotal, sanitizedLineItem })
+	const validBuyProductRepsonse = findBuyProductAmountValid({
+		cartTotal,
+		buyProducts,
+		sanitizedLineItem
+	})
 
-		const buyProuductDiscount = getTotalCartAmount
-			? applyProductAmountValid({
-					offerCategory,
-					getProducts,
-					sanitizedLineItem,
-					discountType,
-					discountValue
-			  })
-			: []
+	const buyProuductDiscount = validBuyProductRepsonse
+		? applyProductAmountValid({
+				offerCategory,
+				buyProducts,
+				getProducts,
+				sanitizedLineItem,
+				discountType,
+				discountValue
+		  })
+		: []
 
-		return { getRemovedProductList, output: buyProuductDiscount }
-	} else {
-		const validBuyProductRepsonse = findBuyProductAmountValid({ buyProducts, sanitizedLineItem })
-
-		const buyProuductDiscount = validBuyProductRepsonse
-			? applyProductAmountValid({
-					offerCategory,
-					getProducts,
-					sanitizedLineItem,
-					discountType,
-					discountValue
-			  })
-			: []
-
-		return { getRemovedProductList, output: buyProuductDiscount }
-	}
+	return { getRemovedProductList, output: buyProuductDiscount }
 }

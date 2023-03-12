@@ -1,5 +1,23 @@
 export const schemaReBuilder = (configSchema: any): object => {
-	const { getCollections, getProducts } = configSchema
+	const { buyOfferType, cartType, cartValue, getCollections, getProducts } = configSchema
+
+	configSchema.onlyCartAmoutAndQunatity = false
+
+	if (buyOfferType === "overAll") configSchema.overAll = true
+	else configSchema.overAll = false
+
+	if (buyOfferType === "collections") configSchema.collection = true
+	else configSchema.collection = false
+
+	if (cartType === "amount") {
+		configSchema.onlyCartAmoutAndQunatity = true
+		configSchema.cartTotal = cartValue
+	} else configSchema.cartTotal = 0
+
+	if (cartType === "count") {
+		configSchema.onlyCartAmoutAndQunatity = true
+		configSchema.cartQuantity = cartValue
+	} else configSchema.cartQuantity = 0
 
 	if (getCollections.length > 0) configSchema.getCollectionValid = true
 	else configSchema.getCollectionValid = false

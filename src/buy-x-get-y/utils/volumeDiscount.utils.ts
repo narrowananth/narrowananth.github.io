@@ -6,15 +6,19 @@ import {
 } from "./percentageDiscountAndFlatDiscount.utils"
 
 export const findBuyProductVolumeValid = (data: any): boolean => {
-	const { buyProducts, sanitizedLineItem } = data
+	const { cartQuantity, buyProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
-		const { variantId, count } = val
+	let localQuantity = 0
 
-		return variantId ? sanitizedLineItem[variantId]?.quantity >= count : false
+	buyProducts.forEach((ids: any) => {
+		const { variantId } = ids
+
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localQuantity += quantity
 	})
 
-	const isValid = buyProductVariantIdsValid ? true : false
+	const isValid = localQuantity >= cartQuantity ? true : false
 
 	return isValid
 }
@@ -54,7 +58,7 @@ export const findVolumeDiscount = (data: any): object => {
 	} else if (!collection) {
 		const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
 
-		const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
+		const validBuyProductRepsonse = findBuyProductVolumeValid({ cartQuantity, buyProducts, sanitizedLineItem })
 
 		const buyProuductDiscount = validBuyProductRepsonse
 			? applyProductDiscount({
@@ -68,7 +72,13 @@ export const findVolumeDiscount = (data: any): object => {
 		return { getRemovedProductList, output: buyProuductDiscount }
 	} else if (collection) {
 		const buyCollectionValue = !getCollectionValid
-			? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
+			? findCollectionValid({
+					cartQuantity,
+					offerCategory,
+					buyCollections,
+					buyCollectionsCount,
+					sanitizedLineItem
+			  })
 			: false
 
 		const buyCollectionDiscount = !getCollectionValid

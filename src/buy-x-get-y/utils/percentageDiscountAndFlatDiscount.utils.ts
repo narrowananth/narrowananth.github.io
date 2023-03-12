@@ -1,33 +1,43 @@
 export const findGetProductValid = (data: any): boolean => {
-	const { buyProducts, getProducts, sanitizedLineItem } = data
+	const { cartQuantity, buyProducts, getProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
-		const { variantId, count } = ids
+	let localQuantity = 0
 
-		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
+	buyProducts.forEach((ids: any) => {
+		const { variantId } = ids
+
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localQuantity += quantity
 	})
 
-	const getProductVariantIdsValid = getProducts.every((ids: any) => {
-		const { variantId, count } = ids
+	getProducts.forEach((ids: any) => {
+		const { variantId } = ids
 
-		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localQuantity += quantity
 	})
 
-	const isValid = buyProductVariantIdsValid && getProductVariantIdsValid ? true : false
+	const isValid = localQuantity >= cartQuantity ? true : false
 
 	return isValid
 }
 
 export const findBuyProductValid = (data: any): boolean => {
-	const { buyProducts, sanitizedLineItem } = data
+	const { cartQuantity, buyProducts, sanitizedLineItem } = data
 
-	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
-		const { variantId, count } = ids
+	let localQuantity = 0
 
-		return sanitizedLineItem[variantId] && sanitizedLineItem[variantId].quantity >= count
+	buyProducts.forEach((ids: any) => {
+		const { variantId } = ids
+
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localQuantity += quantity
 	})
 
-	const isValid = buyProductVariantIdsValid ? true : false
+	const isValid = localQuantity >= cartQuantity ? true : false
 
 	return isValid
 }
@@ -81,7 +91,7 @@ export const applyProductDiscount = (data: any): object => {
 			}
 
 			return finalDiscount
-		} else {
+		} else if (discountType === "amount") {
 			const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
 
 			const getPercentageAmount = (getPercentage / 100) * discountValue
@@ -100,19 +110,12 @@ export const applyProductDiscount = (data: any): object => {
 
 			return finalDiscount
 		}
+		return {}
 	})
 }
 
 export const findCollectionValid = (data: any) => {
-	const {
-		offerCategory,
-		getCollectionValid,
-		buyCollections,
-		buyCollectionsCount,
-		getCollections,
-		getCollectionsCount,
-		sanitizedLineItem
-	} = data
+	const { cartQuantity, offerCategory, getCollectionValid, buyCollections, getCollections, sanitizedLineItem } = data
 
 	let buyCollectionsIdsValid: any[] = []
 	let getCollectionsIdsValid: any[] = []
@@ -149,9 +152,11 @@ export const findCollectionValid = (data: any) => {
 		}
 	})
 
-	const isQuantityValid = getCollectionValid
-		? getCollectionQuantity >= getCollectionsCount && buyCollectionQuantity >= buyCollectionsCount
-		: buyCollectionQuantity >= buyCollectionsCount
+	const getCollectionCount = getCollectionValid
+		? buyCollectionQuantity + getCollectionQuantity
+		: buyCollectionQuantity
+
+	const isQuantityValid = getCollectionCount >= cartQuantity
 
 	const output = isQuantityValid ? { buyCollectionsIdsValid, getCollectionsIdsValid } : {}
 
@@ -253,7 +258,8 @@ export const findPercentageAmountDiscount = (data: any): object => {
 		getCollections,
 		getCollectionsCount,
 		buyProducts,
-		getProducts
+		getProducts,
+		cartQuantity
 	} = data
 
 	const buyProductVariantIds = buyProducts.flatMap((product: any) => product.variantId)
@@ -274,6 +280,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 	} else if (!collection) {
 		const validGetProductRepsonse = getProductValid
 			? findGetProductValid({
+					cartQuantity,
 					buyProducts,
 					getProducts,
 					sanitizedLineItem
@@ -281,7 +288,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 			: false
 
 		const validBuyProductRepsonse = !getProductValid
-			? findBuyProductValid({ buyProducts, sanitizedLineItem })
+			? findBuyProductValid({ cartQuantity, buyProducts, sanitizedLineItem })
 			: false
 
 		const getProuductDiscount =
@@ -314,6 +321,7 @@ export const findPercentageAmountDiscount = (data: any): object => {
 	} else if (collection) {
 		const getCollectionValue = getCollectionValid
 			? findCollectionValid({
+					cartQuantity,
 					offerCategory,
 					getCollectionValid,
 					buyCollections,
@@ -325,7 +333,13 @@ export const findPercentageAmountDiscount = (data: any): object => {
 			: false
 
 		const buyCollectionValue = !getCollectionValid
-			? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
+			? findCollectionValid({
+					cartQuantity,
+					offerCategory,
+					buyCollections,
+					buyCollectionsCount,
+					sanitizedLineItem
+			  })
 			: false
 
 		const getCollectionDiscount = getCollectionValid
