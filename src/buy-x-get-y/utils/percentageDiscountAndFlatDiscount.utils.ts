@@ -220,7 +220,7 @@ export const applyCollectionDiscount = (data: any): any => {
 
 			const getPercentageAmount = (getPercentage / 100) * discountValue
 
-			const getEditedPrice = unitPrice - getPercentageAmount
+			const getEditedPrice = quantity * unitPrice - getPercentageAmount
 
 			const finalDiscount = {
 				productId,
