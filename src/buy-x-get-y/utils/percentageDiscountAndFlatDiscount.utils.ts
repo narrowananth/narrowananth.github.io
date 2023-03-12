@@ -3,23 +3,28 @@ export const findGetProductValid = (data: any): boolean => {
 
 	let localQuantity = 0
 
-	buyProducts.forEach((ids: any) => {
+	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
 		const { variantId } = ids
 
 		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
 
 		localQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
 	})
 
-	getProducts.forEach((ids: any) => {
+	const getProductVariantIdsValid = getProducts.every((ids: any) => {
 		const { variantId } = ids
 
 		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
 
 		localQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
 	})
 
-	const isValid = localQuantity >= cartQuantity ? true : false
+	const isValid =
+		localQuantity >= cartQuantity && buyProductVariantIdsValid && getProductVariantIdsValid ? true : false
 
 	return isValid
 }
@@ -29,15 +34,17 @@ export const findBuyProductValid = (data: any): boolean => {
 
 	let localQuantity = 0
 
-	buyProducts.forEach((ids: any) => {
+	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
 		const { variantId } = ids
 
 		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
 
 		localQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
 	})
 
-	const isValid = localQuantity >= cartQuantity ? true : false
+	const isValid = localQuantity >= cartQuantity && buyProductVariantIdsValid ? true : false
 
 	return isValid
 }
