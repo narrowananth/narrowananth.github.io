@@ -1,5 +1,3 @@
-import { findGetProductValid } from "./percentageDiscountAndFlatDiscount.utils"
-
 export const applyBuyXGetYDiscount = (data: any): object => {
 	const { offerCategory, getProducts, sanitizedLineItem } = data
 
@@ -34,17 +32,56 @@ export const findTotalCartQuantity = (data: any): boolean => {
 	return totalCartQuantity >= cartQuantity ? true : false
 }
 
+export const findBuyXGetYDiscountProductValid = (data: any): boolean => {
+	const { cartQuantity, buyProducts, getProducts, getProductCount, sanitizedLineItem } = data
+
+	let localBuyQuantity = 0
+
+	const buyProductVariantIdsValid = buyProducts.every((ids: any) => {
+		const { variantId } = ids
+
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localBuyQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
+	})
+
+	let localGetQuantity = 0
+
+	const getProductVariantIdsValid = getProducts.every((ids: any) => {
+		const { variantId } = ids
+
+		const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+		localGetQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
+	})
+
+	const isValid =
+		localBuyQuantity >= cartQuantity &&
+		localGetQuantity >= getProductCount &&
+		buyProductVariantIdsValid &&
+		getProductVariantIdsValid
+			? true
+			: false
+
+	return isValid
+}
+
 export const findBuyXGetYDiscount = (data: any): object => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { offerCategory, cartQuantity, buyProducts, getProducts } = data
+	const { offerCategory, cartQuantity, buyProducts, getProducts, getProductCount } = data
 
 	const sanitizedLineItem = lineItems
 
-	const validBuyProductRepsonse = findGetProductValid({
+	const validBuyProductRepsonse = findBuyXGetYDiscountProductValid({
 		cartQuantity,
 		buyProducts,
 		getProducts,
+		getProductCount,
 		sanitizedLineItem
 	})
 
