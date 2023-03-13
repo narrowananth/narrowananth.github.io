@@ -1,7 +1,9 @@
 export const findBuyProductAmountValid = (data: any): boolean => {
-	const { cartTotal, buyProducts, sanitizedLineItem } = data
+	const { discountType, cartTotal, buyProducts, getProducts, getProductCount, sanitizedLineItem } = data
 
-	let localAmount = 0
+	let localBuyAmount = 0
+
+	let localGetQuantity = 0
 
 	buyProducts.forEach((ids: any) => {
 		const { variantId } = ids
@@ -10,10 +12,24 @@ export const findBuyProductAmountValid = (data: any): boolean => {
 			? sanitizedLineItem[variantId].unitPrice * sanitizedLineItem[variantId].quantity
 			: 0
 
-		localAmount += amount
+		localBuyAmount += amount
 	})
 
-	const isValid = localAmount >= cartTotal ? true : false
+	if (discountType === "free") {
+		getProducts.forEach((ids: any) => {
+			const { variantId } = ids
+
+			const quantity = sanitizedLineItem[variantId] ? sanitizedLineItem[variantId].quantity : 0
+
+			localGetQuantity += quantity
+		})
+	}
+
+	const isValid =
+		(discountType === "free" && localBuyAmount >= cartTotal && localGetQuantity >= getProductCount) ||
+		(discountType !== "free" && localBuyAmount >= cartTotal)
+			? true
+			: false
 
 	return isValid
 }
@@ -115,13 +131,16 @@ export const applyProductAmountValid = (data: any): object => {
 export const findBuyMoreSaveDiscount = (data: any) => {
 	const { lineItems, getRemovedProductList } = data
 
-	const { offerCategory, cartTotal, buyProducts, getProducts, discountType, discountValue } = data
+	const { offerCategory, cartTotal, buyProducts, getProducts, getProductCount, discountType, discountValue } = data
 
 	const sanitizedLineItem = lineItems
 
 	const validBuyProductRepsonse = findBuyProductAmountValid({
+		discountType,
 		cartTotal,
 		buyProducts,
+		getProducts,
+		getProductCount,
 		sanitizedLineItem
 	})
 
