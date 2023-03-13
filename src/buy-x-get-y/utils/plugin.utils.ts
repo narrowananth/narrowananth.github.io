@@ -1,5 +1,5 @@
 export const schemaReBuilder = (configSchema: any): object => {
-	const { buyOfferType, cartType, cartValue, getCollections, getProducts } = configSchema
+	const { buyOfferType, cartType, cartValue, buyCollections, getCollections, getProducts } = configSchema
 
 	configSchema.onlyCartAmoutAndQunatity = false
 
@@ -19,11 +19,22 @@ export const schemaReBuilder = (configSchema: any): object => {
 		configSchema.cartQuantity = cartValue
 	} else configSchema.cartQuantity = 0
 
-	if (getCollections.length > 0) configSchema.getCollectionValid = true
-	else configSchema.getCollectionValid = false
+	if (getCollections.length > 0) {
+		configSchema.getCollectionValid = true
+
+		const dummyGetCollectionIds = getCollections.flatMap((collection: any) => collection.collectionId)
+
+		configSchema.getCollections = dummyGetCollectionIds
+	} else configSchema.getCollectionValid = false
 
 	if (getProducts.length > 0) configSchema.getProductValid = true
 	else configSchema.getProductValid = false
+
+	if (buyCollections.length > 0) {
+		const dummyBuyCollectionIds = buyCollections.flatMap((collection: any) => collection.collectionId)
+
+		configSchema.buyCollections = dummyBuyCollectionIds
+	}
 
 	return configSchema
 }
