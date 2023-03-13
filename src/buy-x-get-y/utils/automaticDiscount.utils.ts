@@ -10,38 +10,41 @@ export const findAutomaticDiscount = (data: any): object => {
 		offerCategory,
 		onlyCartAmoutAndQunatity,
 		collection,
+		cartType,
 		cartTotal,
 		cartQuantity,
 		buyProducts,
 		getProducts,
 		buyCollections,
-		buyCollectionsCount
+		getProductCount
 	} = data
 
 	const sanitizedLineItem = lineItems
 
-	const getTotalCartAmount = onlyCartAmoutAndQunatity ? findTotalCartAmount({ cartTotal, sanitizedLineItem }) : false
+	const getTotalCartAmount =
+		onlyCartAmoutAndQunatity && cartType === "amount"
+			? findTotalCartAmount({ cartTotal, buyProducts, sanitizedLineItem })
+			: false
 
-	const getTotalCartQuantity = onlyCartAmoutAndQunatity
-		? findTotalCartQuantity({ cartQuantity, sanitizedLineItem })
-		: false
-
-	const validBuyProductRepsonse = findBuyProductVolumeValid({ buyProducts, sanitizedLineItem })
+	const getTotalCartQuantity =
+		onlyCartAmoutAndQunatity && cartType === "count"
+			? findTotalCartQuantity({ cartQuantity, buyProducts, sanitizedLineItem })
+			: false
 
 	const buyCollectionValue = collection
-		? findCollectionValid({ offerCategory, buyCollections, buyCollectionsCount, sanitizedLineItem })
+		? findCollectionValid({ offerCategory, buyCollections, cartQuantity, sanitizedLineItem })
 		: {}
 
 	const { buyCollectionsIdsValid } = buyCollectionValue
 
-	if (getTotalCartAmount || getTotalCartQuantity || validBuyProductRepsonse || buyCollectionsIdsValid) {
+	if (getTotalCartAmount || getTotalCartQuantity || buyCollectionsIdsValid) {
 		const output = getProducts.map((val: any) => {
-			const { productId, variantId, count } = val
+			const { productId, variantId } = val
 
 			return {
 				productId,
 				variantId,
-				quantity: count,
+				quantity: getProductCount,
 				unitPrice: 0,
 				discountType: offerCategory,
 				discountValue: "Free"

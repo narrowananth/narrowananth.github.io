@@ -19,17 +19,21 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 }
 
 export const findTotalCartQuantity = (data: any): boolean => {
-	const { cartQuantity, sanitizedLineItem } = data
+	const { cartQuantity, buyProducts, sanitizedLineItem } = data
 
 	let totalCartQuantity = 0
 
-	Object.values(sanitizedLineItem).forEach((val: any) => {
-		const { quantity } = val
+	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
+		const { variantId } = val
+
+		const { quantity = 0 } = sanitizedLineItem[variantId] || {}
 
 		totalCartQuantity += quantity
+
+		return sanitizedLineItem[variantId] ? true : false
 	})
 
-	return totalCartQuantity >= cartQuantity ? true : false
+	return buyProductVariantIdsValid && totalCartQuantity >= cartQuantity ? true : false
 }
 
 export const findBuyXGetYDiscountProductValid = (data: any): boolean => {

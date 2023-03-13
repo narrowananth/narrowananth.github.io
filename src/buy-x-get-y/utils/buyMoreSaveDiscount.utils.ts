@@ -35,17 +35,21 @@ export const findBuyProductAmountValid = (data: any): boolean => {
 }
 
 export const findTotalCartAmount = (data: any): boolean => {
-	const { cartTotal, sanitizedLineItem } = data
+	const { buyProducts, cartTotal, sanitizedLineItem } = data
 
 	let totalCartAmount = 0
 
-	Object.values(sanitizedLineItem).forEach((val: any) => {
-		const { unitPrice, quantity } = val
+	const buyProductVariantIdsValid = buyProducts.every((val: any) => {
+		const { variantId } = val
+
+		const { unitPrice = 0, quantity = 0 } = sanitizedLineItem[variantId] || {}
 
 		totalCartAmount += unitPrice * quantity
+
+		return sanitizedLineItem[variantId] ? true : false
 	})
 
-	return totalCartAmount >= cartTotal ? true : false
+	return buyProductVariantIdsValid && totalCartAmount >= cartTotal ? true : false
 }
 
 export const applyProductAmountValid = (data: any): object => {
