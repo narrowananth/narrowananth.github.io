@@ -2,50 +2,38 @@ export const schemaReBuilder = (configSchema: any): object => {
 	const { buyCollections, getCollections, buyProducts, getProducts, getProductCount } = configSchema
 
 	alert(JSON.stringify(buyProducts))
+
+	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
+
+	alert(JSON.stringify(buyVariantIdList))
+
+	configSchema.buyProducts = buyVariantIdList
+
 	alert(JSON.stringify(getProducts))
 
+	const getVariantIdList = getProducts.map((product: any) => product.variantId)
+
+	alert(JSON.stringify(getVariantIdList))
+
+	configSchema.getProducts = getVariantIdList
+
 	alert(JSON.stringify(buyCollections))
+
+	const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
+
+	alert(JSON.stringify(buyCollectionIdList))
+
+	configSchema.buyCollections = buyCollectionIdList
+
 	alert(JSON.stringify(getCollections))
 
-	if (buyProducts.length > 0) {
-		const buyVariantIdList = buyProducts.map((product: any) => {
-			if (product?.variantId) return product.variantId
-			return ""
-		})
+	const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
 
-		configSchema.buyProducts = buyVariantIdList
-	}
+	alert(JSON.stringify(getCollectionIdList))
 
-	if (getProducts.length > 0) {
-		const getVariantIdList = getProducts.map((product: any) => {
-			if (product?.variantId) return product.variantId
-			return ""
-		})
-
-		configSchema.getProducts = getVariantIdList
-	}
-
-	if (buyCollections.length > 0) {
-		const buyCollectionIdList = buyCollections.map((collection: any) => {
-			if (collection?.collectionId) return collection.collectionId
-			return ""
-		})
-
-		configSchema.buyCollections = buyCollectionIdList
-	}
-
-	if (getCollections.length > 0) {
-		const getCollectionIdList = getCollections.map((collection: any) => {
-			if (collection?.collectionId) return collection.collectionId
-			return ""
-		})
-
-		configSchema.getCollections = getCollectionIdList
-	}
+	configSchema.getCollections = getCollectionIdList
 
 	if (!getProductCount) configSchema.getProductCount = 0
-
-	console.log("configSchema", configSchema)
 
 	return configSchema
 }
