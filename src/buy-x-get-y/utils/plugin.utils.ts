@@ -31,13 +31,13 @@ export const schemaReBuilder = (configSchema: any): object => {
 }
 
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
-	const getRemovedProductList = removeExistingDiscount(lineItems) || []
+	// const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
-	const { offerCategory, getProducts, buyProducts } = getConfigSchema
+	// const { offerCategory, getProducts, buyProducts } = getConfigSchema
 
-	lineItems = resetInputLineItem(offerCategory, getProducts, buyProducts, lineItems)
+	// lineItems = resetInputLineItem(offerCategory, getProducts, buyProducts, lineItems)
 
-	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
+	const config = { ...getConfigSchema, lineItems, getRemovedProductList: [] }
 
 	return config
 }
