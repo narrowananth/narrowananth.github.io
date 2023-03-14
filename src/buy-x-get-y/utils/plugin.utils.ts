@@ -3,19 +3,19 @@ export const schemaReBuilder = (configSchema: any): object => {
 
 	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
 
-	configSchema.buyProducts = buyVariantIdList
+	configSchema.customBuyProduct = buyVariantIdList
 
 	const getVariantIdList = getProducts.map((product: any) => product.variantId)
 
-	configSchema.getProducts = getVariantIdList
+	configSchema.customGetProduct = getVariantIdList
 
 	const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
 
-	configSchema.buyCollections = buyCollectionIdList
+	configSchema.customBuyCollection = buyCollectionIdList
 
 	const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
 
-	configSchema.getCollections = getCollectionIdList
+	configSchema.customGetCollection = getCollectionIdList
 
 	if (!getProductCount) configSchema.getProductCount = 0
 
@@ -25,9 +25,9 @@ export const schemaReBuilder = (configSchema: any): object => {
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
-	const { offerCategory, getProducts, buyProducts } = getConfigSchema
+	const { offerCategory, customGetProduct, customBuyProduct } = getConfigSchema
 
-	lineItems = resetInputLineItem(offerCategory, getProducts, buyProducts, lineItems)
+	lineItems = resetInputLineItem(offerCategory, customGetProduct, customBuyProduct, lineItems)
 
 	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
@@ -36,13 +36,13 @@ export const buildInputData = (getConfigSchema: object | any, lineItems: Array<a
 
 export const resetInputLineItem = (
 	offerCategory: String,
-	getProducts: Array<any>,
-	buyProducts: Array<any>,
+	customGetProduct: Array<any>,
+	customBuyProduct: Array<any>,
 	lineItems: Array<any>
 ): Array<any> => {
 	lineItems = getLineItemsObj(lineItems)
 
-	getProducts.forEach((key: any) => {
+	customGetProduct.forEach((key: any) => {
 		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
 		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
@@ -50,7 +50,7 @@ export const resetInputLineItem = (
 		else if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
 	})
 
-	buyProducts.forEach((key: any) => {
+	customBuyProduct.forEach((key: any) => {
 		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
 
 		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
@@ -86,28 +86,36 @@ export const getLineItemsObj = (lineItems: Array<any>): any => {
 }
 
 export const combineSchemaInputArray = (data: any): Array<string> => {
-	const { offerCategory, buyCollections, getCollections, buyProducts, getProducts, getProductCount } = data
+	const {
+		offerCategory,
+		customBuyCollection,
+		customGetCollection,
+		customBuyProduct,
+		customGetProduct,
+		getProductCount
+	} = data
 
-	const xValue = buyProducts.length > 0 || buyCollections.length > 0 ? buyProducts.concat(buyCollections) : []
+	const xValue =
+		customBuyProduct.length > 0 || customBuyCollection.length > 0
+			? customBuyProduct.concat(customBuyCollection)
+			: []
 
 	const yValue =
-		getProductCount === 0 && (getProducts.length > 0 || getCollections.length > 0)
-			? getProducts.concat(getCollections)
+		getProductCount === 0 && (customGetProduct.length > 0 || customGetCollection.length > 0)
+			? customGetProduct.concat(customGetCollection)
 			: []
 
 	const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
-
-	alert(`combinedArray --> ${JSON.stringify(combinedArray)}`)
 
 	return combinedArray
 }
 
 export const combineSchemaOfferArray = (data: any): Array<string> => {
-	const { buyCollections, getCollections, buyProducts, getProducts } = data
+	const { customBuyCollection, customGetCollection, customBuyProduct, customGetProduct } = data
 
-	const xValue = getProducts.length > 0 ? getProducts : buyProducts
+	const xValue = customGetProduct.length > 0 ? customGetProduct : customBuyProduct
 
-	const yValue = getCollections.length > 0 ? getCollections : buyCollections
+	const yValue = customGetCollection.length > 0 ? customGetCollection : customBuyCollection
 
 	const combinedArray = xValue.concat(yValue)
 
@@ -129,8 +137,6 @@ export const validateInputData = (data: any): boolean => {
 
 	const getCombinedArray = combineSchemaInputArray(data)
 
-	alert(`getCombinedArray --> ${getCombinedArray}`)
-
 	return getCombinedArray.every((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
@@ -144,10 +150,6 @@ export const validateInputData = (data: any): boolean => {
 
 				return acc
 			}, 0)
-
-			alert(`sum --> ${sum} & cartValue --> ${cartValue}`)
-
-			alert(sum >= cartValue)
 
 			return sum >= cartValue ? true : false
 		}
@@ -168,9 +170,9 @@ export const validateOverAllData = (data: any): boolean => {
 }
 
 export const validateGetProductCount = (data: any): boolean => {
-	const { getProducts, getProductCount, lineItems } = data
+	const { customGetProduct, getProductCount, lineItems } = data
 
-	return getProducts.every((id: any) => {
+	return customGetProduct.every((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
 				const { collectionId, variantId, quantity } = lineItem || {}
@@ -263,11 +265,12 @@ export const applyPercentageAndAmountOffer = (
 }
 
 export const applyBuyXGetYDiscount = (data: any): object => {
-	const { offerCategory, getProducts, lineItems, getProductCount } = data
+	const { offerCategory, customGetProduct, getProducts, lineItems, getProductCount } = data
 
-	const sanitizedLineItem = getLineItemsObj(lineItems)
+	const sanitizedLineItem =
+		offerCategory === "automaticOffers" ? getLineItemsObj(getProducts) : getLineItemsObj(lineItems)
 
-	return getProducts.map((id: any) => {
+	return customGetProduct.map((id: any) => {
 		if (id) {
 			const { productId, variantId, quantity, lineItemHandle } = sanitizedLineItem[id] || {}
 

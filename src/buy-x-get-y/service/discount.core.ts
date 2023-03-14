@@ -49,7 +49,5 @@ export const findAutomaticDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
-	alert(`getDiscoutOffer --> ${JSON.stringify(getDiscoutOffer)}`)
-
 	return { output: getDiscoutOffer, getRemovedProductList }
 }
