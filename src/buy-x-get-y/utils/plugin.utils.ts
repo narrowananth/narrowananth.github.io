@@ -1,29 +1,29 @@
 export const schemaReBuilder = (configSchema: any): object => {
 	const { buyCollections, getCollections, buyProducts, getProducts, getProductCount } = configSchema
 
-	if (buyProducts.length > 0) {
-		const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
+	// if (buyProducts.length > 0) {
+	// 	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
 
-		configSchema.buyProducts = buyVariantIdList
-	}
+	// 	configSchema.buyProducts = buyVariantIdList
+	// }
 
-	if (getProducts.length > 0) {
-		const getVariantIdList = getProducts.map((product: any) => product.variantId)
+	// if (getProducts.length > 0) {
+	// 	const getVariantIdList = getProducts.map((product: any) => product.variantId)
 
-		configSchema.getProducts = getVariantIdList
-	}
+	// 	configSchema.getProducts = getVariantIdList
+	// }
 
-	if (buyCollections.length > 0) {
-		const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
+	// if (buyCollections.length > 0) {
+	// 	const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
 
-		configSchema.buyCollections = buyCollectionIdList
-	}
+	// 	configSchema.buyCollections = buyCollectionIdList
+	// }
 
-	if (getCollections.length > 0) {
-		const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
+	// if (getCollections.length > 0) {
+	// 	const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
 
-		configSchema.getCollections = getCollectionIdList
-	}
+	// 	configSchema.getCollections = getCollectionIdList
+	// }
 
 	if (!getProductCount) configSchema.getProductCount = 0
 
