@@ -97,6 +97,8 @@ export const combineSchemaInputArray = (data: any): Array<string> => {
 
 	const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
 
+	alert(`combinedArray --> ${JSON.stringify(combinedArray)}`)
+
 	return combinedArray
 }
 
