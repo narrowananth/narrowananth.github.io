@@ -10,6 +10,8 @@ export const flow = (appContext: object | any, configSchema: object): string => 
 
 	const { lineItems = [] } = cartLineItems
 
+	return JSON.stringify({ output: [], getRemovedProductList: [] })
+
 	if (lineItems.length === 0) return JSON.stringify({ output: [], getRemovedProductList: [] })
 
 	const getConfigSchema = schemaReBuilder(configSchema)
