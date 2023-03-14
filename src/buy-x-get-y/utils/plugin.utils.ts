@@ -138,7 +138,7 @@ export const validateInputData = (data: any): boolean => {
 	return getCombinedArray.every((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity, unitPrice } = lineItem
+				const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 				if (variantId === id || collectionId === id) {
 					const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
@@ -173,7 +173,7 @@ export const validateGetProductCount = (data: any): boolean => {
 	return getProducts.every((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity } = lineItem
+				const { collectionId, variantId, quantity } = lineItem || {}
 
 				if (variantId === id || collectionId === id) acc += quantity
 
@@ -192,7 +192,7 @@ export const findUserProductCartTotal = (sanitizedLineItem: Array<string>, lineI
 	sanitizedLineItem.forEach((key: any) => {
 		if (key) {
 			const total = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity, unitPrice } = lineItem
+				const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 				if (variantId === key || collectionId === key) acc += quantity * unitPrice
 
@@ -214,7 +214,7 @@ export const applyPercentageAndAmountOffer = (
 	percentageDiscountValue: number,
 	cartTotal: number
 ): object => {
-	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem
+	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
 
 	if (discountType === "percentage") {
 		const getEditedPrice = quantity * unitPrice - quantity * unitPrice * (percentageDiscountValue / 100)
@@ -269,7 +269,7 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 
 	return getProducts.map((id: any) => {
 		if (id) {
-			const { productId, variantId, quantity, lineItemHandle } = sanitizedLineItem[id]
+			const { productId, variantId, quantity, lineItemHandle } = sanitizedLineItem[id] || {}
 
 			const customQuantity = offerCategory === "automaticOffers" ? getProductCount : quantity
 
@@ -308,7 +308,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 	sanitizedLineItem.forEach((key: any) => {
 		if (key && typeof key === "string") {
 			return lineItems.forEach((lineItem: any) => {
-				const { collectionId, variantId } = lineItem
+				const { collectionId, variantId } = lineItem || {}
 
 				if (variantId === key || collectionId === key) {
 					const value = applyPercentageAndAmountOffer(
