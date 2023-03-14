@@ -1,6 +1,12 @@
 export const schemaReBuilder = (configSchema: any): object => {
 	const { buyCollections, getCollections, buyProducts, getProducts, getProductCount } = configSchema
 
+	alert(JSON.stringify(buyProducts))
+	alert(JSON.stringify(getProducts))
+
+	alert(JSON.stringify(buyCollections))
+	alert(JSON.stringify(getCollections))
+
 	if (buyProducts.length > 0) {
 		const buyVariantIdList = buyProducts.map((product: any) => {
 			if (product?.variantId) return product.variantId
@@ -38,6 +44,8 @@ export const schemaReBuilder = (configSchema: any): object => {
 	}
 
 	if (!getProductCount) configSchema.getProductCount = 0
+
+	console.log("configSchema", configSchema)
 
 	return configSchema
 }
