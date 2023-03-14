@@ -1,35 +1,37 @@
 export const schemaReBuilder = (configSchema: any): object => {
 	const { buyCollections, getCollections, buyProducts, getProducts, getProductCount } = configSchema
 
-	alert(JSON.stringify(buyProducts))
+	alert(`configSchema---> ${JSON.stringify(configSchema)}`)
+
+	alert(`buyProducts---> ${JSON.stringify(buyProducts)}`)
 
 	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
 
-	alert(JSON.stringify(buyVariantIdList))
+	alert(`buyVariantIdList---> ${JSON.stringify(buyVariantIdList)}`)
 
 	configSchema.buyProducts = buyVariantIdList
 
-	alert(JSON.stringify(getProducts))
+	alert(`getProducts---> ${JSON.stringify(getProducts)}`)
 
 	const getVariantIdList = getProducts.map((product: any) => product.variantId)
 
-	alert(JSON.stringify(getVariantIdList))
+	alert(`getVariantIdList---> ${JSON.stringify(getVariantIdList)}`)
 
 	configSchema.getProducts = getVariantIdList
 
-	alert(JSON.stringify(buyCollections))
+	alert(`buyCollections---> ${JSON.stringify(buyCollections)}`)
 
 	const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
 
-	alert(JSON.stringify(buyCollectionIdList))
+	alert(`buyCollectionIdList---> ${JSON.stringify(buyCollectionIdList)}`)
 
 	configSchema.buyCollections = buyCollectionIdList
 
-	alert(JSON.stringify(getCollections))
+	alert(`getCollections---> ${JSON.stringify(getCollections)}`)
 
 	const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
 
-	alert(JSON.stringify(getCollectionIdList))
+	alert(`getCollectionIdList---> ${JSON.stringify(getCollectionIdList)}`)
 
 	configSchema.getCollections = getCollectionIdList
 
