@@ -129,6 +129,8 @@ export const validateInputData = (data: any): boolean => {
 
 	const getCombinedArray = combineSchemaInputArray(data)
 
+	alert(`getCombinedArray --> ${getCombinedArray}`)
+
 	return getCombinedArray.every((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
@@ -142,6 +144,10 @@ export const validateInputData = (data: any): boolean => {
 
 				return acc
 			}, 0)
+
+			alert(`sum --> ${sum} & cartValue --> ${cartValue}`)
+
+			alert(sum >= cartValue)
 
 			return sum >= cartValue ? true : false
 		}
