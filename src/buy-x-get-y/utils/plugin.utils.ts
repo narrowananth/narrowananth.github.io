@@ -137,7 +137,9 @@ export const validateInputData = (data: any): boolean => {
 
 	const getCombinedArray = combineSchemaInputArray(data)
 
-	return getCombinedArray.every((id: any) => {
+	let total = 0
+
+	getCombinedArray.forEach((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
 				const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
@@ -151,28 +153,35 @@ export const validateInputData = (data: any): boolean => {
 				return acc
 			}, 0)
 
-			return sum >= cartValue ? true : false
+			total += sum
 		}
-		return false
 	})
+
+	return total >= cartValue
 }
 
 export const validateOverAllData = (data: any): boolean => {
 	const { cartType, cartValue, lineItems } = data
 
-	return lineItems.every((lineItem: any) => {
+	const total = lineItems.reduce((acc: number, lineItem: any) => {
 		const { quantity, unitPrice } = lineItem
 
 		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-		return currentValue >= cartValue ? true : false
+		acc += currentValue
+
+		return acc
 	})
+
+	return total >= cartValue
 }
 
 export const validateGetProductCount = (data: any): boolean => {
 	const { customGetProduct, getProductCount, lineItems } = data
 
-	return customGetProduct.every((id: any) => {
+	let dummyQuantity = 0
+
+	customGetProduct.forEach((id: any) => {
 		if (id) {
 			const sum = lineItems.reduce((acc: number, lineItem: any) => {
 				const { collectionId, variantId, quantity } = lineItem || {}
@@ -182,10 +191,11 @@ export const validateGetProductCount = (data: any): boolean => {
 				return acc
 			}, 0)
 
-			return sum >= getProductCount ? true : false
+			dummyQuantity += sum
 		}
-		return false
 	})
+
+	return dummyQuantity >= getProductCount
 }
 
 export const findUserProductCartTotal = (sanitizedLineItem: Array<string>, lineItems: Array<any>): number => {
@@ -214,8 +224,9 @@ export const applyPercentageAndAmountOffer = (
 	discountType: string,
 	discountValue: number,
 	percentageDiscountValue: number,
-	cartTotal: number
-): object => {
+	cartTotal: number,
+	getProductCount: number
+): any => {
 	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
 
 	if (discountType === "percentage") {
@@ -228,7 +239,8 @@ export const applyPercentageAndAmountOffer = (
 			unitPrice: getEditedPrice / quantity,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: `You got ${percentageDiscountValue}% off`
+			discountValue: `You got ${percentageDiscountValue}% off`,
+			customLineItemType: "READONLY"
 		}
 		return finalDiscount
 	} else if (discountType === "amount") {
@@ -245,20 +257,41 @@ export const applyPercentageAndAmountOffer = (
 			unitPrice: getEditedPrice / quantity,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`
+			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`,
+			customLineItemType: "READONLY"
 		}
 
 		return finalDiscount
 	} else if (discountType === "free") {
-		return {
+		const offerArray: object[] = []
+
+		const offerValue = {
 			productId,
 			variantId,
-			quantity,
+			quantity: getProductCount,
 			unitPrice: 0,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: "Free"
+			discountValue: "Free",
+			customLineItemType: "READONLY"
 		}
+
+		offerArray.push(offerValue)
+
+		if (quantity >= getProductCount) {
+			const offerValue = {
+				productId,
+				variantId,
+				quantity: quantity - getProductCount,
+				unitPrice,
+				lineItemHandle,
+				customLineItemType: "REGULAR"
+			}
+
+			offerArray.push(offerValue)
+		}
+
+		return offerArray
 	}
 
 	return {}
@@ -270,30 +303,45 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 	const sanitizedLineItem =
 		offerCategory === "automaticOffers" ? getLineItemsObj(getProducts) : getLineItemsObj(lineItems)
 
-	return customGetProduct.map((id: any) => {
+	const offerArray: object[] = []
+
+	customGetProduct.forEach((id: any) => {
 		if (id) {
-			const { productId, variantId, quantity, lineItemHandle } = sanitizedLineItem[id] || {}
+			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
 
-			const customQuantity = offerCategory === "automaticOffers" ? getProductCount : quantity
-
-			const finalValue = {
+			const offerValue = {
 				productId,
 				variantId,
-				quantity: customQuantity,
+				quantity: getProductCount,
 				unitPrice: 0,
 				lineItemHandle,
 				discountType: offerCategory,
-				discountValue: "Free"
+				discountValue: "Free",
+				customLineItemType: "READONLY"
 			}
 
-			return finalValue
+			offerArray.push(offerValue)
+
+			if (quantity >= getProductCount) {
+				const offerValue = {
+					productId,
+					variantId,
+					quantity: quantity - getProductCount,
+					unitPrice,
+					lineItemHandle,
+					customLineItemType: "REGULAR"
+				}
+
+				offerArray.push(offerValue)
+			}
 		}
-		return {}
 	})
+
+	return offerArray
 }
 
 export const applyPercentageAndAmountDiscount = (data: any): any => {
-	const { offerCategory, buyOfferType, discountType, discountValue, lineItems } = data
+	const { offerCategory, buyOfferType, discountType, discountValue, getProductCount, lineItems } = data
 
 	const getCombinedArray = combineSchemaOfferArray(data)
 
@@ -320,10 +368,12 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 						discountType,
 						discountValue,
 						percentageDiscountValue,
-						cartTotal
+						cartTotal,
+						getProductCount
 					)
 
-					getOffer.push(value)
+					if (discountType === "free") value.forEach((val: any) => getOffer.push(val))
+					else getOffer.push(value)
 				}
 			})
 		} else {
@@ -333,10 +383,12 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 				discountType,
 				discountValue,
 				percentageDiscountValue,
-				cartTotal
+				cartTotal,
+				getProductCount
 			)
 
-			getOffer.push(value)
+			if (discountType === "free") value.forEach((val: any) => getOffer.push(val))
+			else getOffer.push(value)
 		}
 	})
 
