@@ -244,13 +244,16 @@ export const applyPercentageAndAmountOffer = (
 
 		const getPercentageAmount = (getPercentage / 100) * discountValue
 
-		const getEditedPrice = quantity * unitPrice - getPercentageAmount
+		const getEditedPrice =
+			quantity * unitPrice >= getPercentageAmount ? quantity * unitPrice - getPercentageAmount : 0
+
+		const finalAmount = getEditedPrice !== 0 ? getEditedPrice / quantity : 0
 
 		const finalDiscount = {
 			productId,
 			variantId,
 			quantity: quantity,
-			unitPrice: getEditedPrice / quantity,
+			unitPrice: finalAmount,
 			lineItemHandle,
 			discountType: offerCategory,
 			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`,
