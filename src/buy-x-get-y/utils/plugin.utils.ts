@@ -126,9 +126,7 @@ export const findOverAllCartTotal = (sanitizedLineItem: Array<any>): number => {
 	return sanitizedLineItem.reduce((acc: number, currentValue: any) => {
 		const { unitPrice, quantity } = currentValue
 
-		acc += unitPrice * quantity
-
-		return acc
+		return (acc += unitPrice * quantity)
 	}, 0)
 }
 
@@ -168,10 +166,8 @@ export const validateOverAllData = (data: any): boolean => {
 
 		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-		acc += currentValue
-
-		return acc
-	})
+		return (acc += currentValue)
+	}, 0)
 
 	return total >= cartValue
 }
