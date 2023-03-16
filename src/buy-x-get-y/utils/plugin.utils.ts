@@ -222,7 +222,7 @@ export const applyPercentageAndAmountOffer = (
 	percentageDiscountValue: number,
 	cartTotal: number,
 	getProductCount: number
-): any => {
+): object => {
 	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
 
 	if (discountType === "percentage") {
@@ -262,35 +262,17 @@ export const applyPercentageAndAmountOffer = (
 
 		return finalDiscount
 	} else if (discountType === "free") {
-		const offerArray: object[] = []
-
-		const offerValue = {
+		const getFreeOfferValue = applyFreeDiscount({
 			productId,
 			variantId,
-			quantity: getProductCount,
-			unitPrice: 0,
 			lineItemHandle,
-			discountType: offerCategory,
-			discountValue: "Free",
-			customLineItemType: "READONLY"
-		}
+			quantity,
+			getProductCount,
+			unitPrice,
+			offerCategory
+		})
 
-		offerArray.push(offerValue)
-
-		if (quantity >= getProductCount) {
-			const offerValue = {
-				productId,
-				variantId,
-				quantity: quantity - getProductCount,
-				unitPrice,
-				lineItemHandle,
-				customLineItemType: "REGULAR"
-			}
-
-			offerArray.push(offerValue)
-		}
-
-		return offerArray
+		return getFreeOfferValue
 	}
 
 	return {}
@@ -299,8 +281,7 @@ export const applyPercentageAndAmountOffer = (
 export const applyBuyXGetYDiscount = (data: any): object => {
 	const { offerCategory, customGetProduct, getProducts, lineItems, getProductCount } = data
 
-	const sanitizedLineItem =
-		offerCategory === "automaticOffers" ? getLineItemsObj(getProducts) : getLineItemsObj(lineItems)
+	const sanitizedLineItem = getLineItemsObj(lineItems)
 
 	const offerArray: object[] = []
 
@@ -308,31 +289,17 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 		if (id) {
 			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
 
-			const offerValue = {
+			const getFreeOfferValue = applyFreeDiscount({
 				productId,
 				variantId,
-				quantity: getProductCount,
-				unitPrice: 0,
 				lineItemHandle,
-				discountType: offerCategory,
-				discountValue: "Free",
-				customLineItemType: "READONLY"
-			}
+				quantity,
+				getProductCount,
+				unitPrice,
+				offerCategory
+			})
 
-			offerArray.push(offerValue)
-
-			if (quantity >= getProductCount) {
-				const offerValue = {
-					productId,
-					variantId,
-					quantity: quantity - getProductCount,
-					unitPrice,
-					lineItemHandle,
-					customLineItemType: "REGULAR"
-				}
-
-				offerArray.push(offerValue)
-			}
+			offerArray.push(getFreeOfferValue)
 		}
 	})
 
@@ -371,8 +338,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 						getProductCount
 					)
 
-					if (discountType === "free") value.forEach((val: any) => getOffer.push(val))
-					else getOffer.push(value)
+					getOffer.push(value)
 				}
 			})
 		} else {
@@ -386,10 +352,39 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 				getProductCount
 			)
 
-			if (discountType === "free") value.forEach((val: any) => getOffer.push(val))
-			else getOffer.push(value)
+			getOffer.push(value)
 		}
 	})
 
 	return getOffer
+}
+
+export const applyFreeDiscount = (data: any): object => {
+	const { productId, variantId, lineItemHandle, quantity, getProductCount, unitPrice, offerCategory } = data
+
+	const customUnitPrice = quantity >= getProductCount ? unitPrice : 0
+
+	const customQuantity = quantity >= getProductCount ? quantity - getProductCount : getProductCount
+
+	const customDiscountType = quantity >= getProductCount ? undefined : offerCategory
+
+	const customDiscountValue =
+		quantity >= getProductCount
+			? `Buy ${quantity}, get ${getProductCount} Free and ${quantity - getProductCount} for the same price.`
+			: "Free"
+
+	const customLineItemType = quantity >= getProductCount ? "REGULAR" : "READONLY"
+
+	const offerValue = {
+		productId,
+		variantId,
+		quantity: customQuantity,
+		unitPrice: customUnitPrice,
+		lineItemHandle,
+		discountType: customDiscountType,
+		discountValue: customDiscountValue,
+		customLineItemType
+	}
+
+	return offerValue
 }
