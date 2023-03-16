@@ -86,9 +86,9 @@ export const validateOverAllData = (data: any): boolean => {
 }
 
 export const validateGetArrayAvaliable = (data: any): boolean => {
-	const { customGetProduct, customGetCollection, lineItems } = data
+	const { customBuyProduct, customBuyCollection, lineItems } = data
 
-	const validationArray = customGetProduct.concat(customGetCollection)
+	const validationArray = customBuyProduct.concat(customBuyCollection)
 
 	return validationArray.some((id: any) => {
 		return lineItems.some((lineItem: any) => {
