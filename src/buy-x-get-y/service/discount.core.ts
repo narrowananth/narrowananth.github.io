@@ -1,19 +1,23 @@
+import { applyPercentageAndAmountDiscount, applyBuyXGetYDiscount } from "./offerApplies.core"
 import {
 	validateInputData,
 	validateOverAllData,
 	validateGetProductCount,
-	applyBuyXGetYDiscount,
-	applyPercentageAndAmountDiscount
+	validateGetArrayAvaliable
 } from "../utils/plugin.utils"
 
 export const findPercentageAmountDiscounts = (data: any): object => {
-	const { getRemovedProductList, buyOfferType } = data
+	const { getRemovedProductList, buyOfferType, customGetProduct, customGetCollection } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
 	const isOverAllValidInput = buyOfferType === "overAll" ? validateOverAllData(data) : false
 
-	const getDiscoutOffer = isOverAllValidInput || isValidInput ? applyPercentageAndAmountDiscount(data) : []
+	const getArrayAvaliable =
+		customGetProduct.length > 0 || customGetCollection.length > 0 ? validateGetArrayAvaliable(data) : true
+
+	const getDiscoutOffer =
+		(isOverAllValidInput || isValidInput) && getArrayAvaliable ? applyPercentageAndAmountDiscount(data) : []
 
 	return { output: getDiscoutOffer, getRemovedProductList }
 }

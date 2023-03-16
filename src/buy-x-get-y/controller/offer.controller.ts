@@ -1,9 +1,9 @@
 import {
-	findAutomaticDiscounts,
-	findBuyMoreSaveDiscounts,
+	findPercentageAmountDiscounts,
 	findBuyXGetYDiscounts,
-	findPercentageAmountDiscounts
-} from "./discount.core"
+	findBuyMoreSaveDiscounts,
+	findAutomaticDiscounts
+} from "../service/discount.core"
 
 export const percentageDiscountProcess = (data: any): object => {
 	const getPercentageDiscount = findPercentageAmountDiscounts(data)

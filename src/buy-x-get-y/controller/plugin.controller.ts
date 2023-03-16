@@ -6,7 +6,7 @@ import {
 	flatDiscountProcess,
 	percentageDiscountProcess,
 	volumeDiscountProcess
-} from "../service/plugin.core"
+} from "./offer.controller"
 
 export const findOfferCategory = (data: any): object => {
 	const { offerCategory } = data
