@@ -151,8 +151,6 @@ export const applyFreeDiscount = (data: any): object => {
 
 	const customUnitPrice = quantity >= getProductCount ? unitPrice : 0
 
-	const customQuantity = quantity >= getProductCount ? quantity - getProductCount : getProductCount
-
 	const customDiscountType = quantity >= getProductCount ? offerCategory : undefined
 
 	const customDiscountValue =
@@ -165,7 +163,7 @@ export const applyFreeDiscount = (data: any): object => {
 	const offerValue = {
 		productId,
 		variantId,
-		quantity: customQuantity,
+		quantity,
 		unitPrice: customUnitPrice,
 		lineItemHandle,
 		discountType: customDiscountType,
