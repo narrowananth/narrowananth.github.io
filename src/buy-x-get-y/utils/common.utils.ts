@@ -61,15 +61,13 @@ export const resetInputLineItem = (
 	customGetProduct.forEach((key: any) => {
 		const { variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (offerCategory === "automaticOffers" && variantId === key) delete lineItems[key]
-		else if (variantId === key) lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory !== "automaticOffers" && variantId === key) lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	customBuyProduct.forEach((key: any) => {
 		const { variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (offerCategory === "automaticOffers" && variantId === key) delete lineItems[key]
-		else if (variantId === key) lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory !== "automaticOffers" && variantId === key) lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	lineItems = Object.values(lineItems)
