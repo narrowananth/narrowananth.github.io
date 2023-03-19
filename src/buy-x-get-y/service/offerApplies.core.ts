@@ -74,6 +74,8 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 
 	customGetProduct.forEach((id: any, index: number) => {
 		if (id) {
+			const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
+
 			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
 
 			const getFreeOfferValue = applyFreeDiscount({
@@ -85,7 +87,8 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 				unitPrice,
 				offerCategory,
 				customGetProductId: getProducts[index].productId,
-				customGetVariantId: getProducts[index].variantId
+				customGetVariantId: getProducts[index].variantId,
+				isGetProductIdInLineitem
 			})
 
 			offerArray.push(getFreeOfferValue)
@@ -149,9 +152,9 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 }
 
 export const applyFreeDiscount = (data: any): object => {
-	const { getProductCount, customGetProductId, customGetVariantId } = data
+	const { offerCategory, getProductCount, customGetProductId, customGetVariantId, isGetProductIdInLineitem } = data
 
-	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice, offerCategory } = data
+	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice } = data
 
 	const customUnitPrice = quantity === getProductCount ? 0 : unitPrice
 
@@ -171,7 +174,8 @@ export const applyFreeDiscount = (data: any): object => {
 		lineItemHandle,
 		discountType: customDiscountType,
 		discountValue: customDiscountValue,
-		customLineItemType: "REGULAR"
+		customLineItemType: "REGULAR",
+		isGetProductIdInLineitem
 	}
 
 	return offerValue
