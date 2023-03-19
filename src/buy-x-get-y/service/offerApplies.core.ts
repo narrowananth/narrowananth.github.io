@@ -160,10 +160,9 @@ export const applyFreeDiscount = (data: any): object => {
 
 	const customDiscountType = quantity >= getProductCount ? offerCategory : ""
 
-	const customDiscountValue =
-		quantity >= getProductCount
-			? `Buy ${quantity}, get ${getProductCount} Free and ${quantity - getProductCount} for the same price.`
-			: "Free"
+	const customDiscountValue = `Buy ${quantity}, Get ${getProductCount} Free and ${
+		quantity - getProductCount
+	} For the Same Price.`
 
 	const offerValue = {
 		productId: productId || customGetProductId,
