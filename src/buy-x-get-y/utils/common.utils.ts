@@ -23,11 +23,25 @@ export const schemaReBuilder = (configSchema: any): object => {
 }
 
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
-	const { offerCategory, discountType, customGetProduct, customBuyProduct } = getConfigSchema
+	const {
+		offerCategory,
+		discountType,
+		customGetProduct,
+		customBuyProduct,
+		customGetCollection,
+		customBuyCollection
+	} = getConfigSchema
 
 	const getRemovedProductList = removeExistingDiscount(lineItems, discountType, customGetProduct) || []
 
-	lineItems = resetInputLineItem(offerCategory, customGetProduct, customBuyProduct, lineItems)
+	lineItems = resetInputLineItem(
+		offerCategory,
+		customGetProduct,
+		customBuyProduct,
+		customGetCollection,
+		customBuyCollection,
+		lineItems
+	)
 
 	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
 
@@ -38,27 +52,45 @@ export const resetInputLineItem = (
 	offerCategory: String,
 	customGetProduct: Array<any>,
 	customBuyProduct: Array<any>,
+	customGetCollection: Array<any>,
+	customBuyCollection: Array<any>,
 	lineItems: Array<any>
 ): Array<any> => {
 	lineItems = getLineItemsObj(lineItems)
 
 	customGetProduct.forEach((key: any) => {
-		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
+		const { variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
-			delete lineItems[key]
-		else if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory === "automaticOffers" && variantId === key) delete lineItems[key]
+		else if (variantId === key) lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	customBuyProduct.forEach((key: any) => {
-		const { lineItemType, variantId, originalUnitPrice } = lineItems[key] || {}
+		const { variantId, originalUnitPrice } = lineItems[key] || {}
 
-		if (offerCategory === "automaticOffers" && variantId === key && lineItemType === "READONLY")
-			delete lineItems[key]
-		else if (variantId === key && lineItemType === "READONLY") lineItems[key].unitPrice = originalUnitPrice
+		if (offerCategory === "automaticOffers" && variantId === key) delete lineItems[key]
+		else if (variantId === key) lineItems[key].unitPrice = originalUnitPrice
 	})
 
 	lineItems = Object.values(lineItems)
+
+	customGetCollection.forEach((key: any) => {
+		lineItems.forEach((lineItem: any) => {
+			const { collectionId, originalUnitPrice } = lineItem || {}
+
+			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
+			else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
+		})
+	})
+
+	customBuyCollection.forEach((key: any) => {
+		lineItems.forEach((lineItem: any) => {
+			const { collectionId, originalUnitPrice } = lineItem || {}
+
+			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
+			else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
+		})
+	})
 
 	return lineItems
 }
@@ -71,13 +103,13 @@ export const removeExistingDiscount = (
 	const getRemoveItemsList = lineItems
 
 	return getRemoveItemsList.filter((lineItem: any) => {
-		const { variantId, lineItemType, originalUnitPrice } = lineItem
+		const { variantId, unitPrice, originalUnitPrice } = lineItem
 
-		lineItem.unitPrice = originalUnitPrice
+		// lineItem.unitPrice = originalUnitPrice
 
 		if (discountType === "free") return customGetProduct.find((id: any) => id === variantId)
 
-		return lineItemType === "READONLY"
+		return unitPrice !== originalUnitPrice
 	})
 }
 

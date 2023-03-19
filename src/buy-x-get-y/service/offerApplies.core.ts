@@ -23,7 +23,7 @@ export const applyPercentageAndAmountOffer = (
 			lineItemHandle,
 			discountType: offerCategory,
 			discountValue: `You got ${percentageDiscountValue}% off`,
-			customLineItemType: "READONLY"
+			customLineItemType: "REGULAR"
 		}
 		return finalDiscount
 	} else if (discountType === "amount") {
@@ -44,7 +44,7 @@ export const applyPercentageAndAmountOffer = (
 			lineItemHandle,
 			discountType: offerCategory,
 			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`,
-			customLineItemType: "READONLY"
+			customLineItemType: "REGULAR"
 		}
 
 		return finalDiscount
@@ -158,7 +158,7 @@ export const applyFreeDiscount = (data: any): object => {
 			? `Buy ${quantity}, get ${getProductCount} Free and ${quantity - getProductCount} for the same price.`
 			: "Free"
 
-	const customLineItemType = quantity >= getProductCount ? "REGULAR" : "READONLY"
+	// const customLineItemType = quantity >= getProductCount ? "REGULAR" : "READONLY"
 
 	const offerValue = {
 		productId,
@@ -169,7 +169,7 @@ export const applyFreeDiscount = (data: any): object => {
 		lineItemHandle,
 		discountType: customDiscountType,
 		discountValue: customDiscountValue,
-		customLineItemType
+		customLineItemType: "REGULAR"
 	}
 
 	return offerValue
