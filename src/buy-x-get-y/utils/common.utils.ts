@@ -105,7 +105,7 @@ export const removeExistingDiscount = (
 	return getRemoveItemsList.filter((lineItem: any) => {
 		const { variantId, unitPrice, originalUnitPrice } = lineItem
 
-		// lineItem.unitPrice = originalUnitPrice
+		lineItem.unitPrice = originalUnitPrice
 
 		if (discountType === "free") return customGetProduct.find((id: any) => id === variantId)
 
