@@ -79,7 +79,7 @@ export const resetInputLineItem = (
 			const { collectionId, originalUnitPrice } = lineItem || {}
 
 			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
-			else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
+			// else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
 		})
 	})
 
@@ -88,7 +88,7 @@ export const resetInputLineItem = (
 			const { collectionId, originalUnitPrice } = lineItem || {}
 
 			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
-			else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
+			// else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
 		})
 	})
 

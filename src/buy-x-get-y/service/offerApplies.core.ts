@@ -151,7 +151,7 @@ export const applyFreeDiscount = (data: any): object => {
 
 	const customUnitPrice = quantity === getProductCount ? 0 : unitPrice
 
-	const customDiscountType = quantity >= getProductCount ? offerCategory : undefined
+	const customDiscountType = quantity >= getProductCount ? offerCategory : ""
 
 	const customDiscountValue =
 		quantity >= getProductCount
