@@ -149,17 +149,9 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 }
 
 export const applyFreeDiscount = (data: any): object => {
-	const {
-		productId,
-		variantId,
-		lineItemHandle,
-		quantity,
-		getProductCount,
-		unitPrice,
-		offerCategory,
-		customGetProductId,
-		customGetVariantId
-	} = data
+	const { getProductCount, customGetProductId, customGetVariantId } = data
+
+	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice, offerCategory } = data
 
 	const customUnitPrice = quantity === getProductCount ? 0 : unitPrice
 
