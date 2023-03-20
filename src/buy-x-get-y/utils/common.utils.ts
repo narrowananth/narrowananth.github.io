@@ -1,5 +1,11 @@
 export const schemaReBuilder = (configSchema: any): object => {
-	const { buyCollections, getCollections, buyProducts, getProducts, getProductCount } = configSchema
+	const {
+		buyCollections = [],
+		getCollections = [],
+		buyProducts = [],
+		getProducts = [],
+		getProductCount
+	} = configSchema
 
 	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
 

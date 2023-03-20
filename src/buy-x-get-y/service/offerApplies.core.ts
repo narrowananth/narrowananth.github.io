@@ -66,7 +66,7 @@ export const applyPercentageAndAmountOffer = (
 }
 
 export const applyBuyXGetYDiscount = (data: any): object => {
-	const { offerCategory, getProducts, customGetProduct, lineItems, getProductCount } = data
+	const { offerCategory, getProducts = [], customGetProduct, lineItems, getProductCount } = data
 
 	const sanitizedLineItem = getLineItemsObj(lineItems)
 
@@ -86,8 +86,8 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 				getProductCount,
 				unitPrice,
 				offerCategory,
-				customGetProductId: getProducts[index].productId,
-				customGetVariantId: getProducts[index].variantId,
+				customGetProductId: getProducts[index]?.productId,
+				customGetVariantId: getProducts[index]?.variantId,
 				isGetProductIdInLineitem
 			})
 
