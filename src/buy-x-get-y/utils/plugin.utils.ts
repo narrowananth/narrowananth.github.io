@@ -95,6 +95,20 @@ export const validateBuyArrayAvaliable = (data: any): boolean => {
 	})
 }
 
+export const validateGetArrayAvaliable = (data: any): boolean => {
+	const { customGetProduct, customGetCollection, lineItems } = data
+
+	const validationArray = customGetProduct.concat(customGetCollection)
+
+	return validationArray.some((id: any) => {
+		return lineItems.some((lineItem: any) => {
+			const { collectionId, variantId } = lineItem || {}
+
+			return variantId === id || collectionId === id
+		})
+	})
+}
+
 export const validateGetProductCount = (data: any): boolean => {
 	const { customGetProduct, getProductCount, lineItems } = data
 
