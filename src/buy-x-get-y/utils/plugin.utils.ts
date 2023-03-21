@@ -30,7 +30,17 @@ export const combineSchemaOfferArray = (data: any): Array<string> => {
 
 	const yValue = customGetCollection.length > 0 ? customGetCollection : customBuyCollection
 
-	const combinedArray = xValue.concat(yValue)
+	const buyAlternativeArray =
+		customBuyProduct.length > 0 && customGetCollection.length > 0 ? customGetCollection : undefined
+
+	const getAlternativeArray =
+		customGetProduct.length > 0 && customBuyCollection.length > 0 ? customGetProduct : undefined
+
+	const customBuyArray = buyAlternativeArray || xValue
+
+	const customeGetArray = getAlternativeArray || yValue
+
+	const combinedArray = customBuyArray.concat(customeGetArray)
 
 	return combinedArray
 }
