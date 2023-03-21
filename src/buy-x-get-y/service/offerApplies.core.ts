@@ -156,19 +156,23 @@ export const applyFreeDiscount = (data: any): object => {
 
 	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice } = data
 
-	const customUnitPrice = quantity === getProductCount ? 0 : unitPrice
+	const customFreeQuantity = isGetProductIdInLineitem && getProductCount > quantity ? getProductCount : quantity
 
-	const customDiscountType = quantity >= getProductCount ? offerCategory : ""
+	const customUnitPrice = customFreeQuantity === getProductCount ? 0 : unitPrice
+
+	const customDiscountType = customFreeQuantity >= getProductCount ? offerCategory : ""
 
 	const customDiscountValue =
-		quantity >= getProductCount
-			? `Buy ${quantity}, Get ${getProductCount} Free and ${quantity - getProductCount} For the Same Price.`
+		customFreeQuantity >= getProductCount
+			? `Buy ${customFreeQuantity}, Get ${getProductCount} Free and ${
+					customFreeQuantity - getProductCount
+			  } For the Same Price.`
 			: ""
 
 	const offerValue = {
 		productId: productId || customGetProductId,
 		variantId: variantId || customGetVariantId,
-		quantity: quantity || getProductCount,
+		quantity: customFreeQuantity,
 		freeQuantity: getProductCount,
 		unitPrice: customUnitPrice,
 		lineItemHandle,
