@@ -3,7 +3,7 @@ import {
 	validateInputData,
 	validateOverAllData,
 	validateGetProductCount,
-	validateGetArrayAvaliable
+	validateBuyArrayAvaliable
 } from "../utils/plugin.utils"
 
 export const findPercentageAmountDiscounts = (data: any): object => {
@@ -14,7 +14,7 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 	const isOverAllValidInput = buyOfferType === "overAll" ? validateOverAllData(data) : false
 
 	const getArrayAvaliable =
-		customGetProduct.length > 0 || customGetCollection.length > 0 ? validateGetArrayAvaliable(data) : true
+		customGetProduct.length > 0 || customGetCollection.length > 0 ? validateBuyArrayAvaliable(data) : true
 
 	const getDiscoutOffer =
 		(isOverAllValidInput || isValidInput) && getArrayAvaliable ? applyPercentageAndAmountDiscount(data) : []

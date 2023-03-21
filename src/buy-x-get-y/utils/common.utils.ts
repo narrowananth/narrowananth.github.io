@@ -29,74 +29,27 @@ export const schemaReBuilder = (configSchema: any): object => {
 }
 
 export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
-	const {
-		offerCategory,
-		discountType,
-		customGetProduct,
-		customBuyProduct,
-		customGetCollection,
-		customBuyCollection
-	} = getConfigSchema
+	const { discountType, customGetProduct } = getConfigSchema
 
 	const getRemovedProductList = removeExistingDiscount(lineItems, discountType, customGetProduct) || []
 
-	lineItems = resetInputLineItem(
-		offerCategory,
-		customGetProduct,
-		customBuyProduct,
-		customGetCollection,
-		customBuyCollection,
-		lineItems
-	)
+	const modifiedLineItem = resetInputLineItem(lineItems)
 
-	const config = { ...getConfigSchema, lineItems, getRemovedProductList }
+	const config = { ...getConfigSchema, lineItems: modifiedLineItem, getRemovedProductList }
 
 	return config
 }
 
-export const resetInputLineItem = (
-	offerCategory: String,
-	customGetProduct: Array<any>,
-	customBuyProduct: Array<any>,
-	customGetCollection: Array<any>,
-	customBuyCollection: Array<any>,
-	lineItems: Array<any>
-): Array<any> => {
-	lineItems = getLineItemsObj(lineItems)
+export const resetInputLineItem = (lineItems: Array<any>): Array<any> => {
+	const modifiedLineItem = lineItems.map((lineItem: any) => {
+		const { originalUnitPrice } = lineItem
 
-	customGetProduct.forEach((key: any) => {
-		const { variantId, originalUnitPrice } = lineItems[key] || {}
+		lineItem.unitPrice = originalUnitPrice
 
-		if (offerCategory !== "automaticOffers" && variantId === key) lineItems[key].unitPrice = originalUnitPrice
+		return lineItem
 	})
 
-	customBuyProduct.forEach((key: any) => {
-		const { variantId, originalUnitPrice } = lineItems[key] || {}
-
-		if (offerCategory !== "automaticOffers" && variantId === key) lineItems[key].unitPrice = originalUnitPrice
-	})
-
-	lineItems = Object.values(lineItems)
-
-	customGetCollection.forEach((key: any) => {
-		lineItems.forEach((lineItem: any) => {
-			const { collectionId, originalUnitPrice } = lineItem || {}
-
-			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
-			// else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
-		})
-	})
-
-	customBuyCollection.forEach((key: any) => {
-		lineItems.forEach((lineItem: any) => {
-			const { collectionId, originalUnitPrice } = lineItem || {}
-
-			if (offerCategory === "automaticOffers" && collectionId === key) delete lineItems[key]
-			// else if (collectionId === key) lineItems[key].unitPrice = originalUnitPrice
-		})
-	})
-
-	return lineItems
+	return modifiedLineItem
 }
 
 export const removeExistingDiscount = (

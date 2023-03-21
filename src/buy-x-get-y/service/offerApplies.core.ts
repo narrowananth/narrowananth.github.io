@@ -116,7 +116,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 
 	sanitizedLineItem.forEach((key: any) => {
 		if (key && typeof key === "string") {
-			return lineItems.forEach((lineItem: any) => {
+			lineItems.forEach((lineItem: any) => {
 				const { collectionId, variantId } = lineItem || {}
 
 				if (variantId === key || collectionId === key) {

@@ -48,25 +48,21 @@ export const validateInputData = (data: any): boolean => {
 
 	const getCombinedArray = combineSchemaInputArray(data)
 
-	let total = 0
+	const total = getCombinedArray.reduce((total: number, id: string) => {
+		const sum = lineItems.reduce((sum: number, lineItem: any) => {
+			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
-	getCombinedArray.forEach((id: any) => {
-		if (id) {
-			const sum = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
+			if (variantId === id || collectionId === id) {
+				const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-				if (variantId === id || collectionId === id) {
-					const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
+				sum += currentValue
+			}
 
-					acc += currentValue
-				}
+			return sum
+		}, 0)
 
-				return acc
-			}, 0)
-
-			total += sum
-		}
-	})
+		return (total += sum)
+	}, 0)
 
 	return total >= cartValue
 }
@@ -85,7 +81,7 @@ export const validateOverAllData = (data: any): boolean => {
 	return total >= cartValue
 }
 
-export const validateGetArrayAvaliable = (data: any): boolean => {
+export const validateBuyArrayAvaliable = (data: any): boolean => {
 	const { customBuyProduct, customBuyCollection, lineItems } = data
 
 	const validationArray = customBuyProduct.concat(customBuyCollection)
@@ -102,41 +98,31 @@ export const validateGetArrayAvaliable = (data: any): boolean => {
 export const validateGetProductCount = (data: any): boolean => {
 	const { customGetProduct, getProductCount, lineItems } = data
 
-	let dummyQuantity = 0
+	const quantity = customGetProduct.reduce((count: number, id: string) => {
+		const sum = lineItems.reduce((acc: number, lineItem: any) => {
+			const { collectionId, variantId, quantity } = lineItem || {}
 
-	customGetProduct.forEach((id: any) => {
-		if (id) {
-			const sum = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity } = lineItem || {}
+			if (variantId === id || collectionId === id) acc += quantity
 
-				if (variantId === id || collectionId === id) acc += quantity
+			return acc
+		}, 0)
 
-				return acc
-			}, 0)
+		return (count += sum)
+	}, 0)
 
-			dummyQuantity += sum
-		}
-	})
-
-	return dummyQuantity >= getProductCount
+	return quantity >= getProductCount
 }
 
 export const findUserProductCartTotal = (sanitizedLineItem: Array<string>, lineItems: Array<any>): number => {
-	let cartValue = 0
+	return sanitizedLineItem.reduce((total: number, key: string) => {
+		const sum = lineItems.reduce((acc: number, lineItem: any) => {
+			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
-	sanitizedLineItem.forEach((key: any) => {
-		if (key) {
-			const total = lineItems.reduce((acc: number, lineItem: any) => {
-				const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
+			if (variantId === key || collectionId === key) acc += quantity * unitPrice
 
-				if (variantId === key || collectionId === key) acc += quantity * unitPrice
+			return acc
+		}, 0)
 
-				return acc
-			}, 0)
-
-			cartValue += total
-		}
-	})
-
-	return cartValue
+		return (total += sum)
+	}, 0)
 }
