@@ -65,7 +65,7 @@ export const applyPercentageAndAmountOffer = (
 	return {}
 }
 
-export const applyBuyXGetYDiscount = (data: any): object => {
+export const applyBuyXGetYDiscount = (data: any): any => {
 	const { offerCategory, getProducts = [], customGetProduct, lineItems, getProductCount } = data
 
 	const sanitizedLineItem = getLineItemsObj(lineItems)

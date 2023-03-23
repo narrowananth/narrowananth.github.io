@@ -6,9 +6,10 @@ import {
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable
 } from "../utils/plugin.utils"
+import { constructDisplayTextHtmlBuilder } from "../utils/common.utils"
 
 export const findPercentageAmountDiscounts = (data: any): object => {
-	const { getRemovedProductList, buyOfferType, customGetProduct, customGetCollection } = data
+	const { getRemovedProductList, buyOfferType, customGetProduct, customGetCollection, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
@@ -34,11 +35,13 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
-	return { output: getDiscoutOffer, getRemovedProductList }
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
 export const findBuyXGetYDiscounts = (data: any): object => {
-	const { getRemovedProductList } = data
+	const { getRemovedProductList, displayText } = data
 
 	const isValidInput = validateInputData(data)
 
@@ -46,11 +49,13 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXGetYDiscount(data) : []
 
-	return { output: getDiscoutOffer, getRemovedProductList }
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
 export const findBuyMoreSaveDiscounts = (data: any) => {
-	const { getRemovedProductList, getProductCount } = data
+	const { getRemovedProductList, getProductCount, displayText } = data
 
 	const isValidInput = validateInputData(data)
 
@@ -58,15 +63,19 @@ export const findBuyMoreSaveDiscounts = (data: any) => {
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyPercentageAndAmountDiscount(data) : []
 
-	return { output: getDiscoutOffer, getRemovedProductList }
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
 export const findAutomaticDiscounts = (data: any): object => {
-	const { getRemovedProductList } = data
+	const { getRemovedProductList, displayText } = data
 
 	const isValidInput = validateInputData(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
-	return { output: getDiscoutOffer, getRemovedProductList }
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
