@@ -39,6 +39,8 @@ export const combineSchemaOfferArray = (data: any): Array<string> => {
 			? buyAlternativeArray.concat(getAlternativeArray)
 			: xValue.concat(yValue)
 
+	console.log(combinedArray)
+
 	return combinedArray
 }
 

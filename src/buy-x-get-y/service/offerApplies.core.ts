@@ -106,7 +106,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 	const getCombinedArray = combineSchemaOfferArray(data)
 
 	const sanitizedLineItem =
-		buyOfferType === "overAll" && customGetProduct.length > 0 && customGetCollection.length > 0
+		buyOfferType === "overAll" && customGetProduct.length <= 0 && customGetCollection.length <= 0
 			? lineItems
 			: getCombinedArray
 
