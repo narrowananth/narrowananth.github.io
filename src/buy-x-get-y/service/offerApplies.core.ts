@@ -99,11 +99,16 @@ export const applyBuyXGetYDiscount = (data: any): object => {
 }
 
 export const applyPercentageAndAmountDiscount = (data: any): any => {
-	const { offerCategory, buyOfferType, discountType, discountValue, getProductCount, lineItems } = data
+	const { offerCategory, buyOfferType, discountType, discountValue } = data
+
+	const { getProductCount, lineItems, customGetProduct, customGetCollection } = data
 
 	const getCombinedArray = combineSchemaOfferArray(data)
 
-	const sanitizedLineItem = buyOfferType === "overAll" ? lineItems : getCombinedArray
+	const sanitizedLineItem =
+		buyOfferType === "overAll" && customGetProduct.length > 0 && customGetCollection.length > 0
+			? lineItems
+			: getCombinedArray
 
 	const cartTotal =
 		buyOfferType === "overAll"
