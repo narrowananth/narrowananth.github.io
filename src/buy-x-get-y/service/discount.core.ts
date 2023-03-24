@@ -35,7 +35,8 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
@@ -49,7 +50,8 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXGetYDiscount(data) : []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
@@ -63,7 +65,8 @@ export const findBuyMoreSaveDiscounts = (data: any) => {
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyPercentageAndAmountDiscount(data) : []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
@@ -75,7 +78,8 @@ export const findAutomaticDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
