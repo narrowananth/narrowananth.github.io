@@ -1,37 +1,31 @@
 import {
-	automaticOffersProcess,
-	buyMoreSaveMoreProcess,
-	buyXGetYProcess,
-	couponCodeProcess,
-	flatDiscountProcess,
-	percentageDiscountProcess,
-	volumeDiscountProcess
-} from "./offer.controller"
+	findPercentageAmountDiscounts,
+	findBuyXGetYDiscounts,
+	findBuyMoreSaveDiscounts,
+	findAutomaticDiscounts
+} from "../service/discount.core"
 
 export const findOfferCategory = (data: any): object => {
 	const { offerCategory } = data
 
 	switch (offerCategory) {
 		case "percentageDiscount":
-			return percentageDiscountProcess(data)
+			return findPercentageAmountDiscounts(data)
 
 		case "flatDiscount":
-			return flatDiscountProcess(data)
+			return findPercentageAmountDiscounts(data)
 
 		case "volumeDiscount":
-			return volumeDiscountProcess(data)
+			return findPercentageAmountDiscounts(data)
 
 		case "buyXGetY":
-			return buyXGetYProcess(data)
+			return findBuyXGetYDiscounts(data)
 
 		case "buyMoreSaveMore":
-			return buyMoreSaveMoreProcess(data)
+			return findBuyMoreSaveDiscounts(data)
 
 		case "automaticOffers":
-			return automaticOffersProcess(data)
-
-		case "couponCode":
-			return couponCodeProcess(data)
+			return findAutomaticDiscounts(data)
 
 		default:
 			return {}
