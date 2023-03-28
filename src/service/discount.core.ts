@@ -13,20 +13,24 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
-	const [buyArrayAvaliable, getArrayAvaliable] =
+	const buyArrayAvaliable =
 		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
-			? [validateBuyArrayAvaliable(data), validateGetArrayAvaliable(data)]
-			: [true, true]
+			? validateBuyArrayAvaliable(data)
+			: true
 
-	const isOverAllValid = buyOfferType === "overAll" ? validateOverAllData(data) : false
+	const getArrayAvaliable =
+		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
+	buyOfferType !== "overAll" ? validateGetArrayAvaliable(data) : true
 
 	const isOverAllGetLevelValid =
 		buyOfferType === "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
 			? validateGetArrayAvaliable(data)
 			: true
 
+	const isOverAllValid = buyOfferType === "overAll" && isOverAllGetLevelValid ? validateOverAllData(data) : false
+
 	const getDiscoutOffer =
-		((isOverAllValid && isOverAllGetLevelValid) || isValidInput) && buyArrayAvaliable && getArrayAvaliable
+		(isOverAllValid || isValidInput) && buyArrayAvaliable && getArrayAvaliable
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
