@@ -62,8 +62,10 @@ export const validateInputData = (data: any): boolean => {
 			if (variantId === id || collectionId === id) {
 				const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-				return (acc += currentValue)
+				acc += currentValue
 			}
+
+			return acc
 		}, 0)
 
 		return (total += sum)
