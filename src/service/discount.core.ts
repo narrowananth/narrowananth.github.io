@@ -20,7 +20,8 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 
 	const getArrayAvaliable =
 		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
-	buyOfferType !== "overAll" ? validateGetArrayAvaliable(data) : true
+			? validateGetArrayAvaliable(data)
+			: true
 
 	const isOverAllGetLevelValid =
 		buyOfferType === "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
