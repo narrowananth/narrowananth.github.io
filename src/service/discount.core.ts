@@ -13,25 +13,20 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
+	const [buyArrayAvaliable, getArrayAvaliable] =
+		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
+			? [validateBuyArrayAvaliable(data), validateGetArrayAvaliable(data)]
+			: [true, true]
+
+	const isOverAllValid = buyOfferType === "overAll" ? validateOverAllData(data) : false
+
 	const isOverAllGetLevelValid =
 		buyOfferType === "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
 			? validateGetArrayAvaliable(data)
 			: true
 
-	const isOverAllValid = buyOfferType === "overAll" && isOverAllGetLevelValid ? validateOverAllData(data) : false
-
-	const buyArrayAvaliable =
-		(customGetProduct.length > 0 || customGetCollection.length > 0) && buyOfferType !== "overAll"
-			? validateBuyArrayAvaliable(data)
-			: true
-
-	const getArrayAvaliable =
-		(customGetProduct.length > 0 || customGetCollection.length > 0) && buyOfferType !== "overAll"
-			? validateGetArrayAvaliable(data)
-			: true
-
 	const getDiscoutOffer =
-		(isOverAllValid || isValidInput) && buyArrayAvaliable && getArrayAvaliable
+		((isOverAllValid && isOverAllGetLevelValid) || isValidInput) && buyArrayAvaliable && getArrayAvaliable
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
@@ -42,9 +37,9 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 }
 
 export const findBuyXGetYDiscounts = (data: any): object => {
-	const { getRemovedProductList, displayText } = data
+	const { getRemovedProductList, buyOfferType, displayText } = data
 
-	const isValidInput = validateInputData(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
@@ -56,25 +51,10 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
-export const findBuyMoreSaveDiscounts = (data: any) => {
-	const { getRemovedProductList, getProductCount, displayText } = data
-
-	const isValidInput = validateInputData(data)
-
-	const isGetProductValid = getProductCount !== 0 ? validateGetProductCount(data) : true
-
-	const getDiscoutOffer = isValidInput && isGetProductValid ? applyPercentageAndAmountDiscount(data) : []
-
-	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
-
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
-}
-
 export const findAutomaticDiscounts = (data: any): object => {
-	const { getRemovedProductList, displayText } = data
+	const { getRemovedProductList, buyOfferType, displayText } = data
 
-	const isValidInput = validateInputData(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 

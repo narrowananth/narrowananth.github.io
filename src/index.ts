@@ -1,5 +1,5 @@
-import { findOfferCategory } from "./buy-x-get-y/controller/plugin.controller"
-import { buildInputData, schemaReBuilder } from "./buy-x-get-y/utils/common.utils"
+import { findOfferCategory } from "./controller/plugin.controller"
+import { buildInputData, schemaReBuilder } from "./utils/common.utils"
 
 export const showMessage = (message: any) => {
 	return message

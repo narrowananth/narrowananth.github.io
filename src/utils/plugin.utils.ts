@@ -39,8 +39,6 @@ export const combineSchemaOfferArray = (data: any): Array<string> => {
 			? buyAlternativeArray.concat(getAlternativeArray)
 			: xValue.concat(yValue)
 
-	console.log(combinedArray)
-
 	return combinedArray
 }
 
@@ -58,16 +56,14 @@ export const validateInputData = (data: any): boolean => {
 	const getCombinedArray = combineSchemaInputArray(data)
 
 	const total = getCombinedArray.reduce((total: number, id: string) => {
-		const sum = lineItems.reduce((sum: number, lineItem: any) => {
+		const sum = lineItems.reduce((acc: number, lineItem: any) => {
 			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 			if (variantId === id || collectionId === id) {
 				const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-				sum += currentValue
+				return (acc += currentValue)
 			}
-
-			return sum
 		}, 0)
 
 		return (total += sum)
