@@ -73,26 +73,24 @@ export const applyBuyXGetYDiscount = (data: any): any => {
 	const offerArray: object[] = []
 
 	customGetProduct.forEach((id: any, index: number) => {
-		if (id) {
-			const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
+		const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
-			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
+		const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
 
-			const getFreeOfferValue = applyFreeDiscount({
-				productId,
-				variantId,
-				lineItemHandle,
-				quantity,
-				getProductCount,
-				unitPrice,
-				offerCategory,
-				customGetProductId: getProducts[index]?.productId,
-				customGetVariantId: getProducts[index]?.variantId,
-				isGetProductIdInLineitem
-			})
+		const getFreeOfferValue = applyFreeDiscount({
+			productId,
+			variantId,
+			lineItemHandle,
+			quantity,
+			getProductCount,
+			unitPrice,
+			offerCategory,
+			customGetProductId: getProducts[index]?.productId,
+			customGetVariantId: getProducts[index]?.variantId,
+			isGetProductIdInLineitem
+		})
 
-			offerArray.push(getFreeOfferValue)
-		}
+		offerArray.push(getFreeOfferValue)
 	})
 
 	return offerArray
@@ -138,19 +136,18 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 					getOffer.push(value)
 				}
 			})
-		} else {
-			const value = applyPercentageAndAmountOffer(
-				offerCategory,
-				key,
-				discountType,
-				discountValue,
-				percentageDiscountValue,
-				cartTotal,
-				getProductCount
-			)
-
-			getOffer.push(value)
 		}
+		const value = applyPercentageAndAmountOffer(
+			offerCategory,
+			key,
+			discountType,
+			discountValue,
+			percentageDiscountValue,
+			cartTotal,
+			getProductCount
+		)
+
+		getOffer.push(value)
 	})
 
 	return getOffer
