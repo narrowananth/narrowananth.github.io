@@ -6,7 +6,6 @@ import {
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable
 } from "../utils/plugin.utils"
-import { constructDisplayTextHtmlBuilder } from "../utils/common.utils"
 
 export const findPercentageAmountDiscounts = (data: any): object => {
 	const { getRemovedProductList, buyOfferType, customGetProduct, customGetCollection, displayText } = data
@@ -35,8 +34,7 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
-	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
@@ -50,8 +48,7 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXGetYDiscount(data) : []
 
-	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
@@ -63,8 +60,7 @@ export const findAutomaticDiscounts = (data: any): object => {
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
-	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? constructDisplayTextHtmlBuilder(displayText) : ""
+	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
