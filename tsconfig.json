@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
+        "outDir": "./plugin/v1.0/",
         "sourceMap": true,
         "strict": true,
         "noImplicitReturns": true,

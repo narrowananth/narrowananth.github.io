@@ -6,7 +6,7 @@ const __dirname = path.resolve()
 const config = {
 	entry: "./src/index.ts",
 	output: {
-		path: _resolve(__dirname, "dist"),
+		path: _resolve(__dirname, "plugin/v1.0"),
 		filename: "vajroPlugin.js",
 		library: "vajroPlugin"
 	},

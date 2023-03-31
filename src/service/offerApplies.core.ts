@@ -26,7 +26,9 @@ export const applyPercentageAndAmountOffer = (
 			customLineItemType: "REGULAR"
 		}
 		return finalDiscount
-	} else if (discountType === "amount") {
+	}
+
+	if (discountType === "amount") {
 		const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
 
 		const getPercentageAmount = (getPercentage / 100) * discountValue
@@ -48,18 +50,6 @@ export const applyPercentageAndAmountOffer = (
 		}
 
 		return finalDiscount
-	} else if (discountType === "free") {
-		const getFreeOfferValue = applyFreeDiscount({
-			productId,
-			variantId,
-			lineItemHandle,
-			quantity,
-			getProductCount,
-			unitPrice,
-			offerCategory
-		})
-
-		return getFreeOfferValue
 	}
 
 	return {}
@@ -70,9 +60,15 @@ export const applyBuyXGetYDiscount = (data: any): any => {
 
 	const sanitizedLineItem = getLineItemsObj(lineItems)
 
+	const filterGetProduct = customGetProduct.filter((id: any) => sanitizedLineItem[id])
+
+	const sortFilteredArray = filterGetProduct.sort(
+		(start: any, next: any) => sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
+	)
+
 	const offerArray: object[] = []
 
-	customGetProduct.forEach((id: any, index: number) => {
+	sortFilteredArray.forEach((id: any, index: number) => {
 		const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
 		const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
