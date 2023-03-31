@@ -68,25 +68,35 @@ export const applyBuyXGetYDiscount = (data: any): any => {
 
 	const offerArray: object[] = []
 
+	let localProductCountTrack = getProductCount
+
 	sortFilteredArray.forEach((id: any, index: number) => {
-		const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
+		if (localProductCountTrack) {
+			const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
-		const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
+			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
 
-		const getFreeOfferValue = applyFreeDiscount({
-			productId,
-			variantId,
-			lineItemHandle,
-			quantity,
-			getProductCount,
-			unitPrice,
-			offerCategory,
-			customGetProductId: getProducts[index]?.productId,
-			customGetVariantId: getProducts[index]?.variantId,
-			isGetProductIdInLineitem
-		})
+			const customFreeQuantity = localProductCountTrack > quantity ? quantity : localProductCountTrack
 
-		offerArray.push(getFreeOfferValue)
+			localProductCountTrack -= quantity
+
+			if (localProductCountTrack < 0) localProductCountTrack = 0
+
+			const getFreeOfferValue = applyFreeDiscount({
+				productId,
+				variantId,
+				lineItemHandle,
+				quantity,
+				getProductCount: customFreeQuantity,
+				unitPrice,
+				offerCategory,
+				customGetProductId: getProducts[index]?.productId,
+				customGetVariantId: getProducts[index]?.variantId,
+				isGetProductIdInLineitem
+			})
+
+			offerArray.push(getFreeOfferValue)
+		}
 	})
 
 	return offerArray
