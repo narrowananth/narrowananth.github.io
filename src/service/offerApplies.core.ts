@@ -7,6 +7,61 @@ import {
 import { getLineItemsObj } from "../utils/common.utils"
 import { combineSchemaOfferArray, findOverAllCartTotal, findUserProductCartTotal } from "../utils/plugin.utils"
 
+export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountDiscount): Array<object> => {
+	const { offerCategory, buyOfferType, discountType, discountValue } = data
+
+	const { lineItems, customGetProduct, customGetCollection } = data
+
+	const getCombinedArray = combineSchemaOfferArray(data)
+
+	const sanitizedLineItem =
+		buyOfferType === "overAll" && customGetProduct.length <= 0 && customGetCollection.length <= 0
+			? lineItems
+			: getCombinedArray
+
+	const cartTotal =
+		buyOfferType === "overAll"
+			? findOverAllCartTotal(sanitizedLineItem)
+			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
+
+	const percentageDiscountValue = discountType === "percentage" && discountValue >= 100 ? 100 : discountValue
+
+	const getOffer: object[] = []
+
+	sanitizedLineItem.forEach((key: any) => {
+		if (typeof key === "string") {
+			lineItems.forEach((lineItem: LineItem) => {
+				const { collectionId, variantId } = lineItem || {}
+
+				if (variantId === key || collectionId === key) {
+					const value = applyPercentageAndAmountOffer(
+						offerCategory,
+						lineItem,
+						discountType,
+						discountValue,
+						percentageDiscountValue,
+						cartTotal
+					)
+
+					getOffer.push(value)
+				}
+			})
+		}
+		const value = applyPercentageAndAmountOffer(
+			offerCategory,
+			key,
+			discountType,
+			discountValue,
+			percentageDiscountValue,
+			cartTotal
+		)
+
+		getOffer.push(value)
+	})
+
+	return getOffer
+}
+
 export const applyPercentageAndAmountOffer = (
 	offerCategory: string,
 	lineItem: LineItem,
@@ -105,61 +160,6 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 	})
 
 	return offerArray
-}
-
-export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountDiscount): Array<object> => {
-	const { offerCategory, buyOfferType, discountType, discountValue } = data
-
-	const { lineItems, customGetProduct, customGetCollection } = data
-
-	const getCombinedArray = combineSchemaOfferArray(data)
-
-	const sanitizedLineItem =
-		buyOfferType === "overAll" && customGetProduct.length <= 0 && customGetCollection.length <= 0
-			? lineItems
-			: getCombinedArray
-
-	const cartTotal =
-		buyOfferType === "overAll"
-			? findOverAllCartTotal(sanitizedLineItem)
-			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
-
-	const percentageDiscountValue = discountType === "percentage" && discountValue >= 100 ? 100 : discountValue
-
-	const getOffer: object[] = []
-
-	sanitizedLineItem.forEach((key: any) => {
-		if (typeof key === "string") {
-			lineItems.forEach((lineItem: LineItem) => {
-				const { collectionId, variantId } = lineItem || {}
-
-				if (variantId === key || collectionId === key) {
-					const value = applyPercentageAndAmountOffer(
-						offerCategory,
-						lineItem,
-						discountType,
-						discountValue,
-						percentageDiscountValue,
-						cartTotal
-					)
-
-					getOffer.push(value)
-				}
-			})
-		}
-		const value = applyPercentageAndAmountOffer(
-			offerCategory,
-			key,
-			discountType,
-			discountValue,
-			percentageDiscountValue,
-			cartTotal
-		)
-
-		getOffer.push(value)
-	})
-
-	return getOffer
 }
 
 export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {

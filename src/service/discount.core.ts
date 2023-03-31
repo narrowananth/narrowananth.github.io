@@ -50,7 +50,7 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const { getRemovedProductList, buyOfferType, displayText = "" } = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
@@ -64,7 +64,7 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const { getRemovedProductList, buyOfferType, displayText = "" } = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
