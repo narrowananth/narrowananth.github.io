@@ -88,6 +88,26 @@ export const validateOverAllData = (data: any): boolean => {
 	return total >= cartValue
 }
 
+export const findFreeOfferOverAllCartValue = (data: any): boolean => {
+	const { cartType, cartValue, lineItems, customGetProduct } = data
+
+	const customLineItem = lineItems
+
+	const filteredGetProduct = customLineItem.filter(
+		(obj: any) => !customGetProduct.some((id: string) => id === obj.variantId)
+	)
+
+	const total = filteredGetProduct.reduce((acc: number, lineItem: any) => {
+		const { quantity, unitPrice } = lineItem
+
+		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
+
+		return (acc += currentValue)
+	}, 0)
+
+	return total >= cartValue
+}
+
 export const validateBuyArrayAvaliable = (data: any): boolean => {
 	const { customBuyProduct, customBuyCollection, lineItems } = data
 

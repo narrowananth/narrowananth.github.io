@@ -4,7 +4,8 @@ import {
 	validateOverAllData,
 	validateGetProductCount,
 	validateBuyArrayAvaliable,
-	validateGetArrayAvaliable
+	validateGetArrayAvaliable,
+	findFreeOfferOverAllCartValue
 } from "../utils/plugin.utils"
 
 export const findPercentageAmountDiscounts = (data: any): object => {
@@ -42,7 +43,7 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 export const findBuyXGetYDiscounts = (data: any): object => {
 	const { getRemovedProductList, buyOfferType, displayText } = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
@@ -56,7 +57,7 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 export const findAutomaticDiscounts = (data: any): object => {
 	const { getRemovedProductList, buyOfferType, displayText } = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
+	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
