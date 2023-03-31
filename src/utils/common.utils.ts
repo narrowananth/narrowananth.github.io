@@ -1,4 +1,15 @@
-export const schemaReBuilder = (configSchema: any): object => {
+import {
+	ConfigSchema,
+	BuyProduct,
+	GetProduct,
+	BuyCollection,
+	GetCollection,
+	LineItem,
+	LineItemObject,
+	BuildInputData
+} from "../interface/common.schema"
+
+export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 	const {
 		buyCollections = [],
 		getCollections = [],
@@ -7,19 +18,19 @@ export const schemaReBuilder = (configSchema: any): object => {
 		getProductCount
 	} = configSchema
 
-	const buyVariantIdList = buyProducts.map((product: any) => product.variantId)
+	const buyVariantIdList = buyProducts.map((product: BuyProduct) => product.variantId)
 
 	configSchema.customBuyProduct = buyVariantIdList
 
-	const getVariantIdList = getProducts.map((product: any) => product.variantId)
+	const getVariantIdList = getProducts.map((product: GetProduct) => product.variantId)
 
 	configSchema.customGetProduct = getVariantIdList
 
-	const buyCollectionIdList = buyCollections.map((collection: any) => collection.collectionId)
+	const buyCollectionIdList = buyCollections.map((collection: BuyCollection) => collection.collectionId)
 
 	configSchema.customBuyCollection = buyCollectionIdList
 
-	const getCollectionIdList = getCollections.map((collection: any) => collection.collectionId)
+	const getCollectionIdList = getCollections.map((collection: GetCollection) => collection.collectionId)
 
 	configSchema.customGetCollection = getCollectionIdList
 
@@ -28,7 +39,7 @@ export const schemaReBuilder = (configSchema: any): object => {
 	return configSchema
 }
 
-export const buildInputData = (getConfigSchema: object | any, lineItems: Array<any>): object => {
+export const buildInputData = (getConfigSchema: BuildInputData | any, lineItems: LineItem[]): object => {
 	const { discountType, customGetProduct } = getConfigSchema
 
 	const getRemovedProductList = removeExistingDiscount(lineItems, discountType, customGetProduct) || []
@@ -40,8 +51,8 @@ export const buildInputData = (getConfigSchema: object | any, lineItems: Array<a
 	return config
 }
 
-export const resetInputLineItem = (lineItems: Array<any>): Array<any> => {
-	const modifiedLineItem = lineItems.map((lineItem: any) => {
+export const resetInputLineItem = (lineItems: LineItem[]): Array<LineItem> => {
+	const modifiedLineItem = lineItems.map((lineItem: LineItem) => {
 		const { originalUnitPrice } = lineItem
 
 		lineItem.unitPrice = originalUnitPrice
@@ -53,25 +64,25 @@ export const resetInputLineItem = (lineItems: Array<any>): Array<any> => {
 }
 
 export const removeExistingDiscount = (
-	lineItems: Array<any>,
+	lineItems: LineItem[],
 	discountType: string,
 	customGetProduct: Array<string>
-): Array<any> => {
+): Array<object> => {
 	const getRemoveItemsList = lineItems
 
-	return getRemoveItemsList.filter((lineItem: any) => {
+	return getRemoveItemsList.filter((lineItem: LineItem) => {
 		const { variantId, unitPrice, originalUnitPrice } = lineItem
 
 		lineItem.unitPrice = originalUnitPrice
 
-		if (discountType === "free") return customGetProduct.find((id: any) => id === variantId)
+		if (discountType === "free") return customGetProduct.find((id: string) => id === variantId)
 
 		return unitPrice !== originalUnitPrice
 	})
 }
 
-export const getLineItemsObj = (lineItems: Array<any>): any => {
-	return lineItems.reduce((acc: any, lineItem: any) => {
+export const getLineItemsObj = (lineItems: LineItem[]): LineItemObject => {
+	return lineItems.reduce((acc: LineItemObject, lineItem: LineItem) => {
 		const { variantId } = lineItem
 
 		acc[variantId] = lineItem

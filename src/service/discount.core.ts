@@ -7,9 +7,16 @@ import {
 	validateGetArrayAvaliable,
 	findFreeOfferOverAllCartValue
 } from "../utils/plugin.utils"
+import { FindPercentageAmountDiscounts } from "../interface/discount.core.schema"
 
-export const findPercentageAmountDiscounts = (data: any): object => {
-	const { getRemovedProductList, buyOfferType, customGetProduct, customGetCollection, displayText } = data
+export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscounts): object => {
+	const {
+		getRemovedProductList,
+		buyOfferType,
+		customGetProduct = [],
+		customGetCollection = [],
+		displayText = ""
+	} = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
@@ -40,8 +47,8 @@ export const findPercentageAmountDiscounts = (data: any): object => {
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
-export const findBuyXGetYDiscounts = (data: any): object => {
-	const { getRemovedProductList, buyOfferType, displayText } = data
+export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
+	const { getRemovedProductList, buyOfferType, displayText = "" } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
 
@@ -54,8 +61,8 @@ export const findBuyXGetYDiscounts = (data: any): object => {
 	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
 }
 
-export const findAutomaticDiscounts = (data: any): object => {
-	const { getRemovedProductList, buyOfferType, displayText } = data
+export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): object => {
+	const { getRemovedProductList, buyOfferType, displayText = "" } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
 

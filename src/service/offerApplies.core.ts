@@ -1,14 +1,19 @@
+import { Data, LineItem } from "../interface/common.schema"
+import {
+	ApplyBuyXGetYDiscount,
+	ApplyFreeDiscount,
+	ApplyPercentageAndAmountDiscount
+} from "../interface/offerApplies.core.schema"
 import { getLineItemsObj } from "../utils/common.utils"
 import { combineSchemaOfferArray, findOverAllCartTotal, findUserProductCartTotal } from "../utils/plugin.utils"
 
 export const applyPercentageAndAmountOffer = (
 	offerCategory: string,
-	lineItem: any,
+	lineItem: LineItem,
 	discountType: string,
 	discountValue: number,
 	percentageDiscountValue: number,
-	cartTotal: number,
-	getProductCount: number
+	cartTotal: number
 ): object => {
 	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
 
@@ -55,22 +60,22 @@ export const applyPercentageAndAmountOffer = (
 	return {}
 }
 
-export const applyBuyXGetYDiscount = (data: any): any => {
-	const { offerCategory, getProducts = [], customGetProduct, lineItems, getProductCount } = data
+export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object> => {
+	const { offerCategory, getProducts, customGetProduct, lineItems, getProductCount } = data
 
 	const sanitizedLineItem = getLineItemsObj(lineItems)
 
-	const filterGetProduct = customGetProduct.filter((id: any) => sanitizedLineItem[id])
+	const filterGetProduct = customGetProduct.filter((id: string) => sanitizedLineItem[id])
 
 	const sortFilteredArray = filterGetProduct.sort(
-		(start: any, next: any) => sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
+		(start: string, next: string) => sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
 	)
 
 	const offerArray: object[] = []
 
 	let localProductCountTrack = getProductCount
 
-	sortFilteredArray.forEach((id: any, index: number) => {
+	sortFilteredArray.forEach((id: string, index: number) => {
 		if (localProductCountTrack) {
 			const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
@@ -102,10 +107,10 @@ export const applyBuyXGetYDiscount = (data: any): any => {
 	return offerArray
 }
 
-export const applyPercentageAndAmountDiscount = (data: any): any => {
+export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountDiscount): Array<object> => {
 	const { offerCategory, buyOfferType, discountType, discountValue } = data
 
-	const { getProductCount, lineItems, customGetProduct, customGetCollection } = data
+	const { lineItems, customGetProduct, customGetCollection } = data
 
 	const getCombinedArray = combineSchemaOfferArray(data)
 
@@ -117,15 +122,15 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 	const cartTotal =
 		buyOfferType === "overAll"
 			? findOverAllCartTotal(sanitizedLineItem)
-			: findUserProductCartTotal(sanitizedLineItem, lineItems)
+			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
 
 	const percentageDiscountValue = discountType === "percentage" && discountValue >= 100 ? 100 : discountValue
 
 	const getOffer: object[] = []
 
 	sanitizedLineItem.forEach((key: any) => {
-		if (key && typeof key === "string") {
-			lineItems.forEach((lineItem: any) => {
+		if (typeof key === "string") {
+			lineItems.forEach((lineItem: LineItem) => {
 				const { collectionId, variantId } = lineItem || {}
 
 				if (variantId === key || collectionId === key) {
@@ -135,8 +140,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 						discountType,
 						discountValue,
 						percentageDiscountValue,
-						cartTotal,
-						getProductCount
+						cartTotal
 					)
 
 					getOffer.push(value)
@@ -149,8 +153,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 			discountType,
 			discountValue,
 			percentageDiscountValue,
-			cartTotal,
-			getProductCount
+			cartTotal
 		)
 
 		getOffer.push(value)
@@ -159,7 +162,7 @@ export const applyPercentageAndAmountDiscount = (data: any): any => {
 	return getOffer
 }
 
-export const applyFreeDiscount = (data: any): object => {
+export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 	const { offerCategory, getProductCount, customGetProductId, customGetVariantId, isGetProductIdInLineitem } = data
 
 	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice } = data
