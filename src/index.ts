@@ -1,7 +1,6 @@
 import { findOfferCategory } from "./controller/plugin.controller"
 import { buildInputData, schemaReBuilder } from "./utils/common.utils"
 import { AppContext, ConfigSchema } from "./interface/common.schema"
-import { loadPartialConfig } from "@babel/core"
 
 export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): string => {
 	const { cartLineItems } = appContext
@@ -17,9 +16,13 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 	})
 
 	const filteredArray = getOfferCategory.filter((output: any) => {
-		const { totalCartValue } = output
+		const { schema, totalCartValue } = output
 
-		return totalCartValue > 0
+		const { offerCategory } = schema
+
+		if (offerCategory === "automaticOffers") return totalCartValue > 0
+
+		return totalCartValue
 	})
 
 	const getBestOfferData = filteredArray.sort(

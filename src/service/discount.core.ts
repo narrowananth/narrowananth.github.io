@@ -56,7 +56,10 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 	const displayTextHtmlBuilder =
 		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
+	const totalCartValue =
+		getDiscoutOffer.length > 0
+			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
+			: 0
 
 	return {
 		output: getDiscoutOffer,
@@ -87,7 +90,10 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 	const displayTextHtmlBuilder =
 		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
+	const totalCartValue =
+		getDiscoutOffer.length > 0
+			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
+			: 0
 
 	return {
 		output: getDiscoutOffer,
