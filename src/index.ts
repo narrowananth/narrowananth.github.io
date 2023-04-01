@@ -8,8 +8,6 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 	const { lineItems } = cartLineItems
 
 	const getOfferCategory = configSchema.map((schema: ConfigSchema) => {
-		if (lineItems.length === 0) return JSON.stringify({ output: [], getRemovedProductList: [], displayText: "" })
-
 		const getConfigSchema = schemaReBuilder(schema)
 
 		const getBuildInputData = buildInputData(getConfigSchema, lineItems)
@@ -17,7 +15,9 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		return findOfferCategory(getBuildInputData)
 	})
 
-	getOfferCategory.sort((start: any, next: any) => start.totalCartValue - next.totalCartValue)
+	const getBestOfferData = getOfferCategory.sort(
+		(start: any, next: any) => start.totalCartValue - next.totalCartValue
+	)
 
-	return JSON.stringify(getOfferCategory[0])
+	return JSON.stringify(getBestOfferData[0])
 }
