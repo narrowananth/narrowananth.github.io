@@ -6,6 +6,7 @@ export interface LineItem {
 	originalUnitPrice: number
 	productId: string
 	quantity: number
+	freeQuantity: number
 	totalPrice: number
 	unitPrice: number
 	variantId: string

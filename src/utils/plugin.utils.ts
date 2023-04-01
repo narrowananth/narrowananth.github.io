@@ -68,9 +68,11 @@ export const findOverAllCartTotal = (lineItems: LineItem[]): number => {
 
 export const findOfferLineItemTotal = (lineItems: LineItem[]): number => {
 	return lineItems.reduce((acc: number, lineItem: LineItem) => {
-		const { customGetProductPrice, quantity } = lineItem
+		const { customGetProductPrice, freeQuantity, quantity } = lineItem
 
-		return (acc += customGetProductPrice * quantity)
+		const localQuantity = quantity - freeQuantity
+
+		return (acc += customGetProductPrice * localQuantity)
 	}, 0)
 }
 
