@@ -105,8 +105,7 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 		lineItems,
 		buyOfferType,
 		displayText,
-		offerCategory,
-		cartValue
+		offerCategory
 	} = data
 
 	const isValidInput =
@@ -122,16 +121,11 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 			: 0
 
-	const output =
-		totalCartValue === 0
-			? {}
-			: {
-					output: getDiscoutOffer,
-					getRemovedProductList,
-					displayText: displayTextHtmlBuilder,
-					totalCartValue,
-					schema: getConfigSchema
-			  }
-
-	return output
+	return {
+		output: getDiscoutOffer,
+		getRemovedProductList,
+		displayText: displayTextHtmlBuilder,
+		totalCartValue,
+		schema: getConfigSchema
+	}
 }
