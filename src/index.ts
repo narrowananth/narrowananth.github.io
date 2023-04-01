@@ -22,7 +22,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 
 		if (offerCategory === "automaticOffers") return totalCartValue > 0
 
-		return totalCartValue
+		return output
 	})
 
 	const getBestOfferData = filteredArray.sort(
