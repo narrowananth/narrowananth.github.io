@@ -16,13 +16,9 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 	})
 
 	const filteredArray = getOfferCategory.filter((output: any) => {
-		const { schema, totalCartValue } = output
+		const { totalCartValue } = output
 
-		const { offerCategory } = schema
-
-		if (offerCategory === "automaticOffers") return totalCartValue > 0
-
-		return output
+		return totalCartValue > 0
 	})
 
 	const getBestOfferData = filteredArray.sort(
