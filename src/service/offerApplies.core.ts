@@ -5,9 +5,15 @@ import {
 	ApplyPercentageAndAmountDiscount
 } from "../interface/offerApplies.core.schema"
 import { getLineItemsObj } from "../utils/common.utils"
-import { combineSchemaOfferArray, findOverAllCartTotal, findUserProductCartTotal } from "../utils/plugin.utils"
+import {
+	combineSchemaOfferArray,
+	findOverAllCartTotal,
+	findUserProductCartTotal
+} from "../utils/plugin.utils"
 
-export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountDiscount): Array<object> => {
+export const applyPercentageAndAmountDiscount = (
+	data: ApplyPercentageAndAmountDiscount
+): Array<object> => {
 	const { offerCategory, buyOfferType, discountType, discountValue } = data
 
 	const { lineItems, customGetProduct, customGetCollection } = data
@@ -15,7 +21,9 @@ export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountD
 	const getCombinedArray = combineSchemaOfferArray(data)
 
 	const sanitizedLineItem =
-		buyOfferType === "overAll" && customGetProduct.length <= 0 && customGetCollection.length <= 0
+		buyOfferType === "overAll" &&
+		customGetProduct.length <= 0 &&
+		customGetCollection.length <= 0
 			? lineItems
 			: getCombinedArray
 
@@ -24,7 +32,8 @@ export const applyPercentageAndAmountDiscount = (data: ApplyPercentageAndAmountD
 			? findOverAllCartTotal(sanitizedLineItem)
 			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
 
-	const percentageDiscountValue = discountType === "percentage" && discountValue >= 100 ? 100 : discountValue
+	const percentageDiscountValue =
+		discountType === "percentage" && discountValue >= 100 ? 100 : discountValue
 
 	const getOffer: object[] = []
 
@@ -73,7 +82,8 @@ export const applyPercentageAndAmountOffer = (
 	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
 
 	if (discountType === "percentage") {
-		const getEditedPrice = quantity * unitPrice - quantity * unitPrice * (percentageDiscountValue / 100)
+		const getEditedPrice =
+			quantity * unitPrice - quantity * unitPrice * (percentageDiscountValue / 100)
 
 		const finalDiscount = {
 			productId,
@@ -94,7 +104,9 @@ export const applyPercentageAndAmountOffer = (
 		const getPercentageAmount = (getPercentage / 100) * discountValue
 
 		const getEditedPrice =
-			quantity * unitPrice >= getPercentageAmount ? quantity * unitPrice - getPercentageAmount : 0
+			quantity * unitPrice >= getPercentageAmount
+				? quantity * unitPrice - getPercentageAmount
+				: 0
 
 		const finalAmount = getEditedPrice !== 0 ? getEditedPrice / quantity : 0
 
@@ -123,7 +135,8 @@ export const applyBuyXChooseYDiscount = (data: ApplyBuyXGetYDiscount): Array<obj
 	const filterGetProduct = customGetProduct.filter((id: string) => sanitizedLineItem[id])
 
 	const sortFilteredArray = filterGetProduct.sort(
-		(start: string, next: string) => sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
+		(start: string, next: string) =>
+			sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
 	)
 
 	const getOffer: object[] = []
@@ -134,9 +147,11 @@ export const applyBuyXChooseYDiscount = (data: ApplyBuyXGetYDiscount): Array<obj
 		if (localProductCountTrack) {
 			const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
-			const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
+			const { productId, variantId, quantity, unitPrice, lineItemHandle } =
+				sanitizedLineItem[id] || {}
 
-			const customFreeQuantity = localProductCountTrack > quantity ? quantity : localProductCountTrack
+			const customFreeQuantity =
+				localProductCountTrack > quantity ? quantity : localProductCountTrack
 
 			localProductCountTrack -= quantity
 
@@ -152,6 +167,7 @@ export const applyBuyXChooseYDiscount = (data: ApplyBuyXGetYDiscount): Array<obj
 				offerCategory,
 				customGetProductId: getProducts[index]?.productId,
 				customGetVariantId: getProducts[index]?.variantId,
+				customGetProductPrice: getProducts[index]?.productPrice,
 				isGetProductIdInLineitem
 			})
 
@@ -172,7 +188,8 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 	customGetProduct.forEach((id: string, index: number) => {
 		const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
 
-		const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
+		const { productId, variantId, quantity, unitPrice, lineItemHandle } =
+			sanitizedLineItem[id] || {}
 
 		const getFreeOfferValue = applyFreeDiscount({
 			productId,
@@ -184,6 +201,7 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 			offerCategory,
 			customGetProductId: getProducts[index]?.productId,
 			customGetVariantId: getProducts[index]?.variantId,
+			customGetProductPrice: getProducts[index]?.productPrice,
 			isGetProductIdInLineitem
 		})
 
@@ -194,11 +212,25 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 }
 
 export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
-	const { offerCategory, getProductCount, customGetProductId, customGetVariantId, isGetProductIdInLineitem } = data
+	const {
+		offerCategory,
+		getProductCount,
+		customGetProductId,
+		customGetVariantId,
+		isGetProductIdInLineitem
+	} = data
 
-	const { productId, variantId, lineItemHandle, quantity = getProductCount, unitPrice } = data
+	const {
+		productId,
+		variantId,
+		lineItemHandle,
+		quantity = getProductCount,
+		unitPrice,
+		customGetProductPrice
+	} = data
 
-	const customFreeQuantity = isGetProductIdInLineitem && getProductCount > quantity ? getProductCount : quantity
+	const customFreeQuantity =
+		isGetProductIdInLineitem && getProductCount > quantity ? getProductCount : quantity
 
 	const customUnitPrice = customFreeQuantity === getProductCount ? 0 : unitPrice
 
@@ -221,7 +253,8 @@ export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 		discountType: customDiscountType,
 		discountValue: customDiscountValue,
 		customLineItemType: "REGULAR",
-		isGetProductIdInLineitem
+		isGetProductIdInLineitem,
+		customGetProductPrice
 	}
 
 	return offerValue

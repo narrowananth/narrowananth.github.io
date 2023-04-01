@@ -18,6 +18,7 @@ export interface ApplyFreeDiscount {
 	offerCategory: string
 	customGetProductId: string
 	customGetVariantId: string
+	customGetProductPrice: number
 	isGetProductIdInLineitem: boolean
 }
 

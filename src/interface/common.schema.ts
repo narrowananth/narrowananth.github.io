@@ -9,6 +9,7 @@ export interface LineItem {
 	totalPrice: number
 	unitPrice: number
 	variantId: string
+	customGetProductPrice: number
 }
 
 export interface GetDiscoutOffer {
@@ -115,4 +116,12 @@ export interface LineItemObject {
 export interface BuildInputData {
 	discountType: string
 	customGetProduct: string[]
+}
+
+export interface GetOfferData {
+	output: LineItem[]
+	getRemovedProductList: LineItem[]
+	displayText: string
+	totalCartValue: number
+	schema: Data[]
 }

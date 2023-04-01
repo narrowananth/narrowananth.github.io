@@ -26,11 +26,15 @@ export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 
 	configSchema.customGetProduct = getVariantIdList
 
-	const buyCollectionIdList = buyCollections.map((collection: BuyCollection) => collection.collectionId)
+	const buyCollectionIdList = buyCollections.map(
+		(collection: BuyCollection) => collection.collectionId
+	)
 
 	configSchema.customBuyCollection = buyCollectionIdList
 
-	const getCollectionIdList = getCollections.map((collection: GetCollection) => collection.collectionId)
+	const getCollectionIdList = getCollections.map(
+		(collection: GetCollection) => collection.collectionId
+	)
 
 	configSchema.customGetCollection = getCollectionIdList
 
@@ -39,12 +43,20 @@ export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 	return configSchema
 }
 
-export const buildInputData = (getConfigSchema: BuildInputData | any, lineItems: LineItem[]): object => {
+export const buildInputData = (
+	getConfigSchema: BuildInputData | any,
+	lineItems: LineItem[]
+): object => {
 	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
 	const modifiedLineItem = resetInputLineItem(lineItems)
 
-	const config = { getConfigSchema, ...getConfigSchema, lineItems: modifiedLineItem, getRemovedProductList }
+	const config = {
+		getConfigSchema,
+		...getConfigSchema,
+		lineItems: modifiedLineItem,
+		getRemovedProductList
+	}
 
 	return config
 }

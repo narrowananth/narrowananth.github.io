@@ -1,4 +1,8 @@
-import { applyPercentageAndAmountDiscount, applyBuyXGetYDiscount, applyBuyXChooseYDiscount } from "./offerApplies.core"
+import {
+	applyPercentageAndAmountDiscount,
+	applyBuyXGetYDiscount,
+	applyBuyXChooseYDiscount
+} from "./offerApplies.core"
 import {
 	validateInputData,
 	validateOverAllData,
@@ -17,36 +21,42 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 		customGetProduct,
 		customGetCollection,
 		displayText = "",
-		getConfigSchema
+		getConfigSchema,
+		offerCategory
 	} = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
 
 	const buyArrayAvaliable =
-		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
+		buyOfferType !== "overAll" &&
+		(customGetProduct.length > 0 || customGetCollection.length > 0)
 			? validateBuyArrayAvaliable(data)
 			: true
 
 	const getArrayAvaliable =
-		buyOfferType !== "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
+		buyOfferType !== "overAll" &&
+		(customGetProduct.length > 0 || customGetCollection.length > 0)
 			? validateGetArrayAvaliable(data)
 			: true
 
 	const isOverAllGetLevelValid =
-		buyOfferType === "overAll" && (customGetProduct.length > 0 || customGetCollection.length > 0)
+		buyOfferType === "overAll" &&
+		(customGetProduct.length > 0 || customGetCollection.length > 0)
 			? validateGetArrayAvaliable(data)
 			: true
 
-	const isOverAllValid = buyOfferType === "overAll" && isOverAllGetLevelValid ? validateOverAllData(data) : false
+	const isOverAllValid =
+		buyOfferType === "overAll" && isOverAllGetLevelValid ? validateOverAllData(data) : false
 
 	const getDiscoutOffer =
 		(isOverAllValid || isValidInput) && buyArrayAvaliable && getArrayAvaliable
 			? applyPercentageAndAmountDiscount(data)
 			: []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 
 	return {
 		output: getDiscoutOffer,
@@ -58,17 +68,26 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 }
 
 export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
+	const {
+		getRemovedProductList,
+		getConfigSchema,
+		lineItems,
+		buyOfferType,
+		displayText,
+		offerCategory
+	} = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
+	const isValidInput =
+		buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXChooseYDiscount(data) : []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 
 	return {
 		output: getDiscoutOffer,
@@ -80,21 +99,39 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 }
 
 export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
+	const {
+		getRemovedProductList,
+		getConfigSchema,
+		lineItems,
+		buyOfferType,
+		displayText,
+		offerCategory,
+		cartValue
+	} = data
 
-	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
+	const isValidInput =
+		buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
-	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+	const displayTextHtmlBuilder =
+		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+	const totalCartValue =
+		getDiscoutOffer.length > 0
+			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
+			: 0
 
-	return {
-		output: getDiscoutOffer,
-		getRemovedProductList,
-		displayText: displayTextHtmlBuilder,
-		totalCartValue,
-		schema: getConfigSchema
-	}
+	const output =
+		totalCartValue === 0
+			? {}
+			: {
+					output: getDiscoutOffer,
+					getRemovedProductList,
+					displayText: displayTextHtmlBuilder,
+					totalCartValue,
+					schema: getConfigSchema
+			  }
+
+	return output
 }

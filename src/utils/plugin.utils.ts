@@ -44,9 +44,11 @@ export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
 
 	const yValue = customGetCollection.length > 0 ? customGetCollection : customBuyCollection
 
-	const buyAlternativeArray = customBuyProduct.length > 0 && customGetCollection.length > 0 ? customGetCollection : []
+	const buyAlternativeArray =
+		customBuyProduct.length > 0 && customGetCollection.length > 0 ? customGetCollection : []
 
-	const getAlternativeArray = customGetProduct.length > 0 && customBuyCollection.length > 0 ? customGetProduct : []
+	const getAlternativeArray =
+		customGetProduct.length > 0 && customBuyCollection.length > 0 ? customGetProduct : []
 
 	const combinedArray =
 		buyAlternativeArray.length > 0 || getAlternativeArray.length > 0
@@ -64,21 +66,44 @@ export const findOverAllCartTotal = (lineItems: LineItem[]): number => {
 	}, 0)
 }
 
-export const afterDiscountCalcCartTotal = (lineItems: LineItem[], getDiscoutOffer: any[]): number => {
-	const sanitizedLineItem = getLineItemsObj(getDiscoutOffer)
-
+export const findOfferLineItemTotal = (lineItems: LineItem[]): number => {
 	return lineItems.reduce((acc: number, lineItem: LineItem) => {
-		const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
+		const { customGetProductPrice, quantity } = lineItem
 
-		const { unitPrice: offerAppliesUnitPrice, quantity: offerAppliesQuantity } = sanitizedLineItem[variantId] || {}
-
-		const finalUnitPrice =
-			offerAppliesUnitPrice || offerAppliesUnitPrice === 0 ? offerAppliesUnitPrice : actualUnitPrice
-
-		const finalQuantity = offerAppliesQuantity || actualQuantity
-
-		return (acc += finalUnitPrice * finalQuantity)
+		return (acc += customGetProductPrice * quantity)
 	}, 0)
+}
+
+export const afterDiscountCalcCartTotal = (
+	lineItems: LineItem[],
+	getDiscoutOffer: any,
+	offerCategory: string
+): number => {
+	if (offerCategory !== "automaticOffers") {
+		const sanitizedLineItem = getLineItemsObj(getDiscoutOffer)
+
+		return lineItems.reduce((acc: number, lineItem: LineItem) => {
+			const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
+
+			const { unitPrice: offerAppliesUnitPrice, quantity: offerAppliesQuantity } =
+				sanitizedLineItem[variantId] || {}
+
+			const finalUnitPrice =
+				offerAppliesUnitPrice || offerAppliesUnitPrice === 0
+					? offerAppliesUnitPrice
+					: actualUnitPrice
+
+			const finalQuantity = offerAppliesQuantity || actualQuantity
+
+			return (acc += finalUnitPrice * finalQuantity)
+		}, 0)
+	} else {
+		const currentLineItemTotal = findOverAllCartTotal(lineItems)
+
+		const offerLineItemTotal = findOfferLineItemTotal(getDiscoutOffer)
+
+		return currentLineItemTotal + offerLineItemTotal
+	}
 }
 
 export const validateInputData = (data: ValidateInputData): boolean => {
