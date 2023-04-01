@@ -70,14 +70,14 @@ export const removeExistingDiscount = (
 ): Array<object> => {
 	const getRemoveItemsList = lineItems
 
-	return getRemoveItemsList.filter((lineItem: LineItem) => {
+	return getRemoveItemsList.map((lineItem: LineItem) => {
 		const { variantId, unitPrice, originalUnitPrice } = lineItem
 
 		lineItem.unitPrice = originalUnitPrice
 
 		// if (discountType === "free") return customGetProduct.find((id: string) => id === variantId)
 
-		return unitPrice !== originalUnitPrice
+		return lineItem
 	})
 }
 
