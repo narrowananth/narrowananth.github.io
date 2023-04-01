@@ -16,7 +16,8 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 		buyOfferType,
 		customGetProduct,
 		customGetCollection,
-		displayText = ""
+		displayText = "",
+		getConfigSchema
 	} = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : false
@@ -47,11 +48,17 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 
 	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
+	return {
+		output: getDiscoutOffer,
+		getRemovedProductList,
+		displayText: displayTextHtmlBuilder,
+		totalCartValue,
+		schema: getConfigSchema
+	}
 }
 
 export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, lineItems, buyOfferType, displayText } = data
+	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
@@ -63,11 +70,17 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 
 	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
+	return {
+		output: getDiscoutOffer,
+		getRemovedProductList,
+		displayText: displayTextHtmlBuilder,
+		totalCartValue,
+		schema: getConfigSchema
+	}
 }
 
 export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, lineItems, buyOfferType, displayText } = data
+	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
@@ -77,5 +90,11 @@ export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): obj
 
 	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
+	return {
+		output: getDiscoutOffer,
+		getRemovedProductList,
+		displayText: displayTextHtmlBuilder,
+		totalCartValue,
+		schema: getConfigSchema
+	}
 }

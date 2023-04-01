@@ -1,4 +1,4 @@
-import { BuyProduct, GetProduct, LineItem } from "./common.schema"
+import { BuyProduct, ConfigSchema, GetProduct, LineItem } from "./common.schema"
 
 export interface FindPercentageAmountDiscounts {
 	buyOfferType: string
@@ -18,4 +18,5 @@ export interface FindPercentageAmountDiscounts {
 	customGetCollection: string[]
 	lineItems: LineItem[]
 	getRemovedProductList: LineItem[]
+	getConfigSchema: ConfigSchema
 }

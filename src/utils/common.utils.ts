@@ -46,7 +46,7 @@ export const buildInputData = (getConfigSchema: BuildInputData | any, lineItems:
 
 	const modifiedLineItem = resetInputLineItem(lineItems)
 
-	const config = { ...getConfigSchema, lineItems: modifiedLineItem, getRemovedProductList }
+	const config = { getConfigSchema, ...getConfigSchema, lineItems: modifiedLineItem, getRemovedProductList }
 
 	return config
 }
