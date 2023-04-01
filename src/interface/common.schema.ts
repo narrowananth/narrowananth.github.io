@@ -11,6 +11,18 @@ export interface LineItem {
 	variantId: string
 }
 
+export interface GetDiscoutOffer {
+	totalCartValue: number
+	productId: string
+	variantId: string
+	quantity: number
+	unitPrice: number
+	lineItemHandle: string
+	discountType: string
+	discountValue: string
+	customLineItemType: string
+}
+
 export interface AppContext {
 	appColors: Record<string, string>
 	appConfig: {

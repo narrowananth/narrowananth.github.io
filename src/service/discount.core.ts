@@ -5,16 +5,17 @@ import {
 	validateGetProductCount,
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable,
-	findFreeOfferOverAllCartValue
+	afterDiscountCalcCartTotal
 } from "../utils/plugin.utils"
 import { FindPercentageAmountDiscounts } from "../interface/discount.core.schema"
 
 export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const {
 		getRemovedProductList,
+		lineItems,
 		buyOfferType,
-		customGetProduct = [],
-		customGetCollection = [],
+		customGetProduct,
+		customGetCollection,
 		displayText = ""
 	} = data
 
@@ -44,11 +45,13 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 
 	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
+	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
 }
 
 export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, buyOfferType, displayText = "" } = data
+	const { getRemovedProductList, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
@@ -58,11 +61,13 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 
 	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
+	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
 }
 
 export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const { getRemovedProductList, buyOfferType, displayText = "" } = data
+	const { getRemovedProductList, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
@@ -70,5 +75,7 @@ export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): obj
 
 	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
-	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder }
+	const totalCartValue = afterDiscountCalcCartTotal(lineItems, getDiscoutOffer)
+
+	return { output: getDiscoutOffer, getRemovedProductList, displayText: displayTextHtmlBuilder, totalCartValue }
 }

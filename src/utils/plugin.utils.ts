@@ -10,6 +10,7 @@ import {
 	ValidateOverAllData
 } from "../interface/plugin.utils.schema"
 import { LineItem } from "../interface/common.schema"
+import { getLineItemsObj } from "./common.utils"
 
 export const combineSchemaInputArray = (data: CombineSchemaInputArray): Array<string> => {
 	const {
@@ -55,11 +56,28 @@ export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
 	return combinedArray
 }
 
-export const findOverAllCartTotal = (sanitizedLineItem: Array<object>): number => {
-	return sanitizedLineItem.reduce((acc: number, lineItem: Partial<LineItem>) => {
-		const { unitPrice = 0, quantity = 0 } = lineItem
+export const findOverAllCartTotal = (lineItems: LineItem[]): number => {
+	return lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const { unitPrice, quantity } = lineItem
 
 		return (acc += unitPrice * quantity)
+	}, 0)
+}
+
+export const afterDiscountCalcCartTotal = (lineItems: LineItem[], getDiscoutOffer: any[]): number => {
+	const sanitizedLineItem = getLineItemsObj(getDiscoutOffer)
+
+	return lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
+
+		const { unitPrice: offerAppliesUnitPrice, quantity: offerAppliesQuantity } = sanitizedLineItem[variantId] || {}
+
+		const finalUnitPrice =
+			offerAppliesUnitPrice || offerAppliesUnitPrice === 0 ? offerAppliesUnitPrice : actualUnitPrice
+
+		const finalQuantity = offerAppliesQuantity || actualQuantity
+
+		return (acc += finalUnitPrice * finalQuantity)
 	}, 0)
 }
 
