@@ -1,4 +1,4 @@
-import { applyPercentageAndAmountDiscount, applyBuyXGetYDiscount } from "./offerApplies.core"
+import { applyPercentageAndAmountDiscount, applyBuyXGetYDiscount, applyBuyXChooseYDiscount } from "./offerApplies.core"
 import {
 	validateInputData,
 	validateOverAllData,
@@ -57,14 +57,14 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 	}
 }
 
-export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
+export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
-	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXGetYDiscount(data) : []
+	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXChooseYDiscount(data) : []
 
 	const displayTextHtmlBuilder = getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
 
@@ -79,7 +79,7 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 	}
 }
 
-export const findAutomaticDiscounts = (data: FindPercentageAmountDiscounts): object => {
+export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const { getRemovedProductList, getConfigSchema, lineItems, buyOfferType, displayText } = data
 
 	const isValidInput = buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)

@@ -40,9 +40,7 @@ export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 }
 
 export const buildInputData = (getConfigSchema: BuildInputData | any, lineItems: LineItem[]): object => {
-	const { discountType, customGetProduct } = getConfigSchema
-
-	const getRemovedProductList = removeExistingDiscount(lineItems, discountType, customGetProduct) || []
+	const getRemovedProductList = removeExistingDiscount(lineItems) || []
 
 	const modifiedLineItem = resetInputLineItem(lineItems)
 
@@ -63,19 +61,13 @@ export const resetInputLineItem = (lineItems: LineItem[]): Array<LineItem> => {
 	return modifiedLineItem
 }
 
-export const removeExistingDiscount = (
-	lineItems: LineItem[],
-	discountType: string,
-	customGetProduct: Array<string>
-): Array<object> => {
+export const removeExistingDiscount = (lineItems: LineItem[]): Array<object> => {
 	const getRemoveItemsList = lineItems
 
 	return getRemoveItemsList.map((lineItem: LineItem) => {
-		const { variantId, unitPrice, originalUnitPrice } = lineItem
+		const { originalUnitPrice } = lineItem
 
 		lineItem.unitPrice = originalUnitPrice
-
-		// if (discountType === "free") return customGetProduct.find((id: string) => id === variantId)
 
 		return lineItem
 	})

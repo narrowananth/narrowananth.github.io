@@ -115,7 +115,7 @@ export const applyPercentageAndAmountOffer = (
 	return {}
 }
 
-export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object> => {
+export const applyBuyXChooseYDiscount = (data: ApplyBuyXGetYDiscount): Array<object> => {
 	const { offerCategory, getProducts, customGetProduct, lineItems, getProductCount } = data
 
 	const sanitizedLineItem = getLineItemsObj(lineItems)
@@ -126,7 +126,7 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 		(start: string, next: string) => sanitizedLineItem[start].unitPrice - sanitizedLineItem[next].unitPrice
 	)
 
-	const offerArray: object[] = []
+	const getOffer: object[] = []
 
 	let localProductCountTrack = getProductCount
 
@@ -155,11 +155,42 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 				isGetProductIdInLineitem
 			})
 
-			offerArray.push(getFreeOfferValue)
+			getOffer.push(getFreeOfferValue)
 		}
 	})
 
-	return offerArray
+	return getOffer
+}
+
+export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object> => {
+	const { offerCategory, getProducts = [], customGetProduct, lineItems, getProductCount } = data
+
+	const sanitizedLineItem = getLineItemsObj(lineItems)
+
+	const getOffer: object[] = []
+
+	customGetProduct.forEach((id: string, index: number) => {
+		const isGetProductIdInLineitem = sanitizedLineItem[id] ? true : false
+
+		const { productId, variantId, quantity, unitPrice, lineItemHandle } = sanitizedLineItem[id] || {}
+
+		const getFreeOfferValue = applyFreeDiscount({
+			productId,
+			variantId,
+			lineItemHandle,
+			quantity,
+			getProductCount,
+			unitPrice,
+			offerCategory,
+			customGetProductId: getProducts[index]?.productId,
+			customGetVariantId: getProducts[index]?.variantId,
+			isGetProductIdInLineitem
+		})
+
+		getOffer.push(getFreeOfferValue)
+	})
+
+	return getOffer
 }
 
 export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
