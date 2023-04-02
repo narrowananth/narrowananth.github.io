@@ -61,7 +61,10 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 			: 0
 
+	const offerApplied = getDiscoutOffer.length > 0 ? true : false
+
 	return {
+		offerApplied,
 		output: getDiscoutOffer,
 		getRemovedProductList,
 		displayText: displayTextHtmlBuilder,
@@ -95,7 +98,10 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 			: 0
 
+	const offerApplied = getDiscoutOffer.length > 0 ? true : false
+
 	return {
+		offerApplied,
 		output: getDiscoutOffer,
 		getRemovedProductList,
 		displayText: displayTextHtmlBuilder,
@@ -127,7 +133,10 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 			? afterDiscountCalcCartTotal(lineItems, getDiscoutOffer, offerCategory)
 			: 0
 
+	const offerApplied = getDiscoutOffer.length > 0 ? true : false
+
 	return {
+		offerApplied,
 		output: getDiscoutOffer,
 		getRemovedProductList,
 		displayText: displayTextHtmlBuilder,
