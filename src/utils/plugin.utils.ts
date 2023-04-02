@@ -107,7 +107,12 @@ export const afterDiscountCalcCartTotal = (
 
 		const offerLineItemTotal = findOfferLineItemTotal(getDiscoutOffer)
 
-		return currentLineItemTotal - offerLineItemTotal
+		const buyXGetYTotal =
+			currentLineItemTotal > offerLineItemTotal
+				? currentLineItemTotal - offerLineItemTotal
+				: currentLineItemTotal
+
+		return buyXGetYTotal
 	}
 }
 
