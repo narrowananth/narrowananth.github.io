@@ -25,9 +25,11 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		return offerApplied
 	})
 
-	const getBestOfferData = filteredArray.sort(
+	const sortBestOfferData = filteredArray.sort(
 		(start: any, next: any) => start.totalCartValue - next.totalCartValue
 	)
 
-	return JSON.stringify(getBestOfferData[0])
+	const getBestOfferData = sortBestOfferData.length > 0 ? sortBestOfferData[0] : []
+
+	return JSON.stringify(getBestOfferData)
 }
