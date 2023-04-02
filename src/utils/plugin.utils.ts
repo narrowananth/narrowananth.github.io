@@ -87,15 +87,20 @@ export const afterDiscountCalcCartTotal = (
 		return lineItems.reduce((acc: number, lineItem: LineItem) => {
 			const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
 
-			const { unitPrice: offerAppliesUnitPrice, quantity: offerAppliesQuantity } =
-				sanitizedLineItem[variantId] || {}
+			const {
+				unitPrice: offerAppliesUnitPrice,
+				quantity: offerAppliesQuantity,
+				freeQuantity = 0
+			} = sanitizedLineItem[variantId] || {}
 
 			const finalUnitPrice =
 				offerAppliesUnitPrice || offerAppliesUnitPrice === 0
 					? offerAppliesUnitPrice
 					: actualUnitPrice
 
-			const finalQuantity = offerAppliesQuantity || actualQuantity
+			const localQuantity = offerAppliesQuantity || actualQuantity
+
+			const finalQuantity = localQuantity - freeQuantity
 
 			return (acc += finalUnitPrice * finalQuantity)
 		}, 0)
