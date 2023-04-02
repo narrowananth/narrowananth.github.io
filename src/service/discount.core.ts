@@ -122,7 +122,7 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 	} = data
 
 	const isValidInput =
-		buyOfferType !== "overAll" ? validateInputData(data) : findFreeOfferOverAllCartValue(data)
+		buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 

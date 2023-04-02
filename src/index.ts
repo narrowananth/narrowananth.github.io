@@ -15,10 +15,14 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		return findOfferCategory(getBuildInputData)
 	})
 
+	const removeUnitPriceLineItem: object[] = []
+
 	const filteredArray = getOfferCategory.filter((output: any) => {
-		const { schema, totalCartValue, offerApplied } = output
+		const { schema, totalCartValue, offerApplied, getRemovedProductList } = output
 
 		const { offerCategory } = schema
+
+		removeUnitPriceLineItem.push(getRemovedProductList)
 
 		if (offerCategory === "automaticOffers" && offerApplied) return totalCartValue > 0
 
@@ -29,7 +33,8 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		(start: any, next: any) => start.totalCartValue - next.totalCartValue
 	)
 
-	const getBestOfferData = sortBestOfferData.length > 0 ? sortBestOfferData[0] : []
+	const getBestOfferData =
+		sortBestOfferData.length > 0 ? sortBestOfferData[0] : removeUnitPriceLineItem[0]
 
 	return JSON.stringify(getBestOfferData)
 }
