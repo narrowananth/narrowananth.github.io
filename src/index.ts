@@ -22,7 +22,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 
 		const { offerCategory } = schema
 
-		removeUnitPriceLineItem.push(getRemovedProductList)
+		removeUnitPriceLineItem.push({ getRemovedProductList })
 
 		if (offerCategory === "automaticOffers" && offerApplied) return totalCartValue > 0
 
