@@ -15,7 +15,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		return findOfferCategory(getBuildInputData)
 	})
 
-	const removeUnitPriceLineItem: object[] = []
+	const defalutFlowOffer: object[] = []
 
 	const filteredArray = getOfferCategory.filter((output: any) => {
 		const { schema, totalCartValue, offerApplied, getRemovedProductList } = output
@@ -23,7 +23,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		const { offerCategory } = schema
 
 		if (!offerApplied)
-			removeUnitPriceLineItem.push({
+			defalutFlowOffer.push({
 				offerApplied,
 				output: [],
 				getRemovedProductList,
@@ -42,7 +42,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 	)
 
 	const getBestOfferData =
-		sortBestOfferData.length > 0 ? sortBestOfferData[0] : removeUnitPriceLineItem[0]
+		sortBestOfferData.length > 0 ? sortBestOfferData[0] : defalutFlowOffer[0]
 
 	return JSON.stringify(getBestOfferData)
 }
