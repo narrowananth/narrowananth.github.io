@@ -1,4 +1,4 @@
-import { Data, LineItem } from "../interface/common.schema"
+import { LineItem } from "../interface/common.schema"
 import {
 	ApplyBuyXGetYDiscount,
 	ApplyFreeDiscount,
@@ -7,6 +7,7 @@ import {
 import { getLineItemsObj } from "../utils/common.utils"
 import {
 	combineSchemaOfferArray,
+	findOfferLineItemTotal,
 	findOverAllCartTotal,
 	findUserProductCartTotal
 } from "../utils/plugin.utils"
@@ -72,62 +73,6 @@ export const applyPercentageAndAmountDiscount = (
 	})
 
 	return getOffer
-}
-
-export const applyPercentageAndAmountOffer = (
-	offerCategory: string,
-	lineItem: LineItem,
-	discountType: string,
-	discountValue: number,
-	percentageDiscountValue: number,
-	cartTotal: number
-): object => {
-	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
-
-	if (discountType === "percentage") {
-		const getEditedPrice =
-			quantity * unitPrice - quantity * unitPrice * (percentageDiscountValue / 100)
-
-		const finalDiscount = {
-			productId,
-			variantId,
-			quantity: quantity,
-			unitPrice: getEditedPrice / quantity,
-			lineItemHandle,
-			discountType: offerCategory,
-			discountValue: `You got ${percentageDiscountValue}% off`,
-			customLineItemType: "REGULAR"
-		}
-		return finalDiscount
-	}
-
-	if (discountType === "amount") {
-		const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
-
-		const getPercentageAmount = (getPercentage / 100) * discountValue
-
-		const getEditedPrice =
-			quantity * unitPrice >= getPercentageAmount
-				? quantity * unitPrice - getPercentageAmount
-				: 0
-
-		const finalAmount = getEditedPrice !== 0 ? getEditedPrice / quantity : 0
-
-		const finalDiscount = {
-			productId,
-			variantId,
-			quantity: quantity,
-			unitPrice: finalAmount,
-			lineItemHandle,
-			discountType: offerCategory,
-			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(2)}`,
-			customLineItemType: "REGULAR"
-		}
-
-		return finalDiscount
-	}
-
-	return {}
 }
 
 export const applyBuyXChooseYDiscount = (data: ApplyBuyXGetYDiscount): Array<object> => {
@@ -214,6 +159,62 @@ export const applyBuyXGetYDiscount = (data: ApplyBuyXGetYDiscount): Array<object
 	return getOffer
 }
 
+export const applyPercentageAndAmountOffer = (
+	offerCategory: string,
+	lineItem: LineItem,
+	discountType: string,
+	discountValue: number,
+	percentageDiscountValue: number,
+	cartTotal: number
+): object => {
+	const { unitPrice, quantity, variantId, productId, lineItemHandle } = lineItem || {}
+
+	if (discountType === "percentage") {
+		const getEditedPrice =
+			quantity * unitPrice - quantity * unitPrice * (percentageDiscountValue / 100)
+
+		const finalDiscount = {
+			productId,
+			variantId,
+			quantity: quantity,
+			unitPrice: getEditedPrice / quantity,
+			lineItemHandle,
+			discountType: offerCategory,
+			discountValue: `You got ${percentageDiscountValue}% off`,
+			customLineItemType: "REGULAR"
+		}
+		return finalDiscount
+	}
+
+	if (discountType === "amount") {
+		const getPercentage = ((quantity * unitPrice) / cartTotal) * 100
+
+		const getPercentageAmount = (getPercentage / 100) * discountValue
+
+		const getEditedPrice =
+			quantity * unitPrice >= getPercentageAmount
+				? quantity * unitPrice - getPercentageAmount
+				: 0
+
+		const finalAmount = getEditedPrice !== 0 ? getEditedPrice / quantity : 0
+
+		const finalDiscount = {
+			productId,
+			variantId,
+			quantity: quantity,
+			unitPrice: finalAmount,
+			lineItemHandle,
+			discountType: offerCategory,
+			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(2)}`,
+			customLineItemType: "REGULAR"
+		}
+
+		return finalDiscount
+	}
+
+	return {}
+}
+
 export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 	const {
 		offerCategory,
@@ -261,4 +262,46 @@ export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 	}
 
 	return offerValue
+}
+
+export const afterDiscountCalcCartTotal = (
+	lineItems: LineItem[],
+	getDiscoutOffer: any,
+	offerCategory: string
+): number => {
+	if (offerCategory !== "automaticOffers") {
+		const sanitizedLineItem = getLineItemsObj(getDiscoutOffer)
+
+		return lineItems.reduce((acc: number, lineItem: LineItem) => {
+			const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
+
+			const {
+				unitPrice: offerAppliesUnitPrice,
+				quantity: offerAppliesQuantity,
+				freeQuantity = 0
+			} = sanitizedLineItem[variantId] || {}
+
+			const finalUnitPrice =
+				offerAppliesUnitPrice || offerAppliesUnitPrice === 0
+					? offerAppliesUnitPrice
+					: actualUnitPrice
+
+			const localQuantity = offerAppliesQuantity || actualQuantity
+
+			const finalQuantity = localQuantity - freeQuantity
+
+			return (acc += finalUnitPrice * finalQuantity)
+		}, 0)
+	} else {
+		const currentLineItemTotal = findOverAllCartTotal(lineItems)
+
+		const offerLineItemTotal = findOfferLineItemTotal(getDiscoutOffer)
+
+		const buyXGetYTotal =
+			currentLineItemTotal > offerLineItemTotal
+				? currentLineItemTotal - offerLineItemTotal
+				: currentLineItemTotal
+
+		return buyXGetYTotal
+	}
 }

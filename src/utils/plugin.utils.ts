@@ -56,48 +56,6 @@ export const findOfferLineItemTotal = (lineItems: LineItem[]): number => {
 	}, 0)
 }
 
-export const afterDiscountCalcCartTotal = (
-	lineItems: LineItem[],
-	getDiscoutOffer: any,
-	offerCategory: string
-): number => {
-	if (offerCategory !== "automaticOffers") {
-		const sanitizedLineItem = getLineItemsObj(getDiscoutOffer)
-
-		return lineItems.reduce((acc: number, lineItem: LineItem) => {
-			const { variantId, unitPrice: actualUnitPrice, quantity: actualQuantity } = lineItem
-
-			const {
-				unitPrice: offerAppliesUnitPrice,
-				quantity: offerAppliesQuantity,
-				freeQuantity = 0
-			} = sanitizedLineItem[variantId] || {}
-
-			const finalUnitPrice =
-				offerAppliesUnitPrice || offerAppliesUnitPrice === 0
-					? offerAppliesUnitPrice
-					: actualUnitPrice
-
-			const localQuantity = offerAppliesQuantity || actualQuantity
-
-			const finalQuantity = localQuantity - freeQuantity
-
-			return (acc += finalUnitPrice * finalQuantity)
-		}, 0)
-	} else {
-		const currentLineItemTotal = findOverAllCartTotal(lineItems)
-
-		const offerLineItemTotal = findOfferLineItemTotal(getDiscoutOffer)
-
-		const buyXGetYTotal =
-			currentLineItemTotal > offerLineItemTotal
-				? currentLineItemTotal - offerLineItemTotal
-				: currentLineItemTotal
-
-		return buyXGetYTotal
-	}
-}
-
 export const validateInputData = (data: ValidateInputData): boolean => {
 	const { cartType, cartValue, lineItems } = data
 

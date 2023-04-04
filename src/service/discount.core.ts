@@ -1,7 +1,8 @@
 import {
 	applyPercentageAndAmountDiscount,
 	applyBuyXGetYDiscount,
-	applyBuyXChooseYDiscount
+	applyBuyXChooseYDiscount,
+	afterDiscountCalcCartTotal
 } from "./offerApplies.core"
 import {
 	validateInputData,
@@ -9,7 +10,6 @@ import {
 	validateGetProductCount,
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable,
-	afterDiscountCalcCartTotal,
 	buyXChooseYInputValidation,
 	buyXChooseYOverAllValidation
 } from "../utils/plugin.utils"
