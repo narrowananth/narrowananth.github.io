@@ -22,6 +22,7 @@ export interface ValidateInputData {
 	cartValue: number
 	offerCategory: string
 	buyOfferType: string
+	getOfferType: string
 	getProductCount: number
 	getProducts: GetProduct[]
 	customGetProduct: string[]

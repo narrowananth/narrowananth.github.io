@@ -95,7 +95,15 @@ export const validateOverAllData = (data: ValidateOverAllData): boolean => {
 }
 
 export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => {
-	const { cartType, cartValue, lineItems, getProducts, getProductCount, offerCategory } = data
+	const {
+		cartType,
+		cartValue,
+		lineItems,
+		getOfferType,
+		getProducts,
+		getProductCount,
+		offerCategory
+	} = data
 
 	const sanitizedGetProduct = getLineItemsObj(getProducts)
 
@@ -117,16 +125,22 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		return (total += sum)
 	}, 0)
 
-	const getProductExist = lineItems.some((lineItem: LineItem) => {
-		const { variantId } = lineItem || {}
+	if (getOfferType === "collections") {
+		const getProductExist = lineItems.some((lineItem: LineItem) => {
+			const { variantId } = lineItem || {}
 
-		return sanitizedGetProduct[variantId]
-	})
+			return sanitizedGetProduct[variantId]
+		})
 
-	const normaliseValue =
-		cartType !== "amount" && getProductExist ? total - getProductCount : total
+		const normaliseValue =
+			cartType !== "amount" && getProductExist ? total - getProductCount : total
 
-	return offerCategory === "automaticOffers" ? total >= cartValue : normaliseValue >= cartValue
+		return offerCategory === "automaticOffers"
+			? total >= cartValue
+			: normaliseValue >= cartValue
+	}
+
+	return total >= cartValue
 }
 
 export const buyXChooseYOverAllValidation = (data: ValidateInputData): boolean => {
