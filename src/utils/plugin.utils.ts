@@ -1,5 +1,5 @@
 import {
-	CombineSchemaInputArray,
+	CombineBuyConfigArrays,
 	CombineSchemaOfferArray,
 	FindUserProductCartTotal,
 	ValidateBuyArrayAvaliable,
@@ -11,29 +11,12 @@ import {
 import { LineItem } from "../interface/common.schema"
 import { getLineItemsObj } from "./common.utils"
 
-export const combineSchemaInputArray = (data: CombineSchemaInputArray): Array<string> => {
-	const {
-		offerCategory,
-		customBuyCollection,
-		customGetCollection,
-		customBuyProduct,
-		customGetProduct,
-		getProductCount
-	} = data
+export const combineBuyConfigArrays = (data: CombineBuyConfigArrays): Array<string> => {
+	const { customBuyCollection, customBuyProduct } = data
 
-	const xValue =
-		customBuyProduct.length > 0 || customBuyCollection.length > 0
-			? customBuyProduct.concat(customBuyCollection)
-			: []
-
-	// const yValue =
-	// 	getProductCount === 0 && (customGetProduct.length > 0 || customGetCollection.length > 0)
-	// 		? customGetProduct.concat(customGetCollection)
-	// 		: []
-
-	// const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
-
-	return xValue
+	return customBuyProduct.length > 0 || customBuyCollection.length > 0
+		? customBuyProduct.concat(customBuyCollection)
+		: []
 }
 
 export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
@@ -118,7 +101,7 @@ export const afterDiscountCalcCartTotal = (
 export const validateInputData = (data: ValidateInputData): boolean => {
 	const { cartType, cartValue, lineItems } = data
 
-	const getCombinedArray = combineSchemaInputArray(data)
+	const getCombinedArray = combineBuyConfigArrays(data)
 
 	const total = getCombinedArray.reduce((total: number, id: string) => {
 		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
@@ -158,7 +141,7 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 
 	const sanitizedGetProduct = getLineItemsObj(getProducts)
 
-	const buyCombinedArray = combineSchemaInputArray(data)
+	const buyCombinedArray = combineBuyConfigArrays(data)
 
 	const total = buyCombinedArray.reduce((total: number, id: string) => {
 		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {

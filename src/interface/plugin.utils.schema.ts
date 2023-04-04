@@ -1,6 +1,6 @@
 import { GetProduct, LineItem } from "./common.schema"
 
-export interface CombineSchemaInputArray {
+export interface CombineBuyConfigArrays {
 	offerCategory: string
 	getProductCount: number
 	customGetProduct: string[]
