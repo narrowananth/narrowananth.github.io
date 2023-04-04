@@ -99,7 +99,7 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		cartType,
 		cartValue,
 		lineItems,
-		getOfferType,
+		buyOfferType,
 		getProducts,
 		getProductCount,
 		offerCategory
@@ -125,7 +125,7 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		return (total += sum)
 	}, 0)
 
-	if (getOfferType === "collections") {
+	if (buyOfferType === "collections") {
 		const getProductExist = lineItems.some((lineItem: LineItem) => {
 			const { variantId } = lineItem || {}
 
