@@ -1,4 +1,4 @@
-import { LineItem } from "./common.schema"
+import { GetProduct, LineItem } from "./common.schema"
 
 export interface CombineSchemaInputArray {
 	offerCategory: string
@@ -23,6 +23,7 @@ export interface ValidateInputData {
 	offerCategory: string
 	buyOfferType: string
 	getProductCount: number
+	getProducts: GetProduct[]
 	customGetProduct: string[]
 	customBuyProduct: string[]
 	customGetCollection: string[]
@@ -32,8 +33,10 @@ export interface ValidateInputData {
 export interface ValidateOverAllData {
 	lineItems: LineItem[]
 	customGetProduct: string[]
+	getProducts: GetProduct[]
 	cartType: string
 	cartValue: number
+	getProductCount: number
 }
 
 export interface FindFreeOfferOverAllCartValue {

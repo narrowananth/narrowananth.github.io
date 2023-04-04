@@ -154,6 +154,58 @@ export const validateOverAllData = (data: ValidateOverAllData): boolean => {
 	return total >= cartValue
 }
 
+export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => {
+	const { cartType, cartValue, lineItems, getProducts, getProductCount } = data
+
+	const sanitizedGetProduct = getLineItemsObj(getProducts)
+
+	const buyCombinedArray = combineSchemaInputArray(data)
+
+	const total = buyCombinedArray.reduce((total: number, id: string) => {
+		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
+			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
+
+			const getProductExist = sanitizedGetProduct[id] ? true : false
+
+			if (variantId === id || collectionId === id) {
+				const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
+
+				const normaliseValue = getProductExist
+					? currentValue - getProductCount
+					: currentValue
+
+				acc += normaliseValue
+			}
+
+			return acc
+		}, 0)
+
+		return (total += sum)
+	}, 0)
+
+	return total >= cartValue
+}
+
+export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean => {
+	const { cartType, cartValue, lineItems, getProducts, getProductCount } = data
+
+	const sanitizedGetProduct = getLineItemsObj(getProducts)
+
+	const total = lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const { quantity, unitPrice, variantId } = lineItem
+
+		const getProductExist = sanitizedGetProduct[variantId] ? true : false
+
+		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
+
+		const normaliseValue = getProductExist ? currentValue - getProductCount : currentValue
+
+		return (acc += normaliseValue)
+	}, 0)
+
+	return total >= cartValue
+}
+
 export const findFreeOfferOverAllCartValue = (data: FindFreeOfferOverAllCartValue): boolean => {
 	const { cartType, cartValue, lineItems, customGetProduct = [] } = data
 

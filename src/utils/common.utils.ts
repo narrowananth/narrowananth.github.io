@@ -85,7 +85,7 @@ export const removeExistingDiscount = (lineItems: LineItem[]): Array<object> => 
 	})
 }
 
-export const getLineItemsObj = (lineItems: LineItem[]): LineItemObject => {
+export const getLineItemsObj = (lineItems: any[]): LineItemObject => {
 	return lineItems.reduce((acc: LineItemObject, lineItem: LineItem) => {
 		const { variantId } = lineItem
 

@@ -10,7 +10,8 @@ import {
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable,
 	afterDiscountCalcCartTotal,
-	findFreeOfferOverAllCartValue
+	buyXChooseYInputValidation,
+	buyXChooseYOverAllValidation
 } from "../utils/plugin.utils"
 import { FindPercentageAmountDiscounts } from "../interface/discount.core.schema"
 
@@ -85,7 +86,9 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 	} = data
 
 	const isValidInput =
-		buyOfferType !== "overAll" ? validateInputData(data) : validateOverAllData(data)
+		buyOfferType !== "overAll"
+			? buyXChooseYInputValidation(data)
+			: buyXChooseYOverAllValidation(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
