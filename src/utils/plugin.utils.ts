@@ -164,16 +164,10 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
 			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
-			const getProductExist = sanitizedGetProduct[id] ? true : false
-
 			if (variantId === id || collectionId === id) {
 				const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-				const normaliseValue = getProductExist
-					? currentValue - getProductCount
-					: currentValue
-
-				acc += normaliseValue
+				acc += currentValue
 			}
 
 			return acc
@@ -182,7 +176,15 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		return (total += sum)
 	}, 0)
 
-	return total >= cartValue
+	const getProductExist = lineItems.some((lineItem: LineItem) => {
+		const { variantId } = lineItem || {}
+
+		return sanitizedGetProduct[variantId]
+	})
+
+	const normaliseValue = getProductExist ? total - getProductCount : total
+
+	return normaliseValue >= cartValue
 }
 
 export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean => {
@@ -191,18 +193,22 @@ export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean
 	const sanitizedGetProduct = getLineItemsObj(getProducts)
 
 	const total = lineItems.reduce((acc: number, lineItem: LineItem) => {
-		const { quantity, unitPrice, variantId } = lineItem
-
-		const getProductExist = sanitizedGetProduct[variantId] ? true : false
+		const { quantity, unitPrice } = lineItem
 
 		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
 
-		const normaliseValue = getProductExist ? currentValue - getProductCount : currentValue
-
-		return (acc += normaliseValue)
+		return (acc += currentValue)
 	}, 0)
 
-	return total >= cartValue
+	const getProductExist = lineItems.some((lineItem: LineItem) => {
+		const { variantId } = lineItem || {}
+
+		return sanitizedGetProduct[variantId]
+	})
+
+	const normaliseValue = getProductExist ? total - getProductCount : total
+
+	return normaliseValue >= cartValue
 }
 
 export const findFreeOfferOverAllCartValue = (data: FindFreeOfferOverAllCartValue): boolean => {
