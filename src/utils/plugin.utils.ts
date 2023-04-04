@@ -27,14 +27,13 @@ export const combineSchemaInputArray = (data: CombineSchemaInputArray): Array<st
 			? customBuyProduct.concat(customBuyCollection)
 			: []
 
-	const yValue =
-		getProductCount === 0 && (customGetProduct.length > 0 || customGetCollection.length > 0)
-			? customGetProduct.concat(customGetCollection)
-			: []
+	// const yValue =
+	// 	getProductCount === 0 && (customGetProduct.length > 0 || customGetCollection.length > 0)
+	// 		? customGetProduct.concat(customGetCollection)
+	// 		: []
 
-	const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
-
-	return combinedArray
+	// const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
+	return xValue
 }
 
 export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
