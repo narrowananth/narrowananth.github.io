@@ -22,7 +22,8 @@ export const applyPercentageAndAmountDiscount = (
 
 	const sanitizedLineItem =
 		buyOfferType === "overAll" &&
-		(customGetProduct.length <= 0 || customGetCollection.length <= 0)
+		customGetProduct.length <= 0 &&
+		customGetCollection.length <= 0
 			? lineItems
 			: getCombinedArray
 
