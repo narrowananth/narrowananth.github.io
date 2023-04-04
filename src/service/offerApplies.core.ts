@@ -28,7 +28,9 @@ export const applyPercentageAndAmountDiscount = (
 			: getCombinedArray
 
 	const cartTotal =
-		buyOfferType === "overAll"
+		buyOfferType === "overAll" &&
+		customGetProduct.length <= 0 &&
+		customGetCollection.length <= 0
 			? findOverAllCartTotal(sanitizedLineItem)
 			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
 
