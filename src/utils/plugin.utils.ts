@@ -154,7 +154,7 @@ export const validateOverAllData = (data: ValidateOverAllData): boolean => {
 }
 
 export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => {
-	const { cartType, cartValue, lineItems, getProducts, getProductCount } = data
+	const { cartType, cartValue, lineItems, getProducts, getProductCount, offerCategory } = data
 
 	const sanitizedGetProduct = getLineItemsObj(getProducts)
 
@@ -185,11 +185,11 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 	const normaliseValue =
 		cartType !== "amount" && getProductExist ? total - getProductCount : total
 
-	return normaliseValue >= cartValue
+	return offerCategory === "automaticOffers" ? total >= cartValue : normaliseValue >= cartValue
 }
 
-export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean => {
-	const { cartType, cartValue, lineItems, getProducts, getProductCount } = data
+export const buyXChooseYOverAllValidation = (data: ValidateInputData): boolean => {
+	const { cartType, cartValue, lineItems, getProducts, getProductCount, offerCategory } = data
 
 	const sanitizedGetProduct = getLineItemsObj(getProducts)
 
@@ -210,7 +210,7 @@ export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean
 	const normaliseValue =
 		cartType !== "amount" && getProductExist ? total - getProductCount : total
 
-	return normaliseValue >= cartValue
+	return offerCategory === "automaticOffers" ? total >= cartValue : normaliseValue >= cartValue
 }
 
 export const validateBuyArrayAvaliable = (data: ValidateBuyArrayAvaliable): boolean => {
