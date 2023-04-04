@@ -1,7 +1,6 @@
 import {
 	CombineSchemaInputArray,
 	CombineSchemaOfferArray,
-	FindFreeOfferOverAllCartValue,
 	FindUserProductCartTotal,
 	ValidateBuyArrayAvaliable,
 	ValidateGetArrayAvaliable,
@@ -33,6 +32,7 @@ export const combineSchemaInputArray = (data: CombineSchemaInputArray): Array<st
 	// 		: []
 
 	// const combinedArray = offerCategory !== "automaticOffers" ? xValue.concat(yValue) : xValue
+
 	return xValue
 }
 
@@ -182,7 +182,8 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 		return sanitizedGetProduct[variantId]
 	})
 
-	const normaliseValue = getProductExist ? total - getProductCount : total
+	const normaliseValue =
+		cartType !== "amount" && getProductExist ? total - getProductCount : total
 
 	return normaliseValue >= cartValue
 }
@@ -206,29 +207,10 @@ export const buyXChooseYOverAllValidation = (data: ValidateOverAllData): boolean
 		return sanitizedGetProduct[variantId]
 	})
 
-	const normaliseValue = getProductExist ? total - getProductCount : total
+	const normaliseValue =
+		cartType !== "amount" && getProductExist ? total - getProductCount : total
 
 	return normaliseValue >= cartValue
-}
-
-export const findFreeOfferOverAllCartValue = (data: FindFreeOfferOverAllCartValue): boolean => {
-	const { cartType, cartValue, lineItems, customGetProduct = [] } = data
-
-	const customLineItem = lineItems || []
-
-	const filteredGetProduct = customLineItem.filter(
-		(obj: LineItem) => !customGetProduct.some((id: string) => id === obj.variantId)
-	)
-
-	const total = filteredGetProduct.reduce((acc: number, lineItem: LineItem) => {
-		const { quantity, unitPrice } = lineItem
-
-		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
-
-		return (acc += currentValue)
-	}, 0)
-
-	return total >= cartValue
 }
 
 export const validateBuyArrayAvaliable = (data: ValidateBuyArrayAvaliable): boolean => {
