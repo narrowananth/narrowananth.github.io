@@ -22,8 +22,7 @@ export const applyPercentageAndAmountDiscount = (
 
 	const sanitizedLineItem =
 		buyOfferType === "overAll" &&
-		customGetProduct.length <= 0 &&
-		customGetCollection.length <= 0
+		(customGetProduct.length <= 0 || customGetCollection.length <= 0)
 			? lineItems
 			: getCombinedArray
 
@@ -55,17 +54,18 @@ export const applyPercentageAndAmountDiscount = (
 					getOffer.push(value)
 				}
 			})
-		}
-		const value = applyPercentageAndAmountOffer(
-			offerCategory,
-			key,
-			discountType,
-			discountValue,
-			percentageDiscountValue,
-			cartTotal
-		)
+		} else {
+			const value = applyPercentageAndAmountOffer(
+				offerCategory,
+				key,
+				discountType,
+				discountValue,
+				percentageDiscountValue,
+				cartTotal
+			)
 
-		getOffer.push(value)
+			getOffer.push(value)
+		}
 	})
 
 	return getOffer
@@ -117,7 +117,7 @@ export const applyPercentageAndAmountOffer = (
 			unitPrice: finalAmount,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(3)}`,
+			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(2)}`,
 			customLineItemType: "REGULAR"
 		}
 
