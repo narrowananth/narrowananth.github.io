@@ -14,6 +14,7 @@ import {
 	buyXChooseYOverAllValidation
 } from "../utils/plugin.utils"
 import { FindPercentageAmountDiscounts } from "../interface/discount.core.schema"
+import { constructDisplayTextHtmlBuilder } from "../utils/common.utils"
 
 export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscounts): object => {
 	const {
@@ -56,7 +57,9 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 			: []
 
 	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+		getDiscoutOffer.length > 0 && displayText.length > 0
+			? constructDisplayTextHtmlBuilder(displayText)
+			: ""
 
 	const totalCartValue =
 		getDiscoutOffer.length > 0
@@ -95,7 +98,9 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 	const getDiscoutOffer = isValidInput && isGetProductValid ? applyBuyXChooseYDiscount(data) : []
 
 	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+		getDiscoutOffer.length > 0 && displayText.length > 0
+			? constructDisplayTextHtmlBuilder(displayText)
+			: ""
 
 	const totalCartValue =
 		getDiscoutOffer.length > 0
@@ -132,7 +137,9 @@ export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): obje
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 
 	const displayTextHtmlBuilder =
-		getDiscoutOffer.length > 0 && displayText.length > 0 ? displayText : ""
+		getDiscoutOffer.length > 0 && displayText.length > 0
+			? constructDisplayTextHtmlBuilder(displayText)
+			: ""
 
 	const totalCartValue =
 		getDiscoutOffer.length > 0
