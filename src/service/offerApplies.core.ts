@@ -22,16 +22,14 @@ export const applyPercentageAndAmountDiscount = (
 	const getCombinedArray = combineSchemaOfferArray(data)
 
 	const sanitizedLineItem =
-		buyOfferType === "overAll" &&
-		customGetProduct.length <= 0 &&
-		customGetCollection.length <= 0
+		// buyOfferType === "overAll" &&
+		customGetProduct.length <= 0 && customGetCollection.length <= 0
 			? lineItems
 			: getCombinedArray
 
 	const cartTotal =
-		buyOfferType === "overAll" &&
-		customGetProduct.length <= 0 &&
-		customGetCollection.length <= 0
+		// buyOfferType === "overAll" &&
+		customGetProduct.length <= 0 && customGetCollection.length <= 0
 			? findOverAllCartTotal(sanitizedLineItem)
 			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
 
