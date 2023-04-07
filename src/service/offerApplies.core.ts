@@ -15,20 +15,18 @@ import {
 export const applyPercentageAndAmountDiscount = (
 	data: ApplyPercentageAndAmountDiscount
 ): Array<object> => {
-	const { offerCategory, buyOfferType, discountType, discountValue } = data
+	const { offerCategory, discountType, discountValue } = data
 
 	const { lineItems, customGetProduct, customGetCollection } = data
 
 	const getCombinedArray = combineSchemaOfferArray(data)
 
 	const sanitizedLineItem =
-		// buyOfferType === "overAll" &&
 		customGetProduct.length <= 0 && customGetCollection.length <= 0
 			? lineItems
 			: getCombinedArray
 
 	const cartTotal =
-		// buyOfferType === "overAll" &&
 		customGetProduct.length <= 0 && customGetCollection.length <= 0
 			? findOverAllCartTotal(sanitizedLineItem)
 			: findUserProductCartTotal({ sanitizedLineItem, lineItems })
@@ -240,9 +238,9 @@ export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 
 	const customDiscountValue =
 		customFreeQuantity >= getProductCount
-			? `Buy ${customFreeQuantity}, Get ${getProductCount} Free and ${
+			? `You Purchased ${customFreeQuantity} Get ${getProductCount} Free and Pay ${
 					customFreeQuantity - getProductCount
-			  } For the Same Price.`
+			  } For the Product Price.`
 			: ""
 
 	const offerValue = {
