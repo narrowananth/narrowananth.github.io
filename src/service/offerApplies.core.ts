@@ -176,7 +176,7 @@ export const applyPercentageAndAmountOffer = (
 			unitPrice: getEditedPrice / quantity,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: `You got ${percentageDiscountValue}% off`,
+			discountValue: "",
 			customLineItemType: "REGULAR"
 		}
 		return finalDiscount
@@ -201,7 +201,7 @@ export const applyPercentageAndAmountOffer = (
 			unitPrice: finalAmount,
 			lineItemHandle,
 			discountType: offerCategory,
-			discountValue: `You save {{currency}}${getPercentageAmount.toFixed(2)}`,
+			discountValue: "",
 			customLineItemType: "REGULAR"
 		}
 
@@ -236,12 +236,12 @@ export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 
 	const customDiscountType = customFreeQuantity >= getProductCount ? offerCategory : ""
 
-	const customDiscountValue =
-		customFreeQuantity >= getProductCount
-			? `You Purchased ${customFreeQuantity} Get ${getProductCount} Free and Pay ${
-					customFreeQuantity - getProductCount
-			  } For the Product Price.`
-			: ""
+	// const customDiscountValue =
+	// 	customFreeQuantity >= getProductCount
+	// 		? `You Purchased ${customFreeQuantity} Get ${getProductCount} Free and Pay ${
+	// 				customFreeQuantity - getProductCount
+	// 		  } For the Product Price.`
+	// 		: ""
 
 	const offerValue = {
 		productId: productId || customGetProductId,
@@ -251,7 +251,7 @@ export const applyFreeDiscount = (data: ApplyFreeDiscount): object => {
 		unitPrice: customUnitPrice,
 		lineItemHandle,
 		discountType: customDiscountType,
-		discountValue: customDiscountValue,
+		discountValue: "",
 		customLineItemType: "REGULAR",
 		isGetProductIdInLineitem,
 		customGetProductPrice
