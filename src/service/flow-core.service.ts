@@ -1,22 +1,22 @@
-import {
-	applyPercentageAndAmountDiscount,
-	applyBuyXGetYDiscount,
-	applyBuyXChooseYDiscount,
-	afterDiscountCalcCartTotal
-} from "./offerApplies.core"
+import { IOfferCategory } from "../interfaces/flow-category.interface"
+import { IOfferApplied } from "../interfaces/flow-core.interface"
+import { constructDisplayTextHtmlBuilder } from "../utils/flow-common.utils"
 import {
 	validateInputData,
-	validateOverAllData,
-	validateGetProductCount,
 	validateBuyArrayAvaliable,
 	validateGetArrayAvaliable,
+	validateOverAllData,
 	buyXChooseYInputValidation,
-	buyXChooseYOverAllValidation
-} from "../utils/plugin.utils"
-import { FindPercentageAmountDiscounts } from "../interface/discount.core.schema"
-import { constructDisplayTextHtmlBuilder } from "../utils/common.utils"
+	validateGetProductCount
+} from "../utils/flow-helper.utils"
+import {
+	applyPercentageAndAmountDiscount,
+	afterDiscountCalcCartTotal,
+	applyBuyXChooseYDiscount,
+	applyBuyXGetYDiscount
+} from "./flow-apply.service"
 
-export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscounts): object => {
+export const findPercentageAmountDiscounts = (data: IOfferCategory): IOfferApplied => {
 	const {
 		getRemovedProductList,
 		lineItems,
@@ -78,20 +78,10 @@ export const findPercentageAmountDiscounts = (data: FindPercentageAmountDiscount
 	}
 }
 
-export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const {
-		getRemovedProductList,
-		getConfigSchema,
-		lineItems,
-		buyOfferType,
-		displayText,
-		offerCategory
-	} = data
+export const findBuyXChooseYDiscounts = (data: IOfferCategory): IOfferApplied => {
+	const { getRemovedProductList, getConfigSchema, lineItems, displayText, offerCategory } = data
 
-	const isValidInput =
-		buyOfferType !== "overAll"
-			? buyXChooseYInputValidation(data)
-			: buyXChooseYOverAllValidation(data)
+	const isValidInput = buyXChooseYInputValidation(data)
 
 	const isGetProductValid = validateGetProductCount(data)
 
@@ -119,20 +109,10 @@ export const findBuyXChooseYDiscounts = (data: FindPercentageAmountDiscounts): o
 	}
 }
 
-export const findBuyXGetYDiscounts = (data: FindPercentageAmountDiscounts): object => {
-	const {
-		getRemovedProductList,
-		getConfigSchema,
-		lineItems,
-		buyOfferType,
-		displayText,
-		offerCategory
-	} = data
+export const findBuyXGetYDiscounts = (data: IOfferCategory): IOfferApplied => {
+	const { getRemovedProductList, getConfigSchema, lineItems, displayText, offerCategory } = data
 
-	const isValidInput =
-		buyOfferType !== "overAll"
-			? buyXChooseYInputValidation(data)
-			: buyXChooseYOverAllValidation(data)
+	const isValidInput = buyXChooseYInputValidation(data)
 
 	const getDiscoutOffer = isValidInput ? applyBuyXGetYDiscount(data) : []
 

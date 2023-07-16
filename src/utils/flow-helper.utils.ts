@@ -1,17 +1,16 @@
+import { IOfferCategory } from "../interfaces/flow-category.interface"
 import {
-	CombineBuyConfigArrays,
-	CombineSchemaOfferArray,
-	FindUserProductCartTotal,
-	ValidateBuyArrayAvaliable,
-	ValidateGetArrayAvaliable,
-	ValidateGetProductCount,
-	ValidateInputData,
-	ValidateOverAllData
-} from "../interface/plugin.utils.schema"
-import { LineItem } from "../interface/common.schema"
-import { getLineItemsObj } from "./common.utils"
+	ICombineBuyConfigArrays,
+	ICombineSchemaOfferArray,
+	IFindUserProductCartTotal,
+	IValidateBuyArrayAvaliable,
+	IValidateGetArrayAvaliable,
+	IValidateGetProductCount
+} from "../interfaces/flow-helper.interface"
+import { ILineItem } from "../interfaces/index.interface"
+import { getLineItemsObj } from "./flow-common.utils"
 
-export const combineBuyConfigArrays = (data: CombineBuyConfigArrays): Array<string> => {
+export const combineBuyConfigArrays = (data: ICombineBuyConfigArrays): string[] => {
 	const { customBuyCollection, customBuyProduct } = data
 
 	return customBuyProduct.length > 0 || customBuyCollection.length > 0
@@ -19,7 +18,7 @@ export const combineBuyConfigArrays = (data: CombineBuyConfigArrays): Array<stri
 		: []
 }
 
-export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
+export const combineSchemaOfferArray = (data: ICombineSchemaOfferArray): string[] => {
 	const { customBuyCollection, customGetCollection, customBuyProduct, customGetProduct } = data
 
 	const xValue = customGetProduct.length > 0 ? customGetProduct : customBuyProduct
@@ -40,29 +39,29 @@ export const combineSchemaOfferArray = (data: CombineSchemaOfferArray): any => {
 	return combinedArray
 }
 
-export const findOverAllCartTotal = (lineItems: LineItem[]): number => {
-	return lineItems.reduce((acc: number, lineItem: LineItem) => {
+export const findOverAllCartTotal = (lineItems: ILineItem[] | any): number => {
+	return lineItems.reduce((acc: number, lineItem: ILineItem) => {
 		const { unitPrice, quantity } = lineItem
 
 		return (acc += unitPrice * quantity)
 	}, 0)
 }
 
-export const findOfferLineItemTotal = (lineItems: LineItem[]): number => {
-	return lineItems.reduce((acc: number, lineItem: LineItem) => {
+export const findOfferLineItemTotal = (lineItems: ILineItem[]): number => {
+	return lineItems.reduce((acc: number, lineItem: ILineItem) => {
 		const { customGetProductPrice, freeQuantity } = lineItem
 
 		return (acc += customGetProductPrice * freeQuantity)
 	}, 0)
 }
 
-export const validateInputData = (data: ValidateInputData): boolean => {
-	const { cartType, cartValue, lineItems } = data
+export const validateInputData = (data: IOfferCategory): boolean => {
+	const { cartType, cartValue, lineItems, customBuyCollection, customBuyProduct } = data
 
-	const getCombinedArray = combineBuyConfigArrays(data)
+	const getCombinedArray = combineBuyConfigArrays({ customBuyCollection, customBuyProduct })
 
 	const total = getCombinedArray.reduce((total: number, id: string) => {
-		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const sum = lineItems.reduce((acc: number, lineItem: ILineItem) => {
 			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 			if (variantId === id || collectionId === id) {
@@ -80,10 +79,10 @@ export const validateInputData = (data: ValidateInputData): boolean => {
 	return total >= cartValue
 }
 
-export const validateOverAllData = (data: ValidateOverAllData): boolean => {
+export const validateOverAllData = (data: IOfferCategory): boolean => {
 	const { cartType, cartValue, lineItems } = data
 
-	const total = lineItems.reduce((acc: number, lineItem: LineItem) => {
+	const total = lineItems.reduce((acc: number, lineItem: ILineItem) => {
 		const { quantity, unitPrice } = lineItem
 
 		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
@@ -94,7 +93,7 @@ export const validateOverAllData = (data: ValidateOverAllData): boolean => {
 	return total >= cartValue
 }
 
-export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => {
+export const buyXChooseYInputValidation = (data: IOfferCategory): boolean => {
 	const {
 		cartType,
 		cartValue,
@@ -110,7 +109,7 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 	const buyCombinedArray = combineBuyConfigArrays(data)
 
 	const total = buyCombinedArray.reduce((total: number, id: string) => {
-		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const sum = lineItems.reduce((acc: number, lineItem: ILineItem) => {
 			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 			if (variantId === id || collectionId === id) {
@@ -126,7 +125,7 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 	}, 0)
 
 	if (buyOfferType === "collections") {
-		const getProductExist = lineItems.some((lineItem: LineItem) => {
+		const getProductExist = lineItems.some((lineItem: ILineItem) => {
 			const { variantId } = lineItem || {}
 
 			return sanitizedGetProduct[variantId]
@@ -143,38 +142,13 @@ export const buyXChooseYInputValidation = (data: ValidateInputData): boolean => 
 	return total >= cartValue
 }
 
-export const buyXChooseYOverAllValidation = (data: ValidateInputData): boolean => {
-	const { cartType, cartValue, lineItems, getProducts, getProductCount, offerCategory } = data
-
-	const sanitizedGetProduct = getLineItemsObj(getProducts)
-
-	const total = lineItems.reduce((acc: number, lineItem: LineItem) => {
-		const { quantity, unitPrice } = lineItem
-
-		const currentValue = cartType === "amount" ? quantity * unitPrice : quantity
-
-		return (acc += currentValue)
-	}, 0)
-
-	const getProductExist = lineItems.some((lineItem: LineItem) => {
-		const { variantId } = lineItem || {}
-
-		return sanitizedGetProduct[variantId]
-	})
-
-	const normaliseValue =
-		cartType !== "amount" && getProductExist ? total - getProductCount : total
-
-	return offerCategory === "automaticOffers" ? total >= cartValue : normaliseValue >= cartValue
-}
-
-export const validateBuyArrayAvaliable = (data: ValidateBuyArrayAvaliable): boolean => {
+export const validateBuyArrayAvaliable = (data: IValidateBuyArrayAvaliable): boolean => {
 	const { customBuyProduct, customBuyCollection, lineItems } = data
 
 	const validationArray = customBuyProduct.concat(customBuyCollection)
 
 	return validationArray.some((id: string) => {
-		return lineItems.some((lineItem: LineItem) => {
+		return lineItems.some((lineItem: ILineItem) => {
 			const { collectionId, variantId } = lineItem || {}
 
 			return variantId === id || collectionId === id
@@ -182,13 +156,13 @@ export const validateBuyArrayAvaliable = (data: ValidateBuyArrayAvaliable): bool
 	})
 }
 
-export const validateGetArrayAvaliable = (data: ValidateGetArrayAvaliable): boolean => {
+export const validateGetArrayAvaliable = (data: IValidateGetArrayAvaliable): boolean => {
 	const { customGetProduct, customGetCollection, lineItems } = data
 
 	const validationArray = customGetProduct.concat(customGetCollection)
 
 	return validationArray.some((id: string) => {
-		return lineItems.some((lineItem: LineItem) => {
+		return lineItems.some((lineItem: ILineItem) => {
 			const { collectionId, variantId } = lineItem || {}
 
 			return variantId === id || collectionId === id
@@ -196,11 +170,11 @@ export const validateGetArrayAvaliable = (data: ValidateGetArrayAvaliable): bool
 	})
 }
 
-export const validateGetProductCount = (data: ValidateGetProductCount): boolean => {
+export const validateGetProductCount = (data: IValidateGetProductCount): boolean => {
 	const { customGetProduct, getProductCount, lineItems } = data
 
 	const quantity = customGetProduct.reduce((count: number, id: string) => {
-		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const sum = lineItems.reduce((acc: number, lineItem: ILineItem) => {
 			const { collectionId, variantId, quantity } = lineItem || {}
 
 			if (variantId === id || collectionId === id) acc += quantity
@@ -214,11 +188,11 @@ export const validateGetProductCount = (data: ValidateGetProductCount): boolean 
 	return quantity >= getProductCount
 }
 
-export const findUserProductCartTotal = (data: FindUserProductCartTotal): number => {
+export const findUserProductCartTotal = (data: IFindUserProductCartTotal): number => {
 	const { sanitizedLineItem, lineItems } = data
 
 	return sanitizedLineItem.reduce((total: number, key: string) => {
-		const sum = lineItems.reduce((acc: number, lineItem: LineItem) => {
+		const sum = lineItems.reduce((acc: number, lineItem: ILineItem) => {
 			const { collectionId, variantId, quantity, unitPrice } = lineItem || {}
 
 			if (variantId === key || collectionId === key) acc += quantity * unitPrice

@@ -1,16 +1,16 @@
+import { IOfferCategory } from "../interfaces/flow-category.interface"
+import { IOfferApplied } from "../interfaces/flow-core.interface"
 import {
 	findPercentageAmountDiscounts,
 	findBuyXChooseYDiscounts,
 	findBuyXGetYDiscounts
-} from "../service/discount.core"
+} from "../service/flow-core.service"
 
-export const findOfferCategory = (data: any): object => {
+export const findOfferCategory = (data: IOfferCategory): IOfferApplied => {
 	const { offerCategory } = data
 
 	switch (offerCategory) {
 		case "percentageDiscount":
-			return findPercentageAmountDiscounts(data)
-
 		case "flatDiscount":
 			return findPercentageAmountDiscounts(data)
 

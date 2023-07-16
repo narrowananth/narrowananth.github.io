@@ -1,13 +1,14 @@
-import { findOfferCategory } from "./controller/plugin.controller"
-import { buildInputData, schemaReBuilder } from "./utils/common.utils"
-import { AppContext, ConfigSchema } from "./interface/common.schema"
+import { findOfferCategory } from "./controller/flow-category.controller"
+import { IOfferApplied } from "./interfaces/flow-core.interface"
+import { IAppContext, IConfigSchema } from "./interfaces/index.interface"
+import { buildInputData, schemaReBuilder } from "./utils/flow-common.utils"
 
-export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): string => {
+export const flow = (appContext: IAppContext, configSchema: IConfigSchema[]): string => {
 	const { cartLineItems } = appContext
 
 	const { lineItems } = cartLineItems
 
-	const getOfferCategory = configSchema.map((schema: ConfigSchema) => {
+	const getOfferCategory = configSchema.map((schema: IConfigSchema) => {
 		const getConfigSchema = schemaReBuilder(schema)
 
 		const getBuildInputData = buildInputData(getConfigSchema, lineItems)
@@ -15,7 +16,7 @@ export const flow = (appContext: AppContext, configSchema: ConfigSchema[]): stri
 		return findOfferCategory(getBuildInputData)
 	})
 
-	const defalutFlowOffer: object[] = []
+	const defalutFlowOffer: IOfferApplied[] = []
 
 	const filteredArray = getOfferCategory.filter((output: any) => {
 		const { schema, totalCartValue, offerApplied, getRemovedProductList } = output

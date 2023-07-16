@@ -1,15 +1,15 @@
 import {
-	ConfigSchema,
-	BuyProduct,
-	GetProduct,
-	BuyCollection,
-	GetCollection,
-	LineItem,
-	LineItemObject,
-	BuildInputData
-} from "../interface/common.schema"
+	IBuyCollection,
+	IBuyProduct,
+	IConfigSchema,
+	IGetCollection,
+	IGetProduct,
+	ILineItem
+} from "../interfaces/index.interface"
+import { IOfferCategory } from "../interfaces/flow-category.interface"
+import { ILineItemObject } from "../interfaces/flow-common.interface"
 
-export const schemaReBuilder = (configSchema: ConfigSchema): object => {
+export const schemaReBuilder = (configSchema: IConfigSchema): IConfigSchema => {
 	const {
 		buyCollections = [],
 		getCollections = [],
@@ -18,22 +18,22 @@ export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 		getProductCount
 	} = configSchema
 
-	const buyVariantIdList = buyProducts.map((product: BuyProduct) => product.variantId)
+	const buyVariantIdList = buyProducts.map((product: IBuyProduct) => product.variantId)
 
 	configSchema.customBuyProduct = buyVariantIdList
 
-	const getVariantIdList = getProducts.map((product: GetProduct) => product.variantId)
+	const getVariantIdList = getProducts.map((product: IGetProduct) => product.variantId)
 
 	configSchema.customGetProduct = getVariantIdList
 
 	const buyCollectionIdList = buyCollections.map(
-		(collection: BuyCollection) => collection.collectionId
+		(collection: IBuyCollection) => collection.collectionId
 	)
 
 	configSchema.customBuyCollection = buyCollectionIdList
 
 	const getCollectionIdList = getCollections.map(
-		(collection: GetCollection) => collection.collectionId
+		(collection: IGetCollection) => collection.collectionId
 	)
 
 	configSchema.customGetCollection = getCollectionIdList
@@ -44,39 +44,23 @@ export const schemaReBuilder = (configSchema: ConfigSchema): object => {
 }
 
 export const buildInputData = (
-	getConfigSchema: BuildInputData | any,
-	lineItems: LineItem[]
-): object => {
-	const getRemovedProductList = removeExistingDiscount(lineItems) || []
-
+	getConfigSchema: IConfigSchema,
+	lineItems: ILineItem[]
+): IOfferCategory => {
 	const modifiedLineItem = resetInputLineItem(lineItems)
 
 	const config = {
 		getConfigSchema,
 		...getConfigSchema,
 		lineItems: modifiedLineItem,
-		getRemovedProductList
+		getRemovedProductList: modifiedLineItem
 	}
 
 	return config
 }
 
-export const resetInputLineItem = (lineItems: LineItem[]): Array<LineItem> => {
-	const modifiedLineItem = lineItems.map((lineItem: LineItem) => {
-		const { originalUnitPrice } = lineItem
-
-		lineItem.unitPrice = originalUnitPrice
-
-		return lineItem
-	})
-
-	return modifiedLineItem
-}
-
-export const removeExistingDiscount = (lineItems: LineItem[]): Array<object> => {
-	const getRemoveItemsList = lineItems
-
-	return getRemoveItemsList.map((lineItem: LineItem) => {
+export const resetInputLineItem = (lineItems: ILineItem[]): ILineItem[] => {
+	return lineItems.map((lineItem: ILineItem) => {
 		const { originalUnitPrice } = lineItem
 
 		lineItem.unitPrice = originalUnitPrice
@@ -85,8 +69,8 @@ export const removeExistingDiscount = (lineItems: LineItem[]): Array<object> => 
 	})
 }
 
-export const getLineItemsObj = (lineItems: any[]): LineItemObject => {
-	return lineItems.reduce((acc: LineItemObject, lineItem: LineItem) => {
+export const getLineItemsObj = (lineItems: any): ILineItemObject => {
+	return lineItems.reduce((acc: ILineItemObject, lineItem: ILineItem) => {
 		const { variantId } = lineItem
 
 		acc[variantId] = lineItem
